@@ -1,0 +1,1395 @@
+% ============================================================
+% Documento LaTeX - Site de Acolhimento FAESA
+% Desenvolvimento Web II
+% Compilar com: pdflatex ou lualatex (recomendado para TikZ)
+% ============================================================
+\documentclass[12pt, a4paper]{article}
+
+% ---- Pacotes ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tikz}
+% \usepackage{tikz-uml}  % Removido: indisponível no Overleaf
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+% \usepackage{pgf-umlsd}  % Removido: indisponível no Overleaf
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{fontawesome5}
+\usepackage{setspace}
+\usepackage{parskip}
+
+% ---- TikZ Libraries ----
+\usetikzlibrary{shapes, shapes.geometric, shapes.multipart, arrows.meta, positioning, calc, fit, backgrounds, shadows, decorations.markings}
+
+% ---- Cores FAESA ----
+\definecolor{faesaAzul}{HTML}{003366}
+\definecolor{faesaAzulClaro}{HTML}{0066CC}
+\definecolor{faesaVerde}{HTML}{28A745}
+\definecolor{faesaLaranja}{HTML}{FF8C00}
+\definecolor{faesaCinza}{HTML}{6C757D}
+\definecolor{faesaBranco}{HTML}{FFFFFF}
+\definecolor{faesaBG}{HTML}{F5F7FA}
+\definecolor{reqFunc}{HTML}{DCE6F1}
+\definecolor{reqNFunc}{HTML}{FDE8D0}
+
+% ---- Geometria ----
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    left=2.5cm,
+    right=2.5cm
+}
+
+% ---- Hyperref ----
+\hypersetup{
+    colorlinks=true,
+    linkcolor=faesaAzul,
+    urlcolor=faesaAzulClaro,
+    citecolor=faesaAzul,
+    pdfauthor={Gabriel Malheiros},
+    pdftitle={Site de Acolhimento FAESA - Documento de Requisitos},
+    pdfsubject={Desenvolvimento Web II}
+}
+
+% ---- Cabeçalho e Rodapé ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{faesaAzul}{\small\textbf{FAESA — Site de Acolhimento}}}
+\fancyhead[R]{\textcolor{faesaCinza}{\small Desenvolvimento Web II}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{faesaAzul}\leaders\hrule height \headrulewidth\hfill}}
+
+% ---- Títulos ----
+\titleformat{\section}
+    {\Large\bfseries\color{faesaAzul}}
+    {\thesection.}{0.5em}{}[\color{faesaAzul}\titlerule]
+
+\titleformat{\subsection}
+    {\large\bfseries\color{faesaAzulClaro}}
+    {\thesubsection}{0.5em}{}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries\color{faesaCinza}}
+    {\thesubsubsection}{0.5em}{}
+
+% ---- Caixas coloridas ----
+\newtcolorbox{destaque}[1][]{
+    colback=faesaBG,
+    colframe=faesaAzul,
+    fonttitle=\bfseries,
+    title=#1,
+    rounded corners,
+    boxrule=1pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+\newtcolorbox{alerta}[1][]{
+    colback=reqNFunc,
+    colframe=faesaLaranja,
+    fonttitle=\bfseries,
+    title=#1,
+    rounded corners,
+    boxrule=1pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% ---- Estilos TikZ para diagramas ----
+\tikzstyle{actor} = [draw, fill=faesaAzul!10, text=faesaAzul, font=\small\bfseries, minimum width=2cm, minimum height=0.8cm, rounded corners=3pt]
+\tikzstyle{usecase} = [draw, fill=faesaBG, text=black, font=\small, ellipse, minimum width=3.5cm, minimum height=1.2cm, align=center, text width=3cm]
+\tikzstyle{system} = [draw=faesaAzul, thick, dashed, rounded corners=10pt, inner sep=15pt]
+\tikzstyle{component} = [draw, fill=faesaAzulClaro!15, text=black, font=\small\bfseries, minimum width=3cm, minimum height=1cm, rounded corners=5pt, drop shadow]
+\tikzstyle{database} = [cylinder, draw, fill=faesaVerde!15, shape border rotate=90, aspect=0.25, minimum height=1.5cm, minimum width=2cm, font=\small\bfseries]
+\tikzstyle{arrowstyle} = [-{Stealth[length=3mm]}, thick, color=faesaCinza]
+\tikzstyle{dashedarrow} = [-{Stealth[length=3mm]}, thick, dashed, color=faesaCinza]
+\tikzstyle{class} = [draw, fill=white, text=black, font=\small, rectangle split, rectangle split parts=3, minimum width=4cm, drop shadow]
+
+% ============================================================
+\begin{document}
+
+% ---- Capa ----
+\begin{titlepage}
+\begin{center}
+
+\vspace*{1cm}
+
+% Logo simulado (substituir por imagem real)
+\begin{tikzpicture}
+    \node[fill=faesaAzul, rounded corners=10pt, minimum width=6cm, minimum height=2cm, text=white, font=\Huge\bfseries] {FAESA};
+\end{tikzpicture}
+
+\vspace{1.5cm}
+
+{\LARGE\textcolor{faesaAzul}{\textbf{Centro Universitário FAESA}}}
+
+\vspace{0.5cm}
+
+{\large\textcolor{faesaCinza}{Curso de Sistemas de Informação / Ciência da Computação}}
+
+\vspace{2cm}
+
+\rule{\textwidth}{2pt}
+
+\vspace{0.5cm}
+
+{\Huge\textcolor{faesaAzul}{\textbf{Site de Acolhimento FAESA}}}
+
+\vspace{0.3cm}
+
+{\Large\textcolor{faesaAzulClaro}{Documento de Requisitos, Arquitetura e Diagramas}}
+
+\vspace{0.5cm}
+
+\rule{\textwidth}{2pt}
+
+\vspace{2.5cm}
+
+{\large\textbf{Disciplina:} Desenvolvimento Web II}
+
+\vspace{0.3cm}
+
+{\large\textbf{Aluno:} Gabriel Malheiros}
+
+\vspace{0.3cm}
+
+{\large\textbf{Professor(a):} [Nome do Professor]}
+
+\vspace{\fill}
+
+{\large Vitória --- ES}
+
+{\large 2026}
+
+\end{center}
+\end{titlepage}
+
+% ---- Sumário ----
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================
+% SEÇÃO 1 - INTRODUÇÃO
+% ============================================================
+\section{Introdução}
+
+\subsection{Contextualização}
+
+A FAESA --- Centro Universitário, presente na educação capixaba há mais de 53 anos, é reconhecida pelo MEC como o melhor Centro Universitário do Espírito Santo pela sexta vez consecutiva e está entre os 10 melhores do Brasil (IGC/MEC). Com mais de 70 cursos de graduação e pós-graduação, mais de 75 mil alunos formados e 85\% dos egressos atuando em sua área de formação, a instituição é referência em ensino de qualidade.
+
+Nesse contexto, o \textbf{programa de acolhimento estudantil} desempenha papel fundamental na integração dos novos alunos à vida acadêmica. O acolhimento abrange temas como:
+
+\begin{itemize}[leftmargin=2cm]
+    \item[\faIcon{book}] \textbf{Planos de Estudos} --- orientação para organização do tempo e metas acadêmicas;
+    \item[\faIcon{chart-line}] \textbf{Melhoria nas Atividades} --- técnicas para aprimorar o desempenho em atividades curriculares e extracurriculares;
+    \item[\faIcon{graduation-cap}] \textbf{Estudos fora da FAESA} --- incentivo a cursos complementares, certificações e aprendizado contínuo;
+    \item[\faIcon{brain}] \textbf{Concentração e Foco} --- práticas de mindfulness, técnicas Pomodoro e exercícios de concentração;
+    \item[\faIcon{users}] \textbf{Apoio Social e Emocional} --- conexão com colegas, mentores e suporte psicopedagógico.
+\end{itemize}
+
+\subsection{Objetivo do Documento}
+
+Este documento tem como objetivo apresentar, de forma detalhada e organizada, todos os aspectos necessários para o desenvolvimento do \textbf{Site de Acolhimento da FAESA}, incluindo:
+
+\begin{enumerate}[leftmargin=2cm]
+    \item Levantamento completo de requisitos funcionais e não funcionais;
+    \item Diagramas UML (casos de uso, classes, sequência, componentes);
+    \item Arquitetura do sistema;
+    \item Tecnologias recomendadas;
+    \item Protótipos de interface;
+    \item Cronograma de desenvolvimento.
+\end{enumerate}
+
+\subsection{Escopo do Projeto}
+
+O site será uma \textbf{plataforma web responsiva} que centraliza recursos de acolhimento para os estudantes da FAESA, oferecendo ferramentas interativas para planejamento de estudos, acompanhamento de progresso, exercícios de concentração e acesso a conteúdos de apoio acadêmico.
+
+\begin{destaque}[Visão do Produto]
+    \textit{``Criar uma plataforma digital de acolhimento que acompanhe o estudante FAESA desde o ingresso até a conclusão do curso, promovendo organização, bem-estar e excelência acadêmica.''}
+\end{destaque}
+
+% ============================================================
+% SEÇÃO 2 - ANÁLISE DE REQUISITOS
+% ============================================================
+\newpage
+\section{Análise de Requisitos}
+
+\subsection{Requisitos Funcionais (RF)}
+
+Os requisitos funcionais descrevem as funcionalidades que o sistema deve oferecer aos seus usuários.
+
+\begin{longtable}{|c|p{4.5cm}|p{6.5cm}|c|}
+\hline
+\rowcolor{faesaAzul}
+\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requisito}} & \textcolor{white}{\textbf{Descrição}} & \textcolor{white}{\textbf{Prior.}} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{faesaAzul}
+\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requisito}} & \textcolor{white}{\textbf{Descrição}} & \textcolor{white}{\textbf{Prior.}} \\
+\hline
+\endhead
+
+\rowcolor{reqFunc}
+RF01 & Cadastro e Login & O sistema deve permitir cadastro com matrícula FAESA e login via e-mail institucional (SSO) & Alta \\
+\hline
+
+RF02 & Plano de Estudos Personalizado & O aluno deve criar, editar e gerenciar seu plano de estudos com metas semanais e mensais & Alta \\
+\hline
+
+\rowcolor{reqFunc}
+RF03 & Cronograma Interativo & Calendário interativo com drag-and-drop para organização de horários de estudo & Alta \\
+\hline
+
+RF04 & Exercícios de Concentração & Módulo com técnicas de concentração (Pomodoro, mindfulness, exercícios respiratórios) & Alta \\
+\hline
+
+\rowcolor{reqFunc}
+RF05 & Dashboard de Progresso & Painel visual com gráficos de progresso acadêmico, metas atingidas e estatísticas & Alta \\
+\hline
+
+RF06 & Biblioteca de Recursos & Repositório de materiais sobre técnicas de estudo, artigos, vídeos e podcasts & Média \\
+\hline
+
+\rowcolor{reqFunc}
+RF07 & Trilhas de Aprendizagem & Roteiros guiados de estudo para cada curso e período & Média \\
+\hline
+
+RF08 & Fórum de Discussão & Espaço para troca de experiências entre estudantes e mentores & Média \\
+\hline
+
+\rowcolor{reqFunc}
+RF09 & Sistema de Mentoria & Conexão entre veteranos (mentores) e calouros para orientação & Média \\
+\hline
+
+RF10 & Notificações e Lembretes & Alertas via push e e-mail sobre metas, prazos e atividades pendentes & Média \\
+\hline
+
+\rowcolor{reqFunc}
+RF11 & Avaliação de Bem-estar & Questionários periódicos para autoavaliação emocional e acadêmica & Média \\
+\hline
+
+RF12 & Atividades Extracurriculares & Catálogo de cursos, workshops e eventos externos recomendados & Baixa \\
+\hline
+
+\rowcolor{reqFunc}
+RF13 & Gamificação & Sistema de pontos, badges e rankings para motivação dos estudantes & Baixa \\
+\hline
+
+RF14 & Relatórios para Coordenação & Relatórios agregados (anônimos) sobre engajamento e bem-estar estudantil & Baixa \\
+\hline
+
+\rowcolor{reqFunc}
+RF15 & Chat com Suporte & Canal de comunicação direta com o núcleo de apoio psicopedagógico & Baixa \\
+\hline
+
+\caption{Requisitos Funcionais do Site de Acolhimento}
+\label{tab:requisitos-funcionais}
+\end{longtable}
+
+\subsection{Requisitos Não Funcionais (RNF)}
+
+Os requisitos não funcionais definem atributos de qualidade que o sistema deve possuir.
+
+\begin{longtable}{|c|p{3.5cm}|p{7.5cm}|c|}
+\hline
+\rowcolor{faesaLaranja}
+\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Categoria}} & \textcolor{white}{\textbf{Descrição}} & \textcolor{white}{\textbf{Prior.}} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{faesaLaranja}
+\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Categoria}} & \textcolor{white}{\textbf{Descrição}} & \textcolor{white}{\textbf{Prior.}} \\
+\hline
+\endhead
+
+\rowcolor{reqNFunc}
+RNF01 & Responsividade & Interface adaptável a desktops, tablets e smartphones (Mobile-First) & Alta \\
+\hline
+
+RNF02 & Performance & Tempo de carregamento de páginas $\leq$ 3 segundos com conexão 3G & Alta \\
+\hline
+
+\rowcolor{reqNFunc}
+RNF03 & Segurança & Autenticação OAuth 2.0 / SSO, criptografia TLS 1.3, proteção contra XSS e CSRF & Alta \\
+\hline
+
+RNF04 & Acessibilidade & Conformidade com WCAG 2.1 nível AA (contraste, leitores de tela, navegação por teclado) & Alta \\
+\hline
+
+\rowcolor{reqNFunc}
+RNF05 & Disponibilidade & Uptime mínimo de 99,5\% com monitoramento 24/7 & Alta \\
+\hline
+
+RNF06 & Escalabilidade & Suportar crescimento de até 10.000 usuários simultâneos & Média \\
+\hline
+
+\rowcolor{reqNFunc}
+RNF07 & Usabilidade & Interface intuitiva, seguindo Design System consistente, taxa de erro $\leq$ 2\% & Média \\
+\hline
+
+RNF08 & Manutenibilidade & Código documentado, arquitetura modular, cobertura de testes $\geq$ 80\% & Média \\
+\hline
+
+\rowcolor{reqNFunc}
+RNF09 & LGPD & Conformidade total com a Lei Geral de Proteção de Dados (Lei 13.709/2018) & Alta \\
+\hline
+
+RNF10 & Internacionalização & Suporte a pt-BR como idioma principal, com preparação para en-US & Baixa \\
+\hline
+
+\caption{Requisitos Não Funcionais do Site de Acolhimento}
+\label{tab:requisitos-nao-funcionais}
+\end{longtable}
+
+\subsection{Regras de Negócio}
+
+\begin{alerta}[Regras de Negócio Essenciais]
+\begin{enumerate}
+    \item \textbf{RN01} --- Apenas estudantes com matrícula ativa na FAESA podem se cadastrar.
+    \item \textbf{RN02} --- Os planos de estudo devem ser vinculados ao curso e período do aluno.
+    \item \textbf{RN03} --- Mentores devem ser estudantes a partir do 5º período com CRA $\geq$ 7,0.
+    \item \textbf{RN04} --- Os dados de bem-estar são confidenciais e acessados apenas de forma agregada pela coordenação.
+    \item \textbf{RN05} --- O sistema de gamificação não pode gerar competição negativa; rankings são opcionais.
+    \item \textbf{RN06} --- Conteúdos externos recomendados devem ser revisados por um coordenador antes da publicação.
+\end{enumerate}
+\end{alerta}
+
+% ============================================================
+% SEÇÃO 3 - PERSONAS E HISTÓRIAS DE USUÁRIO
+% ============================================================
+\newpage
+\section{Personas e Histórias de Usuário}
+
+\subsection{Personas}
+
+\begin{destaque}[Persona 1 --- Lucas (Calouro)]
+\begin{itemize}
+    \item \textbf{Idade:} 18 anos
+    \item \textbf{Curso:} Sistemas de Informação --- 1º período
+    \item \textbf{Necessidade:} Organizar seus horários de estudo e se adaptar à rotina universitária
+    \item \textbf{Dor:} Sente-se perdido com a quantidade de disciplinas e atividades
+    \item \textbf{Motivação:} Quer ter um desempenho excelente desde o início
+\end{itemize}
+\end{destaque}
+
+\begin{destaque}[Persona 2 --- Mariana (Veterana/Mentora)]
+\begin{itemize}
+    \item \textbf{Idade:} 22 anos
+    \item \textbf{Curso:} Psicologia --- 7º período
+    \item \textbf{Necessidade:} Compartilhar suas experiências e ajudar novos alunos
+    \item \textbf{Dor:} Não há um canal estruturado para mentorias
+    \item \textbf{Motivação:} Desenvolver habilidades de liderança e contribuir com a comunidade
+\end{itemize}
+\end{destaque}
+
+\begin{destaque}[Persona 3 --- Prof. Ricardo (Coordenador)]
+\begin{itemize}
+    \item \textbf{Idade:} 45 anos
+    \item \textbf{Função:} Coordenador de curso
+    \item \textbf{Necessidade:} Acompanhar indicadores de engajamento e bem-estar dos alunos
+    \item \textbf{Dor:} Dados dispersos e falta de visão consolidada
+    \item \textbf{Motivação:} Reduzir evasão e melhorar a experiência acadêmica
+\end{itemize}
+\end{destaque}
+
+\subsection{Histórias de Usuário}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|c|X|c|}
+\hline
+\rowcolor{faesaAzul}
+\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{História de Usuário}} & \textcolor{white}{\textbf{RF}} \\
+\hline
+US01 & \textit{Como} calouro, \textit{quero} criar meu plano de estudos semanal \textit{para} me organizar melhor no semestre. & RF02 \\
+\hline
+US02 & \textit{Como} estudante, \textit{quero} praticar exercícios de concentração \textit{para} melhorar meu foco durante os estudos. & RF04 \\
+\hline
+US03 & \textit{Como} estudante, \textit{quero} visualizar meu progresso \textit{para} me manter motivado. & RF05 \\
+\hline
+US04 & \textit{Como} veterana, \textit{quero} me cadastrar como mentora \textit{para} ajudar calouros do meu curso. & RF09 \\
+\hline
+US05 & \textit{Como} coordenador, \textit{quero} visualizar relatórios de engajamento \textit{para} identificar alunos em risco. & RF14 \\
+\hline
+US06 & \textit{Como} estudante, \textit{quero} receber lembretes de metas \textit{para} não esquecer minhas tarefas. & RF10 \\
+\hline
+US07 & \textit{Como} estudante, \textit{quero} acessar uma biblioteca de recursos \textit{para} aprender técnicas de estudo eficientes. & RF06 \\
+\hline
+US08 & \textit{Como} estudante, \textit{quero} ganhar badges \textit{para} me sentir reconhecido pelo meu esforço. & RF13 \\
+\hline
+\end{tabularx}
+\end{center}
+
+% ============================================================
+% SEÇÃO 4 - DIAGRAMAS UML
+% ============================================================
+\newpage
+\section{Diagramas UML}
+
+\subsection{Diagrama de Casos de Uso}
+
+O diagrama de casos de uso apresenta as principais interações entre os atores do sistema (Estudante, Mentor, Coordenador e Administrador) e as funcionalidades oferecidas pela plataforma.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=1.2cm]
+
+% Sistema boundary
+\node[draw=faesaAzul, thick, dashed, rounded corners=15pt, 
+      minimum width=13cm, minimum height=18cm, 
+      label={[font=\Large\bfseries, text=faesaAzul]above:Sistema --- Site de Acolhimento FAESA}] 
+      (sistema) at (6, -8) {};
+
+% Atores à esquerda
+\node[actor] (estudante) at (-3, -4) {\faIcon{user-graduate} Estudante};
+\node[actor] (mentor) at (-3, -12) {\faIcon{chalkboard-teacher} Mentor};
+
+% Atores à direita
+\node[actor] (coord) at (15, -4) {\faIcon{user-tie} Coordenador};
+\node[actor] (admin) at (15, -12) {\faIcon{user-cog} Admin};
+
+% Casos de uso
+\node[usecase] (uc1) at (4, -1) {Realizar Cadastro/Login};
+\node[usecase] (uc2) at (8, -1) {Gerenciar Perfil};
+\node[usecase] (uc3) at (4, -3.5) {Criar Plano de Estudos};
+\node[usecase] (uc4) at (8, -3.5) {Gerenciar Cronograma};
+\node[usecase] (uc5) at (4, -6) {Praticar Concentração};
+\node[usecase] (uc6) at (8, -6) {Visualizar Dashboard};
+\node[usecase] (uc7) at (4, -8.5) {Acessar Biblioteca};
+\node[usecase] (uc8) at (8, -8.5) {Participar do Fórum};
+\node[usecase] (uc9) at (4, -11) {Solicitar Mentoria};
+\node[usecase] (uc10) at (8, -11) {Receber Notificações};
+\node[usecase] (uc11) at (4, -13.5) {Responder Avaliação de Bem-estar};
+\node[usecase] (uc12) at (8, -13.5) {Participar da Gamificação};
+\node[usecase] (uc13) at (6, -16) {Visualizar Relatórios};
+
+% Conexões Estudante
+\draw[arrowstyle] (estudante) -- (uc1);
+\draw[arrowstyle] (estudante) -- (uc3);
+\draw[arrowstyle] (estudante) -- (uc5);
+\draw[arrowstyle] (estudante) -- (uc7);
+\draw[arrowstyle] (estudante) -- (uc9);
+\draw[arrowstyle] (estudante) -- (uc11);
+\draw[arrowstyle] (estudante) -- (uc6);
+\draw[arrowstyle] (estudante) -- (uc10);
+\draw[arrowstyle] (estudante) -- (uc12);
+
+% Conexões Mentor
+\draw[arrowstyle] (mentor) -- (uc1);
+\draw[arrowstyle] (mentor) -- (uc8);
+\draw[arrowstyle] (mentor) -- (uc9);
+
+% Conexões Coordenador
+\draw[arrowstyle] (coord) -- (uc1);
+\draw[arrowstyle] (coord) -- (uc13);
+\draw[arrowstyle] (coord) -- (uc6);
+
+% Conexões Admin  
+\draw[arrowstyle] (admin) -- (uc1);
+\draw[arrowstyle] (admin) -- (uc2);
+\draw[arrowstyle] (admin) -- (uc7);
+\draw[arrowstyle] (admin) -- (uc13);
+
+% Relacionamentos <<include>>
+\draw[dashedarrow] (uc3) -- node[above, font=\tiny, sloped] {$\ll$include$\gg$} (uc4);
+\draw[dashedarrow] (uc9) -- node[above, font=\tiny, sloped] {$\ll$include$\gg$} (uc8);
+
+% Relacionamentos <<extend>>
+\draw[dashedarrow] (uc12) -- node[above, font=\tiny, sloped] {$\ll$extend$\gg$} (uc6);
+\draw[dashedarrow] (uc10) -- node[above, font=\tiny, sloped] {$\ll$extend$\gg$} (uc3);
+
+\end{tikzpicture}
+}%
+\caption{Diagrama de Casos de Uso --- Site de Acolhimento FAESA}
+\label{fig:casos-de-uso}
+\end{figure}
+
+% ============================================================
+\newpage
+\subsection{Diagrama de Classes}
+
+O diagrama de classes modela as principais entidades do sistema e seus relacionamentos.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    class/.style={draw, fill=white, rectangle split, rectangle split parts=3, 
+                  minimum width=5cm, text centered, drop shadow, rounded corners=2pt},
+    node distance=1.5cm
+]
+
+% Classe Usuario
+\node[class] (usuario) at (0, 0) {
+    \textbf{\textcolor{faesaAzul}{Usuario}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - nome: String \\
+    - email: String \\
+    - matricula: String \\
+    - senha: String \\
+    - tipo: TipoUsuario \\
+    - dataCadastro: Date \\
+    - ativo: Boolean
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + cadastrar(): void \\
+    + autenticar(): Boolean \\
+    + atualizarPerfil(): void
+    \end{tabular}
+};
+
+% Classe PlanoEstudo
+\node[class] (plano) at (8, 0) {
+    \textbf{\textcolor{faesaAzul}{PlanoEstudo}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - titulo: String \\
+    - descricao: String \\
+    - dataInicio: Date \\
+    - dataFim: Date \\
+    - metaSemanal: Integer \\
+    - status: StatusPlano
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + criar(): void \\
+    + editar(): void \\
+    + concluir(): void \\
+    + calcularProgresso(): Double
+    \end{tabular}
+};
+
+% Classe Meta
+\node[class] (meta) at (16, 0) {
+    \textbf{\textcolor{faesaAzul}{Meta}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - descricao: String \\
+    - prazo: Date \\
+    - concluida: Boolean \\
+    - prioridade: Prioridade \\
+    - categoria: String
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + marcarConcluida(): void \\
+    + adiar(): void \\
+    + notificar(): void
+    \end{tabular}
+};
+
+% Classe SessaoConcentracao
+\node[class] (sessao) at (0, -8) {
+    \textbf{\textcolor{faesaAzul}{SessaoConcentracao}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - tipo: TipoExercicio \\
+    - duracao: Integer \\
+    - dataRealizacao: DateTime \\
+    - pontuacao: Integer \\
+    - concluida: Boolean
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + iniciar(): void \\
+    + pausar(): void \\
+    + finalizar(): void \\
+    + registrarResultado(): void
+    \end{tabular}
+};
+
+% Classe Mentoria
+\node[class] (mentoria) at (8, -8) {
+    \textbf{\textcolor{faesaAzul}{Mentoria}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - mentor: Usuario \\
+    - mentorado: Usuario \\
+    - dataInicio: Date \\
+    - status: StatusMentoria \\
+    - avaliacaoMentor: Integer \\
+    - avaliacaoMentorado: Integer
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + solicitar(): void \\
+    + aceitar(): void \\
+    + encerrar(): void \\
+    + avaliar(): void
+    \end{tabular}
+};
+
+% Classe Recurso (Biblioteca)
+\node[class] (recurso) at (16, -8) {
+    \textbf{\textcolor{faesaAzul}{Recurso}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - titulo: String \\
+    - tipo: TipoRecurso \\
+    - url: String \\
+    - descricao: String \\
+    - tags: List$<$String$>$ \\
+    - avaliacao: Double
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + publicar(): void \\
+    + avaliar(): void \\
+    + favoritar(): void
+    \end{tabular}
+};
+
+% Classe AvaliacaoBemEstar
+\node[class] (avaliacao) at (4, -15.5) {
+    \textbf{\textcolor{faesaAzul}{AvaliacaoBemEstar}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - dataPreenchimento: Date \\
+    - nivelEstresse: Integer \\
+    - satisfacaoAcademica: Integer \\
+    - horasSono: Double \\
+    - respostas: Map$<$String, String$>$
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + preencher(): void \\
+    + calcularIndice(): Double \\
+    + gerarAlerta(): void
+    \end{tabular}
+};
+
+% Classe Badge (Gamificação)
+\node[class] (badge) at (12, -15.5) {
+    \textbf{\textcolor{faesaAzul}{Badge}}
+    \nodepart{second}
+    \begin{tabular}{l}
+    - id: Long \\
+    - nome: String \\
+    - descricao: String \\
+    - icone: String \\
+    - pontosNecessarios: Integer \\
+    - categoria: CategoriaBadge
+    \end{tabular}
+    \nodepart{third}
+    \begin{tabular}{l}
+    + desbloquear(): void \\
+    + verificarElegibilidade(): Bool
+    \end{tabular}
+};
+
+% Relacionamentos
+\draw[-{Stealth}, thick] (usuario) -- node[above, font=\scriptsize] {1..*} node[below, font=\scriptsize] {cria} (plano);
+\draw[-{Stealth}, thick] (plano) -- node[above, font=\scriptsize] {1..*} node[below, font=\scriptsize] {contém} (meta);
+\draw[-{Stealth}, thick] (usuario) -- node[left, font=\scriptsize] {0..*} node[right, font=\scriptsize] {realiza} (sessao);
+\draw[-{Stealth}, thick] (usuario) -- node[right, font=\scriptsize, pos=0.3] {0..*} node[left, font=\scriptsize, pos=0.7] {participa} (mentoria);
+\draw[-{Stealth}, thick] (usuario.south) -- ++(0,-1.5) -| node[above, font=\scriptsize, pos=0.25] {0..*} (avaliacao);
+\draw[-{Stealth}, thick] (usuario.south) -- ++(0,-2) -| node[above, font=\scriptsize, pos=0.2] {0..*} (badge);
+\draw[-{Diamond}, thick] (recurso) -- node[right, font=\scriptsize] {0..*} (meta);
+
+\end{tikzpicture}
+}%
+\caption{Diagrama de Classes --- Entidades Principais do Sistema}
+\label{fig:diagrama-classes}
+\end{figure}
+
+% ============================================================
+\newpage
+\subsection{Diagrama de Componentes / Arquitetura}
+
+O diagrama a seguir ilustra a arquitetura de componentes do sistema, separando as responsabilidades em camadas.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[node distance=1.5cm]
+
+% ---- Camada de Apresentação ----
+\node[draw=faesaAzul, fill=faesaAzul!5, thick, rounded corners=10pt, 
+      minimum width=16cm, minimum height=3.5cm, 
+      label={[font=\large\bfseries, text=faesaAzul]above left:Camada de Apresentação (Frontend)}] 
+      (frontend) at (8, 0) {};
+
+\node[component] (react) at (3, 0) {React.js / Next.js};
+\node[component] (css) at (8, 0) {Tailwind CSS};
+\node[component] (pwa) at (13, 0) {PWA / Service Worker};
+
+% ---- Camada de API ----
+\node[draw=faesaVerde, fill=faesaVerde!5, thick, rounded corners=10pt, 
+      minimum width=16cm, minimum height=3.5cm, 
+      label={[font=\large\bfseries, text=faesaVerde]above left:Camada de API (Backend)}] 
+      (backend) at (8, -5) {};
+
+\node[component, fill=faesaVerde!15] (api) at (3, -5) {API REST / GraphQL};
+\node[component, fill=faesaVerde!15] (auth) at (8, -5) {Auth (JWT / OAuth)};
+\node[component, fill=faesaVerde!15] (ws) at (13, -5) {WebSocket (Real-time)};
+
+% ---- Camada de Serviços ----
+\node[draw=faesaLaranja, fill=faesaLaranja!5, thick, rounded corners=10pt, 
+      minimum width=16cm, minimum height=3.5cm, 
+      label={[font=\large\bfseries, text=faesaLaranja]above left:Camada de Serviços (Domínio)}] 
+      (servicos) at (8, -10) {};
+
+\node[component, fill=faesaLaranja!15] (planoSvc) at (2, -10) {Plano de Estudos};
+\node[component, fill=faesaLaranja!15] (concSvc) at (6.5, -10) {Concentração};
+\node[component, fill=faesaLaranja!15] (mentSvc) at (10.5, -10) {Mentoria};
+\node[component, fill=faesaLaranja!15] (gameSvc) at (14.5, -10) {Gamificação};
+
+% ---- Camada de Dados ----
+\node[draw=faesaCinza, fill=faesaCinza!5, thick, rounded corners=10pt, 
+      minimum width=16cm, minimum height=3.5cm, 
+      label={[font=\large\bfseries, text=faesaCinza]above left:Camada de Dados (Persistência)}] 
+      (dados) at (8, -15) {};
+
+\node[database] (postgres) at (3, -15) {PostgreSQL};
+\node[database] (redis) at (8, -15) {Redis (Cache)};
+\node[database] (s3) at (13, -15) {S3 / Storage};
+
+% ---- Setas entre camadas ----
+\draw[arrowstyle, very thick] (frontend) -- node[right, font=\small] {HTTP/HTTPS} (backend);
+\draw[arrowstyle, very thick] (backend) -- node[right, font=\small] {Chamadas de Serviço} (servicos);
+\draw[arrowstyle, very thick] (servicos) -- node[right, font=\small] {ORM / Queries} (dados);
+
+% ---- Serviços Externos ----
+\node[component, fill=red!10] (email) at (-2, -5) {E-mail Service};
+\node[component, fill=red!10] (push) at (-2, -8) {Push Notifications};
+\draw[dashedarrow] (backend) -- (email);
+\draw[dashedarrow] (servicos) -- (push);
+
+% Integrações
+\node[component, fill=purple!10] (sso) at (18, -5) {FAESA SSO};
+\node[component, fill=purple!10] (lms) at (18, -8) {LMS Integration};
+\draw[dashedarrow] (backend) -- (sso);
+\draw[dashedarrow] (servicos) -- (lms);
+
+\end{tikzpicture}
+}%
+\caption{Diagrama de Componentes / Arquitetura do Sistema}
+\label{fig:arquitetura}
+\end{figure}
+
+% ============================================================
+\newpage
+\subsection{Diagrama de Fluxo de Navegação}
+
+Este diagrama apresenta o fluxo de navegação principal do usuário no site de acolhimento.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.9\textwidth}{!}{%
+\begin{tikzpicture}[
+    page/.style={draw=faesaAzul, fill=faesaAzul!10, rounded corners=8pt, 
+                 minimum width=3.5cm, minimum height=1.8cm, text centered, 
+                 font=\small\bfseries, text=faesaAzul, drop shadow},
+    start/.style={draw=faesaVerde, fill=faesaVerde!20, circle, minimum size=1.5cm, 
+                  font=\small\bfseries, text=faesaVerde},
+    arrow/.style={-{Stealth[length=3mm]}, thick, color=faesaCinza}
+]
+
+% Início
+\node[start] (inicio) at (0, 0) {Início};
+
+% Páginas
+\node[page] (login) at (4, 0) {Login / \\ Cadastro};
+\node[page] (home) at (9, 0) {Home / \\ Dashboard};
+
+% Ramificações a partir do Home
+\node[page] (plano) at (4, -4) {Plano de \\ Estudos};
+\node[page] (conc) at (9, -4) {Exercícios de \\ Concentração};
+\node[page] (biblio) at (14, -4) {Biblioteca de \\ Recursos};
+
+\node[page] (mentor) at (4, -8) {Mentoria};
+\node[page] (forum) at (9, -8) {Fórum};
+\node[page] (perfil) at (14, -8) {Meu Perfil};
+
+\node[page] (bemestar) at (4, -12) {Avaliação de \\ Bem-estar};
+\node[page] (gamif) at (9, -12) {Gamificação / \\ Badges};
+\node[page] (ext) at (14, -12) {Atividades \\ Extracurriculares};
+
+% Setas
+\draw[arrow] (inicio) -- (login);
+\draw[arrow] (login) -- (home);
+
+\draw[arrow] (home) -- (plano);
+\draw[arrow] (home) -- (conc);
+\draw[arrow] (home) -- (biblio);
+
+\draw[arrow] (home.south) -- ++(0, -0.5) -| (mentor);
+\draw[arrow] (home.south) -- ++(0, -0.5) -| (forum);
+\draw[arrow] (home.south) -- ++(0, -0.5) -| (perfil);
+
+\draw[arrow] (plano) -- (mentor);
+\draw[arrow] (conc) -- (forum);
+\draw[arrow] (biblio) -- (perfil);
+
+\draw[arrow] (mentor) -- (bemestar);
+\draw[arrow] (forum) -- (gamif);
+\draw[arrow] (perfil) -- (ext);
+
+% Seta de volta
+\draw[arrow, color=faesaVerde, dashed] (gamif.north) -- ++(0, 0.5) -- ++(5, 0) |- (home.east);
+
+\end{tikzpicture}
+}%
+\caption{Diagrama de Fluxo de Navegação do Site}
+\label{fig:fluxo-navegacao}
+\end{figure}
+
+% ============================================================
+\newpage
+\subsection{Diagrama Entidade-Relacionamento (ER)}
+
+O diagrama ER apresenta o modelo de dados do sistema com suas entidades e relacionamentos.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    entity/.style={draw=faesaAzul, fill=faesaAzul!10, thick, 
+                   minimum width=4cm, minimum height=1cm, rounded corners=5pt, 
+                   font=\bfseries, text=faesaAzul, drop shadow},
+    relation/.style={draw=faesaLaranja, fill=faesaLaranja!20, thick, 
+                     diamond, minimum width=2.5cm, minimum height=1.2cm, 
+                     font=\small\bfseries, text=faesaLaranja, aspect=2},
+    attr/.style={draw=faesaCinza, fill=faesaCinza!10, ellipse, 
+                 minimum width=2cm, font=\scriptsize, inner sep=2pt},
+    pk/.style={draw=faesaCinza, fill=faesaCinza!10, ellipse, 
+               minimum width=2cm, font=\scriptsize\underline, inner sep=2pt}
+]
+
+% Entidades
+\node[entity] (user) at (0, 0) {USUARIO};
+\node[entity] (plano) at (8, 3) {PLANO\_ESTUDO};
+\node[entity] (meta) at (16, 3) {META};
+\node[entity] (sessao) at (8, -3) {SESSAO\_CONCENTRACAO};
+\node[entity] (mentoria) at (0, -6) {MENTORIA};
+\node[entity] (recurso) at (16, -3) {RECURSO};
+\node[entity] (avaliacao) at (8, -7) {AVALIACAO\_BEM\_ESTAR};
+\node[entity] (badge) at (16, -7) {BADGE};
+
+% Relacionamentos
+\node[relation] (r1) at (4, 1.5) {cria};
+\node[relation] (r2) at (12, 3) {contém};
+\node[relation] (r3) at (4, -3) {realiza};
+\node[relation] (r4) at (0, -3) {participa};
+\node[relation] (r5) at (12, -5) {favorita};
+\node[relation] (r6) at (4, -7) {preenche};
+\node[relation] (r7) at (12, -7) {conquista};
+
+% Conexões
+\draw[thick] (user) -- node[above left, font=\scriptsize] {1} (r1);
+\draw[thick] (r1) -- node[above right, font=\scriptsize] {N} (plano);
+\draw[thick] (plano) -- node[above, font=\scriptsize] {1} (r2);
+\draw[thick] (r2) -- node[above, font=\scriptsize] {N} (meta);
+\draw[thick] (user) -- node[left, font=\scriptsize] {1} (r3);
+\draw[thick] (r3) -- node[above, font=\scriptsize] {N} (sessao);
+\draw[thick] (user) -- node[left, font=\scriptsize] {N} (r4);
+\draw[thick] (r4) -- node[left, font=\scriptsize] {N} (mentoria);
+\draw[thick] (user.east) -| (r5);
+\draw[thick] (r5) -- node[right, font=\scriptsize] {N} (recurso);
+\draw[thick] (user.south) |- (r6);
+\draw[thick] (r6) -- node[above, font=\scriptsize] {N} (avaliacao);
+\draw[thick] (user.south east) |- (r7);
+\draw[thick] (r7) -- node[above, font=\scriptsize] {N} (badge);
+
+\end{tikzpicture}
+}%
+\caption{Diagrama Entidade-Relacionamento}
+\label{fig:diagrama-er}
+\end{figure}
+
+% ============================================================
+% SEÇÃO 5 - TECNOLOGIAS
+% ============================================================
+\newpage
+\section{Stack Tecnológica Recomendada}
+
+\subsection{Visão Geral das Tecnologias}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|c|X|X|}
+\hline
+\rowcolor{faesaAzul}
+\textcolor{white}{\textbf{Camada}} & \textcolor{white}{\textbf{Tecnologia}} & \textcolor{white}{\textbf{Justificativa}} \\
+\hline
+\textbf{Frontend} & React.js / Next.js 14+ & SSR/SSG para performance, TypeScript para segurança de tipos, ecossistema robusto \\
+\hline
+\textbf{Estilização} & Tailwind CSS + shadcn/ui & Design system consistente, utilitário, responsivo, dark mode nativo \\
+\hline
+\textbf{Backend} & Node.js + Express / NestJS & Mesmo ecossistema JavaScript, alta performance com V8, amplamente adotado \\
+\hline
+\textbf{Banco de Dados} & PostgreSQL 16+ & Relacional, robusto, suporte a JSON, extensível, open-source \\
+\hline
+\textbf{Cache} & Redis & Cache em memória para sessões, notificações em tempo real \\
+\hline
+\textbf{ORM} & Prisma & Type-safe, migrations automáticas, integração nativa com TypeScript \\
+\hline
+\textbf{Autenticação} & NextAuth.js / OAuth 2.0 & SSO com provedor FAESA, JWT, refresh tokens \\
+\hline
+\textbf{Real-time} & Socket.io & WebSockets para chat, notificações em tempo real, fórum ao vivo \\
+\hline
+\textbf{Deploy} & Vercel + Docker & CI/CD automatizado, preview deployments, escalabilidade \\
+\hline
+\textbf{Testes} & Jest + Cypress + Playwright & Unitários, integração e E2E para cobertura completa \\
+\hline
+\textbf{Monitoramento} & Sentry + Grafana & Error tracking, logs, métricas de performance \\
+\hline
+\end{tabularx}
+\end{center}
+
+\subsection{Diagrama de Tecnologias}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    tech/.style={draw, fill=#1!15, rounded corners=8pt, minimum width=2.5cm, 
+                 minimum height=1cm, font=\small\bfseries, drop shadow, text centered},
+    every node/.style={font=\small}
+]
+% Frontend
+\node[tech=blue] (next) at (0, 0) {Next.js};
+\node[tech=blue] (react) at (3.5, 0) {React};
+\node[tech=cyan] (tw) at (7, 0) {Tailwind};
+\node[tech=blue] (ts) at (10.5, 0) {TypeScript};
+
+% Backend
+\node[tech=green] (node) at (0, -2.5) {Node.js};
+\node[tech=green] (nest) at (3.5, -2.5) {NestJS};
+\node[tech=green] (prisma) at (7, -2.5) {Prisma};
+\node[tech=green] (socket) at (10.5, -2.5) {Socket.io};
+
+% Data
+\node[tech=orange] (pg) at (0, -5) {PostgreSQL};
+\node[tech=red] (redis) at (3.5, -5) {Redis};
+\node[tech=orange] (s3) at (7, -5) {Cloud Storage};
+\node[tech=purple] (sentry) at (10.5, -5) {Sentry};
+
+% Infra
+\node[tech=gray] (docker) at (2, -7.5) {Docker};
+\node[tech=gray] (vercel) at (5.5, -7.5) {Vercel};
+\node[tech=gray] (github) at (9, -7.5) {GitHub Actions};
+
+% Labels
+\node[font=\bfseries, text=blue!70] at (-3, 0) {Frontend};
+\node[font=\bfseries, text=green!50!black] at (-3, -2.5) {Backend};
+\node[font=\bfseries, text=orange!70!black] at (-3, -5) {Dados};
+\node[font=\bfseries, text=gray!70!black] at (-3, -7.5) {Infra};
+
+% Linhas horizontais
+\draw[dashed, color=gray!50] (-4, -1.25) -- (12.5, -1.25);
+\draw[dashed, color=gray!50] (-4, -3.75) -- (12.5, -3.75);
+\draw[dashed, color=gray!50] (-4, -6.25) -- (12.5, -6.25);
+
+\end{tikzpicture}
+\caption{Mapa de Tecnologias por Camada}
+\label{fig:tech-stack}
+\end{figure}
+
+% ============================================================
+% SEÇÃO 6 - WIREFRAMES / PROTÓTIPOS
+% ============================================================
+\newpage
+\section{Protótipos de Interface}
+
+\subsection{Estrutura de Páginas}
+
+A seguir, a representação esquemática das principais telas do site.
+
+\subsubsection{Tela de Login}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+% Frame
+\draw[thick, rounded corners=5pt] (0,0) rectangle (12, 8);
+
+% Header
+\fill[faesaAzul, rounded corners=5pt] (0, 7) rectangle (12, 8);
+\node[text=white, font=\bfseries] at (6, 7.5) {FAESA --- Acolhimento Estudantil};
+
+% Logo
+\draw[fill=faesaAzul!10, rounded corners=3pt] (4, 5) rectangle (8, 6.5);
+\node[font=\large\bfseries, text=faesaAzul] at (6, 5.75) {FAESA};
+
+% Campos
+\draw[fill=gray!10, rounded corners=2pt] (3, 4) rectangle (9, 4.5);
+\node[font=\small, text=gray] at (6, 4.25) {E-mail institucional (@faesa.br)};
+
+\draw[fill=gray!10, rounded corners=2pt] (3, 3) rectangle (9, 3.5);
+\node[font=\small, text=gray] at (6, 3.25) {Senha};
+
+% Botão
+\draw[fill=faesaAzul, rounded corners=3pt] (4, 1.8) rectangle (8, 2.5);
+\node[text=white, font=\small\bfseries] at (6, 2.15) {ENTRAR};
+
+% Link
+\node[font=\tiny, text=faesaAzulClaro] at (6, 1.3) {Primeiro acesso? Cadastre-se com sua matrícula};
+
+% Rodapé
+\draw[fill=faesaCinza!20] (0, 0) rectangle (12, 0.5);
+\node[font=\tiny, text=faesaCinza] at (6, 0.25) {\textcopyright\ 2026 FAESA Centro Universitário};
+\end{tikzpicture}
+\caption{Wireframe --- Tela de Login}
+\label{fig:wireframe-login}
+\end{figure}
+
+\subsubsection{Tela de Dashboard (Home)}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.9, every node/.style={scale=0.9}]
+% Frame
+\draw[thick, rounded corners=5pt] (0,0) rectangle (16, 11);
+
+% Header
+\fill[faesaAzul, rounded corners=5pt] (0, 10) rectangle (16, 11);
+\node[text=white, font=\bfseries] at (3, 10.5) {\faIcon{home} Dashboard};
+\node[text=white, font=\small] at (13, 10.5) {\faIcon{bell} \faIcon{user-circle} Lucas};
+
+% Sidebar
+\fill[faesaAzul!10] (0, 0) rectangle (3.5, 10);
+\node[font=\small\bfseries, text=faesaAzul] at (1.75, 9.5) {Menu};
+\node[font=\scriptsize, text=faesaAzul] at (1.75, 8.8) {\faIcon{tachometer-alt} Dashboard};
+\node[font=\scriptsize, text=faesaCinza] at (1.75, 8.2) {\faIcon{book} Plano de Estudos};
+\node[font=\scriptsize, text=faesaCinza] at (1.75, 7.6) {\faIcon{brain} Concentração};
+\node[font=\scriptsize, text=faesaCinza] at (1.75, 7.0) {\faIcon{folder-open} Biblioteca};
+\node[font=\scriptsize, text=faesaCinza] at (1.75, 6.4) {\faIcon{users} Mentoria};
+\node[font=\scriptsize, text=faesaCinza] at (1.75, 5.8) {\faIcon{comments} Fórum};
+\node[font=\scriptsize, text=faesaCinza] at (1.75, 5.2) {\faIcon{trophy} Badges};
+\node[font=\scriptsize, text=faesaCinza] at (1.75, 4.6) {\faIcon{heart} Bem-estar};
+
+% Cards de progresso
+\draw[fill=faesaVerde!10, rounded corners=3pt] (4, 8) rectangle (7.5, 9.8);
+\node[font=\scriptsize\bfseries, text=faesaVerde] at (5.75, 9.4) {Metas Concluídas};
+\node[font=\Large\bfseries, text=faesaVerde] at (5.75, 8.7) {12/20};
+
+\draw[fill=faesaAzulClaro!10, rounded corners=3pt] (8, 8) rectangle (11.5, 9.8);
+\node[font=\scriptsize\bfseries, text=faesaAzulClaro] at (9.75, 9.4) {Horas de Estudo};
+\node[font=\Large\bfseries, text=faesaAzulClaro] at (9.75, 8.7) {45h};
+
+\draw[fill=faesaLaranja!10, rounded corners=3pt] (12, 8) rectangle (15.5, 9.8);
+\node[font=\scriptsize\bfseries, text=faesaLaranja] at (13.75, 9.4) {Sessões de Foco};
+\node[font=\Large\bfseries, text=faesaLaranja] at (13.75, 8.7) {28};
+
+% Gráfico (simulado)
+\draw[fill=gray!5, rounded corners=3pt] (4, 3.5) rectangle (10, 7.5);
+\node[font=\scriptsize\bfseries, text=faesaAzul] at (7, 7.2) {Progresso Semanal};
+% Barras do gráfico
+\foreach \x/\h/\label in {4.5/2.5/Seg, 5.3/3.0/Ter, 6.1/1.8/Qua, 6.9/3.5/Qui, 7.7/2.8/Sex, 8.5/1.2/Sáb, 9.3/0.5/Dom} {
+    \fill[faesaAzul!60, rounded corners=1pt] (\x, 3.8) rectangle (\x+0.5, 3.8+\h);
+    \node[font=\tiny, text=faesaCinza] at (\x+0.25, 3.5) {\label};
+}
+
+% Próximas atividades
+\draw[fill=gray!5, rounded corners=3pt] (10.5, 3.5) rectangle (15.5, 7.5);
+\node[font=\scriptsize\bfseries, text=faesaAzul] at (13, 7.2) {Próximas Atividades};
+\draw[fill=faesaAzul!5, rounded corners=2pt] (10.8, 6.0) rectangle (15.2, 6.8);
+\node[font=\tiny] at (13, 6.4) {\faIcon{clock} Sessão Pomodoro --- 14:00};
+\draw[fill=faesaLaranja!5, rounded corners=2pt] (10.8, 5.0) rectangle (15.2, 5.8);
+\node[font=\tiny] at (13, 5.4) {\faIcon{book} Estudar Cálculo --- 16:00};
+\draw[fill=faesaVerde!5, rounded corners=2pt] (10.8, 4.0) rectangle (15.2, 4.8);
+\node[font=\tiny] at (13, 4.4) {\faIcon{users} Mentoria --- Amanhã 10:00};
+
+% Badges recentes
+\draw[fill=gray!5, rounded corners=3pt] (4, 0.5) rectangle (15.5, 3);
+\node[font=\scriptsize\bfseries, text=faesaAzul] at (5.5, 2.7) {Badges Recentes};
+\foreach \x/\cor/\nome in {5.5/faesaVerde/Focado, 8/faesaAzulClaro/Dedicado, 10.5/faesaLaranja/Mentor, 13/purple/Explorador} {
+    \node[draw=\cor, fill=\cor!20, circle, minimum size=1.2cm, font=\tiny\bfseries, text=\cor] at (\x, 1.5) {\nome};
+}
+
+\end{tikzpicture}
+\caption{Wireframe --- Dashboard Principal}
+\label{fig:wireframe-dashboard}
+\end{figure}
+
+% ============================================================
+% SEÇÃO 7 - MÓDULOS DETALHADOS
+% ============================================================
+\newpage
+\section{Detalhamento dos Módulos}
+
+\subsection{Módulo 1 --- Plano de Estudos}
+
+\begin{destaque}[Funcionalidades do Plano de Estudos]
+O módulo de Plano de Estudos permite ao estudante:
+\begin{itemize}
+    \item Criar planos semanais ou mensais vinculados às suas disciplinas;
+    \item Definir metas SMART (Específicas, Mensuráveis, Alcançáveis, Relevantes, Temporais);
+    \item Utilizar calendário interativo com drag-and-drop;
+    \item Receber sugestões automáticas baseadas no curso e período;
+    \item Acompanhar o percentual de cumprimento dos planos;
+    \item Exportar o plano em formato PDF ou integrar com Google Calendar.
+\end{itemize}
+\end{destaque}
+
+\subsubsection{Fluxo de Criação de Plano}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    step/.style={draw=faesaAzul, fill=faesaAzul!10, rounded corners=5pt, 
+                 minimum width=2.5cm, minimum height=1.2cm, text centered, 
+                 font=\scriptsize, text width=2.3cm},
+    arrow/.style={-{Stealth[length=3mm]}, thick, color=faesaAzul}
+]
+
+\node[step] (s1) at (0, 0) {Selecionar Disciplinas do Período};
+\node[step] (s2) at (3.5, 0) {Definir Horários Disponíveis};
+\node[step] (s3) at (7, 0) {Criar Metas Semanais};
+\node[step] (s4) at (10.5, 0) {Configurar Lembretes};
+\node[step] (s5) at (14, 0) {Ativar Plano};
+
+\draw[arrow] (s1) -- (s2);
+\draw[arrow] (s2) -- (s3);
+\draw[arrow] (s3) -- (s4);
+\draw[arrow] (s4) -- (s5);
+
+% Números
+\foreach \x/\n in {0/1, 3.5/2, 7/3, 10.5/4, 14/5} {
+    \node[circle, fill=faesaAzul, text=white, font=\tiny\bfseries, minimum size=0.5cm] at (\x, 0.9) {\n};
+}
+
+\end{tikzpicture}
+\caption{Fluxo de Criação de Plano de Estudos}
+\label{fig:fluxo-plano}
+\end{figure}
+
+\subsection{Módulo 2 --- Exercícios de Concentração}
+
+\begin{destaque}[Tipos de Exercícios Disponíveis]
+\begin{enumerate}
+    \item \textbf{Técnica Pomodoro} --- Ciclos de 25 min de foco + 5 min de pausa, com timer integrado;
+    \item \textbf{Mindfulness} --- Meditações guiadas de 5, 10 ou 15 minutos com áudio;
+    \item \textbf{Exercícios Respiratórios} --- Técnica 4-7-8 com animação visual;
+    \item \textbf{White Noise / Sons Ambientes} --- Biblioteca de sons para concentração (chuva, floresta, café);
+    \item \textbf{Focus Mode} --- Bloqueio de notificações e gamificação do tempo de foco.
+\end{enumerate}
+\end{destaque}
+
+\subsection{Módulo 3 --- Mentoria}
+
+O sistema de mentoria conecta estudantes veteranos a calouros, promovendo troca de experiências e suporte acadêmico.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\rowcolor{faesaAzul}
+\textcolor{white}{\textbf{Aspecto}} & \textcolor{white}{\textbf{Detalhamento}} \\
+\hline
+\textbf{Quem pode ser mentor?} & Estudantes a partir do 5º período com CRA $\geq$ 7,0 \\
+\hline
+\textbf{Como funciona?} & O calouro solicita mentoria; o sistema faz match por curso e disponibilidade \\
+\hline
+\textbf{Frequência} & Mínimo de 2 encontros mensais (presenciais ou online) \\
+\hline
+\textbf{Avaliação} & Ambas as partes avaliam ao final de cada ciclo (0-10) \\
+\hline
+\textbf{Benefício mentor} & Pontos de gamificação, certificado de horas complementares \\
+\hline
+\end{tabularx}
+\end{center}
+
+\subsection{Módulo 4 --- Estudos Fora da FAESA}
+
+\begin{destaque}[Recursos Externos Recomendados]
+O módulo cataloga e recomenda atividades de estudo externas:
+\begin{itemize}
+    \item \textbf{Cursos Online:} Coursera, edX, Alura, Rocketseat, Khan Academy;
+    \item \textbf{Certificações:} AWS, Google, Microsoft, Oracle;
+    \item \textbf{Eventos:} Hackathons, meetups, conferências da área;
+    \item \textbf{Leitura:} Artigos científicos, blogs técnicos, livros recomendados;
+    \item \textbf{Projetos:} Desafios no GitHub, contribuições open source.
+\end{itemize}
+Cada recurso possui avaliação da comunidade e tag de relevância por curso.
+\end{destaque}
+
+\subsection{Módulo 5 --- Gamificação}
+
+O sistema de gamificação incentiva o engajamento contínuo dos estudantes:
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\rowcolor{faesaAzul}
+\textcolor{white}{\textbf{Badge}} & \textcolor{white}{\textbf{Critério}} & \textcolor{white}{\textbf{Pontos}} \\
+\hline
+\faIcon{star} Primeiro Passo & Completar o cadastro e primeiro plano & 50 pts \\
+\hline
+\faIcon{fire} Focado & 7 dias consecutivos de sessões Pomodoro & 100 pts \\
+\hline
+\faIcon{graduation-cap} Dedicado & Cumprir 100\% das metas semanais & 150 pts \\
+\hline
+\faIcon{users} Mentor & Completar 1 ciclo de mentoria & 200 pts \\
+\hline
+\faIcon{book-reader} Explorador & Acessar 10 recursos da biblioteca & 75 pts \\
+\hline
+\faIcon{brain} Zen Master & 30 sessões de mindfulness & 120 pts \\
+\hline
+\faIcon{trophy} Top Estudante & Acumular 1000 pontos totais & 300 pts \\
+\hline
+\end{tabular}
+\end{center}
+
+% ============================================================
+% SEÇÃO 8 - CRONOGRAMA
+% ============================================================
+\newpage
+\section{Cronograma de Desenvolvimento}
+
+O desenvolvimento do site está dividido em sprints de 2 semanas, seguindo a metodologia ágil Scrum.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    sprint/.style={draw=faesaAzul, fill=#1, rounded corners=3pt, 
+                   minimum height=0.7cm, font=\scriptsize, text=black, anchor=west},
+    label/.style={font=\scriptsize\bfseries, text=faesaAzul, anchor=east}
+]
+
+% Eixo de tempo
+\draw[thick, -{Stealth}] (0, 0) -- (16, 0);
+\foreach \x/\m in {0/Mar, 2/Abr, 4/Mai, 6/Jun, 8/Jul, 10/Ago, 12/Set, 14/Out} {
+    \draw[thick] (\x, -0.2) -- (\x, 0.2);
+    \node[font=\scriptsize, below] at (\x, -0.3) {\m};
+}
+
+% Sprints
+\node[label] at (-0.2, 5) {Planejamento};
+\node[sprint=faesaAzul!30, minimum width=3cm] at (0, 5) {Requisitos e Design};
+
+\node[label] at (-0.2, 4) {Sprint 1-2};
+\node[sprint=faesaVerde!30, minimum width=4cm] at (2, 4) {Auth + Cadastro + Dashboard};
+
+\node[label] at (-0.2, 3) {Sprint 3-4};
+\node[sprint=faesaVerde!30, minimum width=4cm] at (4, 3) {Plano de Estudos + Cronograma};
+
+\node[label] at (-0.2, 2) {Sprint 5-6};
+\node[sprint=faesaLaranja!30, minimum width=4cm] at (6, 2) {Concentração + Gamificação};
+
+\node[label] at (-0.2, 1) {Sprint 7-8};
+\node[sprint=faesaLaranja!30, minimum width=4cm] at (8, 1) {Mentoria + Fórum + Chat};
+
+\node[label] at (-0.2, -1) {Sprint 9-10};
+\node[sprint=purple!20, minimum width=4cm] at (10, -1) {Biblioteca + Atividades Ext.};
+
+\node[label] at (-0.2, -2) {Sprint 11-12};
+\node[sprint=red!20, minimum width=3cm] at (12, -2) {Testes + Deploy + Docs};
+
+% Marco
+\node[draw=faesaVerde, fill=faesaVerde, star, star points=5, minimum size=0.4cm] at (15, -2) {};
+\node[font=\scriptsize\bfseries, text=faesaVerde, right] at (15.3, -2) {Go-Live!};
+
+\end{tikzpicture}
+}%
+\caption{Cronograma de Desenvolvimento (Gantt Simplificado)}
+\label{fig:cronograma}
+\end{figure}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|c|c|X|}
+\hline
+\rowcolor{faesaAzul}
+\textcolor{white}{\textbf{Fase}} & \textcolor{white}{\textbf{Período}} & \textcolor{white}{\textbf{Entregas}} \\
+\hline
+Planejamento & Mar 2026 & Requisitos, protótipos, arquitetura, setup do ambiente \\
+\hline
+Sprint 1--2 & Abr 2026 & Autenticação SSO, cadastro, layout base, dashboard \\
+\hline
+Sprint 3--4 & Mai 2026 & CRUD plano de estudos, calendário interativo, metas \\
+\hline
+Sprint 5--6 & Jun 2026 & Timer Pomodoro, mindfulness, gamificação base \\
+\hline
+Sprint 7--8 & Jul 2026 & Sistema de mentoria, fórum, chat em tempo real \\
+\hline
+Sprint 9--10 & Ago 2026 & Biblioteca de recursos, atividades extracurriculares \\
+\hline
+Sprint 11--12 & Set--Out 2026 & Testes E2E, otimização de performance, deploy final \\
+\hline
+\end{tabularx}
+\end{center}
+
+% ============================================================
+% SEÇÃO 9 - CONCLUSÃO
+% ============================================================
+\newpage
+\section{Conclusão}
+
+O \textbf{Site de Acolhimento da FAESA} é uma plataforma estratégica para o sucesso acadêmico dos estudantes, integrando em um único ambiente digital as ferramentas necessárias para:
+
+\begin{itemize}[leftmargin=2cm]
+    \item[\faIcon{check-circle}] \textbf{Organização acadêmica} por meio de planos de estudo personalizados;
+    \item[\faIcon{check-circle}] \textbf{Desenvolvimento pessoal} com exercícios de concentração e mindfulness;
+    \item[\faIcon{check-circle}] \textbf{Conexão social} através de mentoria e fórum de discussão;
+    \item[\faIcon{check-circle}] \textbf{Aprendizado contínuo} com biblioteca de recursos e atividades externas;
+    \item[\faIcon{check-circle}] \textbf{Motivação} por meio de gamificação e acompanhamento de progresso;
+    \item[\faIcon{check-circle}] \textbf{Bem-estar} com avaliações periódicas e suporte psicopedagógico.
+\end{itemize}
+
+O projeto segue boas práticas de engenharia de software, com arquitetura modular, stack tecnológica moderna e desenvolvimento ágil, garantindo que a plataforma possa evoluir continuamente para atender às necessidades dos mais de 75 mil alunos formados pela instituição e dos futuros estudantes que ingressarão na FAESA.
+
+\begin{destaque}[Próximos Passos]
+\begin{enumerate}
+    \item Validação dos requisitos com stakeholders (coordenadores e estudantes);
+    \item Criação de protótipos navegáveis no Figma;
+    \item Setup do ambiente de desenvolvimento e CI/CD;
+    \item Início da Sprint 1 com a funcionalidade de autenticação;
+    \item Testes de usabilidade com grupo piloto de 50 estudantes.
+\end{enumerate}
+\end{destaque}
+
+% ============================================================
+% REFERÊNCIAS
+% ============================================================
+\newpage
+\section{Referências}
+
+\begin{enumerate}[leftmargin=2cm]
+    \item FAESA Centro Universitário. \textit{Sobre Nós}. Disponível em: \url{https://www.faesa.br/sobre-nos/}. Acesso em: fev. 2026.
+    
+    \item SOMMERVILLE, Ian. \textit{Engenharia de Software}. 10ª ed. São Paulo: Pearson, 2018.
+    
+    \item PRESSMAN, Roger S. \textit{Engenharia de Software: Uma Abordagem Profissional}. 8ª ed. Porto Alegre: AMGH, 2016.
+    
+    \item W3C. \textit{Web Content Accessibility Guidelines (WCAG) 2.1}. Disponível em: \url{https://www.w3.org/TR/WCAG21/}. Acesso em: fev. 2026.
+    
+    \item REACT. \textit{React Documentation}. Disponível em: \url{https://react.dev/}. Acesso em: fev. 2026.
+    
+    \item NEXT.JS. \textit{Next.js Documentation}. Disponível em: \url{https://nextjs.org/docs}. Acesso em: fev. 2026.
+    
+    \item CIRILLO, Francesco. \textit{The Pomodoro Technique}. Berlin: FC Garage, 2006.
+    
+    \item BRASIL. \textit{Lei nº 13.709/2018 --- Lei Geral de Proteção de Dados Pessoais (LGPD)}. Diário Oficial da União, 2018.
+    
+    \item FOWLER, Martin. \textit{UML Distilled: A Brief Guide to the Standard Object Modeling Language}. 3ª ed. Addison-Wesley, 2003.
+    
+    \item NIELSEN, Jakob. \textit{Usability Engineering}. San Francisco: Morgan Kaufmann, 1993.
+\end{enumerate}
+
+% ============================================================
+\end{document}
