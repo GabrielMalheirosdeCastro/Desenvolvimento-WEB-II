@@ -1,0 +1,126 @@
+{
+  // ──────────────────────────────────────────────
+  // LaTeX Workshop — Configurações do Projeto
+  // Site de Acolhimento FAESA (lualatex + TikZ)
+  // ──────────────────────────────────────────────
+
+  // ── Compilador padrão ──────────────────────────
+  // Usa a primeira recipe definida abaixo (lualatexmk)
+  "latex-workshop.latex.recipe.default": "first",
+
+  // ── Recipes (cadeias de compilação) ───────────
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "lualatexmk",
+      "tools": ["lualatexmk"]
+    },
+    {
+      "name": "lualatex × 2",
+      "tools": ["lualatex", "lualatex"]
+    }
+  ],
+
+  // ── Tools (comandos individuais) ───────────────
+  "latex-workshop.latex.tools": [
+    {
+      // latexmk com flag -lualatex: gerencia automaticamente
+      // quantas passagens são necessárias (recomendado)
+      "name": "lualatexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-lualatex",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      // Compilação direta lualatex (fallback)
+      "name": "lualatex",
+      "command": "lualatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+
+  // ── Build automático ───────────────────────────
+  // "onSave": compila ao salvar o .tex
+  // "onFileChange": compila ao detectar qualquer mudança
+  // "never": apenas manual (recomendado para projetos pesados com TikZ)
+  "latex-workshop.latex.autoBuild.run": "onSave",
+
+  // Intervalo mínimo entre compilações automáticas (ms)
+  "latex-workshop.latex.autoBuild.interval": 2000,
+
+  // Tentar limpar arquivos auxiliares e recompilar em caso de erro
+  "latex-workshop.latex.autoBuild.cleanAndRetry.enabled": true,
+
+  // ── Visualizador de PDF ────────────────────────
+  // "tab": abre o PDF em uma aba lateral no VS Code (recomendado)
+  "latex-workshop.view.pdf.viewer": "tab",
+
+  // Aba do PDF abre à direita do .tex
+  "latex-workshop.view.pdf.tab.editorGroup": "right",
+
+  // Zoom padrão do visualizador
+  "latex-workshop.view.pdf.zoom": "page-width",
+
+  // SyncTeX automático após compilar (Ctrl+Alt+J para ir ao PDF)
+  "latex-workshop.synctex.afterBuild.enabled": true,
+
+  // ── Limpeza de arquivos auxiliares ────────────
+  // "onFailed": limpa apenas se a compilação falhar
+  // "onBuilt": sempre limpa após compilar
+  // "never": nunca limpa automaticamente
+  "latex-workshop.latex.autoClean.run": "onFailed",
+
+  // Extensões de arquivos auxiliares a serem removidos
+  "latex-workshop.latex.clean.fileTypes": [
+    "%DOCFILE%.aux",
+    "%DOCFILE%.bbl",
+    "%DOCFILE%.blg",
+    "%DOCFILE%.idx",
+    "%DOCFILE%.ind",
+    "%DOCFILE%.lof",
+    "%DOCFILE%.lot",
+    "%DOCFILE%.out",
+    "%DOCFILE%.toc",
+    "%DOCFILE%.fls",
+    "%DOCFILE%.log",
+    "%DOCFILE%.fdb_latexmk",
+    "%DOCFILE%.synctex.gz",
+    "%DOCFILE%.nav",
+    "%DOCFILE%.snm",
+    "%DOCFILE%.vrb"
+  ],
+
+  // ── Mensagens e logs ───────────────────────────
+  "latex-workshop.message.error.show": true,
+  "latex-workshop.message.warning.show": true,
+  "latex-workshop.message.information.show": false,
+
+  // Mostrar badboxes (overfull/underfull hbox) no painel de problemas
+  "latex-workshop.message.badbox.show": "overfull",
+
+  // ── Editor ─────────────────────────────────────
+  // Habilita quebra de linha automática em arquivos .tex
+  "[latex]": {
+    "editor.wordWrap": "on",
+    "editor.rulers": [100],
+    "editor.tabSize": 4
+  },
+
+  // ── IntelliSense e snippets ────────────────────
+  "latex-workshop.intellisense.package.enabled": true,
+
+  // Sugere label ao criar \ref
+  "latex-workshop.intellisense.label.keyval": true
+}
