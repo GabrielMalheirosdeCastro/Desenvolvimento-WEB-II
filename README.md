@@ -44,6 +44,7 @@ O **Site de Acolhimento FAESA** é uma plataforma web responsiva que centraliza 
 | RF13 | Gamificação (pontos, badges, rankings) | Baixa |
 | RF14 | Relatórios para Coordenação | Baixa |
 | RF15 | Chat com Suporte psicopedagógico | Baixa |
+| RF16 | Chatbot IA de Acolhimento (respostas adaptadas por faixa etária: 17–20, 21–25, 26+) | Alta |
 
 ---
 
@@ -125,6 +126,7 @@ O arquivo [`site_acolhimento_faesa.tex`](site_acolhimento_faesa.tex) contém o d
 - ✅ Diagrama de Componentes / Arquitetura
 - ✅ Diagrama de Fluxo de Navegação
 - ✅ Diagrama Entidade-Relacionamento (ER)
+- ✅ Diagrama de Atividades do Chatbot IA (RF16)
 - ✅ Stack Tecnológica Recomendada
 - ✅ Personas e Histórias de Usuário
 
