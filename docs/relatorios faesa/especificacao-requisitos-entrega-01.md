@@ -62,7 +62,8 @@ A ausência de uma ferramenta unificada para o acolhimento resulta em:
 - Enviar notificações e lembretes sobre metas, prazos e atividades;
 - Aplicar questionários periódicos de autoavaliação de bem-estar emocional e acadêmico;
 - Implementar sistema de gamificação (pontos, badges, rankings) para motivação;
-- Gerar relatórios agregados e anônimos para a coordenação.
+- Gerar relatórios agregados e anônimos para a coordenação;
+- Disponibilizar chatbot com IA de acolhimento, com respostas adaptadas por faixa etária (17–20, 21–25, 26+).
 
 ### O que o sistema NÃO vai fazer (limitações de escopo)
 
@@ -93,6 +94,7 @@ A ausência de uma ferramenta unificada para o acolhimento resulta em:
 | RF13 | Gamificação | O sistema deve implementar sistema de pontos, badges e rankings para motivação dos estudantes. | Baixa |
 | RF14 | Relatórios para Coordenação | O sistema deve gerar relatórios agregados (anônimos) sobre engajamento e bem-estar estudantil. | Baixa |
 | RF15 | Chat com Suporte | O sistema deve oferecer canal de comunicação direta com o núcleo de apoio psicopedagógico. | Baixa |
+| RF16 | Chatbot IA de Acolhimento | O sistema deve disponibilizar um chatbot com inteligência artificial que ofereça respostas adaptadas por faixa etária (17–20, 21–25, 26+) para orientação e acolhimento estudantil. | Alta |
 
 ---
 
