@@ -14,7 +14,7 @@
 | **Nome do projeto** | Site de Acolhimento FAESA |
 | **Aluno** | Gabriel Malheiros de Castro |
 | **Matrícula** | 23110145 |
-| **Curso** | Sistemas de Informação / Ciência da Computação |
+| **Curso** | Curso superior de Analise e Desenvolvimento de Sistemas |
 
 > Trabalho individual — não há outros integrantes.
 
