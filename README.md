@@ -13,6 +13,7 @@
 | **Turma** | CI-1014-261-5DC1 NATEC01 |
 | **Docente** | Otávio Lube dos Santos |
 | **Aluno** | Gabriel Malheiros de Castro |
+| **Matrícula** | 23110145 |
 | **Ano** | 2026 |
 
 ---
