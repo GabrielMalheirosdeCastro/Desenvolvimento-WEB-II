@@ -57,7 +57,7 @@ O Site de Acolhimento FAESA adota uma **arquitetura monolítica modular em 4 cam
 │   API REST (Express.js / NestJS)                │
 │   Auth JWT/OAuth · WebSocket (Socket.io)        │
 ├─────────────────────────────────────────────────┤
-│   CAMADA 3 — SERVIÇOS (Domínio)                │
+│   CAMADA 3 — SERVIÇOS (Domínio)                 │
 │   Plano de Estudos · Concentração               │
 │   Mentoria · Gamificação · Fórum · Chat         │
 │   Notificações · Bem-Estar · Trilhas · Chatbot  │
