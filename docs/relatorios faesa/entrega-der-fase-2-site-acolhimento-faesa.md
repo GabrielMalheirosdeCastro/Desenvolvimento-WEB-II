@@ -75,7 +75,22 @@ O Site de Acolhimento FAESA e uma plataforma web para estudantes da propria FAES
 - Usuario 1:N ConsentimentoLGPD
 - Usuario 1:N AuditoriaDados
 
-### 2.2 DER em Mermaid
+### 2.2 DER em representacao visual (formato de submissao)
+
+Imagem final do DER (obrigatoria para entrega):
+
+![DER Completo - Site de Acolhimento FAESA](./der-site-acolhimento.png)
+
+Se necessario refinar layout e legibilidade apos exportacao inicial:
+
+![DER Completo Refinado - Site de Acolhimento FAESA](./der-site-acolhimento-refinado.png)
+
+Nota tecnica:
+- O DER visual deve explicitar entidades, relacionamentos e cardinalidades no proprio desenho.
+- PK/FK e atributos detalhados permanecem na secao 3 (mapeamento relacional).
+- Em caso de baixa legibilidade no diagrama unico, usar 4 subdiagramas por dominio (academico, planejamento, comunidade e operacoes/compliance).
+
+### 2.3 Fonte tecnica do DER (Mermaid)
 
 ```mermaid
 erDiagram
@@ -129,7 +144,7 @@ erDiagram
     RELATORIOS_ANONIMIZADOS ||--o{ AUDITORIA_DADOS : rastreia
 ```
 
-Observacao: para o PDF final da atividade, exportar este DER como imagem (PNG/SVG) em ferramenta como draw.io ou Mermaid Live Editor e inserir no documento final.
+Observacao: exportar a secao Mermaid em PNG/SVG no Mermaid Live Editor e salvar em `docs/relatorios faesa/` com os nomes usados nesta secao.
 
 ---
 
