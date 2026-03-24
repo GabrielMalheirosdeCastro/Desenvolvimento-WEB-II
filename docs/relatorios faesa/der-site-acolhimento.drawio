@@ -1,0 +1,229 @@
+<mxfile host="65bd71144e">
+    <diagram id="R2lEEwgBhxs36uWA_0Pa" name="DER Site Acolhimento FAESA">
+        <mxGraphModel dx="3133" dy="2159" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" background="ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="inst1" value="INSTITUICOES_FAESA&#xa;&#xa;PK: id&#xa;- codigo (UNIQUE)&#xa;- nome&#xa;- campus&#xa;- ativo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#01579B;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="50" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="cur1" value="CURSOS&#xa;&#xa;PK: id&#xa;FK: instituicao_id&#xa;- codigo&#xa;- nome&#xa;- nivel&#xa;- ativo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#01579B;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="50" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge1" value="1:N&#xa;oferta" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="inst1" target="cur1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="turm1" value="TURMAS&#xa;&#xa;PK: id&#xa;FK: curso_id&#xa;- codigo&#xa;- ano&#xa;- semestre&#xa;- turno" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#01579B;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="-50" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge2" value="1:N&#xa;organiza" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="cur1" target="turm1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="disc1" value="DISCIPLINAS&#xa;&#xa;PK: id&#xa;- codigo (UNIQUE)&#xa;- nome&#xa;- carga_horaria&#xa;- ativa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#01579B;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="645" y="-50" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="tdis1" value="TURMA_DISCIPLINAS&#xa;&#xa;PK: id&#xa;FK: turma_id, disciplina_id&#xa;- professor_responsavel" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="455" y="120" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge3" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="turm1" target="tdis1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge4" value="N:1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="disc1" target="tdis1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="usr1" value="USUARIOS&#xa;&#xa;PK: id&#xa;- matricula_institucional&#xa;- email_institucional&#xa;- nome&#xa;- tipo_usuario&#xa;- data_nascimento" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="190" width="160" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="mat1" value="MATRICULAS_ACADEMICAS&#xa;&#xa;PK: id&#xa;FK: usuario_id, turma_id&#xa;- numero_matricula&#xa;- periodo_atual&#xa;- cra" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#1B5E20;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="380" width="160" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge5" value="1:N&#xa;possui" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="usr1" target="mat1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge6" value="1:N&#xa;recebe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="turm1" target="mat1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dicur1" value="DISCIPLINAS_CURSADAS&#xa;&#xa;PK: id&#xa;FK: matricula_id, turma_disciplina_id&#xa;- frequencia_percentual&#xa;- media_final" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#1B5E20;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="350" width="170" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge7" value="1:N&#xa;cursa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="mat1" target="dicur1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge8" value="1:N&#xa;vincula" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="tdis1" target="dicur1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="aval1" value="AVALIACOES_DISCIPLINA&#xa;&#xa;PK: id&#xa;FK: disciplina_cursada_id&#xa;- tipo&#xa;- nota&#xa;- data_avaliacao" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#1B5E20;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="350" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge9" value="1:N&#xa;gera" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="dicur1" target="aval1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pla1" value="PLANOS_ESTUDO&#xa;&#xa;PK: id&#xa;FK: usuario_id&#xa;- titulo&#xa;- meta_horas_semanal&#xa;- status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#880E4F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="530" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge10" value="1:N&#xa;cria" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="usr1" target="pla1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="exc1" value="EXERCICIOS_CONCENTRACAO&#xa;&#xa;PK: id&#xa;FK: usuario_id&#xa;- tipo&#xa;- duracao_minutos&#xa;- data_realizacao" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#880E4F;strokeWidth=2;" vertex="1" parent="1">
+                    <mxGeometry x="-260" y="530" width="170" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge39" value="1:N&#xa;realiza" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="exc1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="meta1" value="METAS_SEMANAIS&#xa;&#xa;PK: id&#xa;FK: plano_estudo_id&#xa;- numero_semana&#xa;- horas_meta" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#880E4F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="770" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge11" value="1:N&#xa;define" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="pla1" target="meta1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ati1" value="ATIVIDADES_ESTUDO&#xa;&#xa;PK: id&#xa;FK: plano_estudo_id, usuario_id&#xa;- nome&#xa;- data_agendada&#xa;- status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#880E4F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="700" width="160" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge12" value="1:N&#xa;contem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="pla1" target="ati1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="tri1" value="TRILHAS_APRENDIZAGEM&#xa;&#xa;PK: id&#xa;- nome&#xa;- descricao&#xa;- publico_alvo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#880E4F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="560" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="rec1" value="RECURSOS&#xa;&#xa;PK: id&#xa;- titulo&#xa;- tipo&#xa;- url&#xa;- categoria" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#880E4F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="500" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="trec1" value="TRILHA_RECURSOS&#xa;&#xa;PK: id&#xa;FK: trilha_id, recurso_id&#xa;- ordem" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="865" width="150" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge13" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="tri1" target="trec1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge14" value="N:1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="rec1" target="trec1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="urec1" value="USUARIO_RECURSOS&#xa;&#xa;PK: id&#xa;FK: usuario_id, recurso_id&#xa;- favorito&#xa;- data_acesso" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="680" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="for1" value="FORUNS_DISCUSSAO&#xa;&#xa;PK: id&#xa;FK: criado_por&#xa;- titulo&#xa;- categoria" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="-140" y="990" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="fpos1" value="FORUM_POSTS&#xa;&#xa;PK: id&#xa;FK: forum_id, usuario_id&#xa;- conteudo&#xa;- votos_positivos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="155" y="980" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge15" value="1:N&#xa;contem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="for1" target="fpos1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="fcom1" value="FORUM_COMENTARIOS&#xa;&#xa;PK: id&#xa;FK: post_id, usuario_id&#xa;- conteudo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="985" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge16" value="1:N&#xa;recebe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="fpos1" target="fcom1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="men1" value="MENTORIAS&#xa;&#xa;PK: id&#xa;FK: mentor_id, mentorado_id&#xa;- status&#xa;- objetivo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="970" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="noti1" value="NOTIFICACOES&#xa;&#xa;PK: id&#xa;FK: usuario_id&#xa;- titulo&#xa;- tipo&#xa;- lida" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="45" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="ques1" value="QUESTIONARIOS_BEM_ESTAR&#xa;&#xa;PK: id&#xa;FK: usuario_id&#xa;- data_aplicacao&#xa;- resultado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1250" y="45" width="160" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="gam1" value="GAMIFICACAO&#xa;&#xa;PK: id&#xa;FK: usuario_id (UNIQUE)&#xa;- pontos_totais&#xa;- ranking_posicao" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="45" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="evt1" value="EVENTOS&#xa;&#xa;PK: id&#xa;- titulo&#xa;- data_evento&#xa;- vagas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F4C3;strokeColor=#558B2F;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="180" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="uevt1" value="USUARIO_EVENTOS&#xa;&#xa;PK: id&#xa;FK: usuario_id, evento_id&#xa;- data_inscricao" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="-50" y="310" width="160" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="chat1" value="CHAT_TICKETS&#xa;&#xa;PK: id&#xa;FK: usuario_id, atendente_id&#xa;- titulo&#xa;- status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#004D40;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="510" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="chm1" value="CHAT_MENSAGENS&#xa;&#xa;PK: id&#xa;FK: ticket_id, autor_id&#xa;- mensagem&#xa;- data_envio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#004D40;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="670" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge17" value="1:N&#xa;contem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="chat1" target="chm1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cbot1" value="CHATBOT_CONVERSAS&#xa;&#xa;PK: id&#xa;FK: usuario_id&#xa;- faixa_etaria&#xa;- status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1140" y="660" width="170" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="cbm1" value="CHATBOT_MENSAGENS&#xa;&#xa;PK: id&#xa;FK: conversa_id, usuario_id&#xa;- origem&#xa;- sentimento" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1430" y="430" width="180" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge18" value="1:N&#xa;contem" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="cbot1" target="cbm1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="cons1" value="CONSENTIMENTOS_LGPD&#xa;&#xa;PK: id&#xa;FK: usuario_id&#xa;- finalidade&#xa;- consentiu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#283593;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1720" y="20" width="180" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="aud1" value="AUDITORIA_DADOS&#xa;&#xa;PK: id&#xa;FK: usuario_id&#xa;- ator&#xa;- acao&#xa;- base_legal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#283593;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="2030" y="280" width="180" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel1" value="RELATORIOS_ANONIMIZADOS&#xa;&#xa;PK: id&#xa;- tipo_relatorio&#xa;- periodo_inicio&#xa;- valor_agregado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#283593;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="2025" y="680" width="190" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge19" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="urec1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge20" value="N:1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rec1" target="urec1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge21" value="1:N&#xa;publica" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="fpos1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge22" value="1:N&#xa;comenta" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="fcom1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge23" value="1:N&#xa;mentor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="usr1" target="men1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge24" value="1:N&#xa;mentorado" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="usr1" target="men1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge25" value="1:N&#xa;recebe" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="noti1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge26" value="1:N&#xa;responde" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="ques1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge27" value="1:1&#xa;possui" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="usr1" target="gam1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge28" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="evt1" target="uevt1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge29" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="uevt1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge30" value="1:N&#xa;abre" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="chat1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge31" value="1:N&#xa;inicia" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="cbot1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge32" value="1:N&#xa;concede" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="cons1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge33" value="1:N&#xa;registra" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="usr1" target="aud1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge34" value="1:N&#xa;rastreia" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="rel1" target="aud1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge35" value="1:N&#xa;cria_forum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="usr1" target="for1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge36" value="1:N&#xa;executa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="usr1" target="ati1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge38" value="1:N&#xa;envia" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="usr1" target="cbm1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg1" value="Legenda de Cores e Cardinalidades" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="1250" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg2" value="Azul: Dominio Academico&#xa;Rosa: Dominio Planejamento&#xa;Verde-Claro: Dominio Comunidade&#xa;Azul-Marinho: LGPD/Compliance&#xa;Laranja: Tabelas Junction (N:M)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1290" width="400" height="80" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
