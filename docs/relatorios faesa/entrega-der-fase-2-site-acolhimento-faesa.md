@@ -9,7 +9,7 @@ Data: 2026-03-22
 
 ## 1. Descricao do Minimundo
 
-O Site de Acolhimento FAESA e uma plataforma web para estudantes da propria FAESA, com foco em acolhimento academico, organizacao de estudos, bem-estar e suporte psicopedagogico. O sistema permite cadastro institucional, planos de estudo, cronograma, exercicios de concentracao, trilhas de aprendizagem, biblioteca de recursos, forum, mentoria, notificacoes, gamificacao, eventos e chat de suporte. O dominio academico considera multiplas instituicoes da rede FAESA (campi/unidades), com vinculo de cursos, turmas e disciplinas. Cada aluno possui historico academico por matricula, com avaliacoes por disciplina cursada. Para coordenacao, o sistema produz relatorios agregados e anonimizados. Para LGPD, registra consentimento, trilha de auditoria e governanca de dados.
+O Site de Acolhimento FAESA e uma plataforma web destinada a estudantes da propria FAESA, com foco em acolhimento academico, organizacao de estudos, bem-estar e suporte psicopedagogico. O sistema contempla cadastro institucional, planos de estudo, cronograma, exercicios de concentracao, trilhas de aprendizagem, biblioteca de recursos, forum, mentoria, notificacoes, gamificacao, eventos e chat de suporte. O dominio academico considera multiplas instituicoes da rede FAESA (campi/unidades), com vinculo entre cursos, turmas e disciplinas. Cada aluno possui historico academico por matricula, com avaliacoes por disciplina cursada. Para apoio a coordenacao, o sistema produz relatorios agregados e anonimizados. Para conformidade com LGPD, registra consentimento, trilha de auditoria e governanca de dados.
 
 ### Entidades principais
 
@@ -77,18 +77,12 @@ O Site de Acolhimento FAESA e uma plataforma web para estudantes da propria FAES
 
 ### 2.2 DER em representacao visual (formato de submissao)
 
-Imagem final do DER (obrigatoria para entrega):
-
-![DER Completo - Site de Acolhimento FAESA](./der-site-acolhimento.png)
-
-Se necessario refinar layout e legibilidade apos exportacao inicial:
-
-![DER Completo Refinado - Site de Acolhimento FAESA](./der-site-acolhimento-refinado.png)
+O DER visual exportado do Draw.io e apresentado no final deste relatorio, na secao 7 (Anexo).
 
 Nota tecnica:
 - O DER visual deve explicitar entidades, relacionamentos e cardinalidades no proprio desenho.
 - PK/FK e atributos detalhados permanecem na secao 3 (mapeamento relacional).
-- Em caso de baixa legibilidade no diagrama unico, usar 4 subdiagramas por dominio (academico, planejamento, comunidade e operacoes/compliance).
+- Em caso de baixa legibilidade no diagrama unico, usar subdiagramas por dominio (academico, planejamento, comunidade e operacoes/compliance).
 
 ### 2.3 Fonte tecnica do DER (Mermaid)
 
@@ -144,13 +138,13 @@ erDiagram
     RELATORIOS_ANONIMIZADOS ||--o{ AUDITORIA_DADOS : rastreia
 ```
 
-Observacao: exportar a secao Mermaid em PNG/SVG no Mermaid Live Editor e salvar em `docs/relatorios faesa/` com os nomes usados nesta secao.
+Observacao: exportar o DER final do Draw.io em PNG/SVG e salvar em docs/relatorios faesa para insercao no anexo final deste relatorio.
 
 ---
 
 ## 3. Mapeamento para Modelo Relacional
 
-Abaixo esta a lista de tabelas resultantes do DER, com PK, FKs e tipos de dados principais (PostgreSQL).
+A seguir, apresenta-se a lista de tabelas resultantes do DER, com PK, FKs e tipos de dados principais (PostgreSQL).
 
 ### 3.1 Dominio academico
 
@@ -333,7 +327,7 @@ PostgreSQL 16+ (Supabase)
 - O modelo possui relacionamentos fortes e diversas FKs, exigindo integridade referencial nativa.
 - O dominio academico possui regras de consistencia que favorecem transacoes ACID.
 - RF14 exige agregacao analitica de dados para coordenacao, com consultas SQL e JOINs.
-- RF16 pode usar dados relacionais para contexto de usuario e historico de conversa.
+- RF16 pode utilizar dados relacionais para contexto de usuario e historico de conversa.
 - RNF09 (LGPD) precisa trilha de consentimento e auditoria estruturada em tabelas.
 - Supabase oferece PostgreSQL gerenciado, autenticacao integrada e compatibilidade com deploy serverless.
 
@@ -346,11 +340,11 @@ Prisma ORM
 - Type-safe com TypeScript, reduzindo erros de consulta.
 - Migrations versionadas para evolucao do esquema.
 - Boa integracao com PostgreSQL/Supabase e arquitetura Node.js/Next.js/NestJS.
-- Produtividade maior para CRUD e relatorios sem perder rastreabilidade de schema.
+- Maior produtividade para CRUD e relatorios sem perda de rastreabilidade de schema.
 
 ---
 
-## 5. Confirmacao de aderencia aos requisitos do projeto
+## 5. Confirmacao de Aderencia aos Requisitos do Projeto
 
 - RF14: coberto por relatorios_anonimizados e estrutura agregada.
 - RF16: coberto por chatbot_conversas e chatbot_mensagens com faixa etaria.
@@ -365,3 +359,15 @@ Prisma ORM
 - Especificacao de requisitos da Fase 1
 - Documento principal do projeto
 - Diretrizes da atividade de DER (Fase 2)
+
+---
+
+## 7. Anexo - DER exportado do Draw.io
+
+Imagem principal do DER para submissao:
+
+![DER Completo - Site de Acolhimento FAESA](./der-site-acolhimento.png)
+
+Versao refinada (opcional):
+
+![DER Completo Refinado - Site de Acolhimento FAESA](./der-site-acolhimento-refinado.png)
