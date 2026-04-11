@@ -9,6 +9,12 @@ Este diretorio consolida a base de banco de dados do projeto, com modelo relacio
 - `der-fonte.mmd`: fonte Mermaid das cardinalidades do DER.
 - `dev.db`: banco local gerado em tempo de execucao.
 
+## Cobertura direta de requisitos
+
+- RF14: view `vw_rf14_relatorio_turma_desempenho` com agregacao por turma (sem identificacao individual).
+- RF16: view `vw_rf16_chatbot_por_faixa` com contexto de conversas por faixa etaria.
+- RNF09 (LGPD): view `vw_rnf09_lgpd_auditoria` com trilha de consentimento e eventos de auditoria.
+
 ## Como executar
 
 No PowerShell, dentro deste diretorio:

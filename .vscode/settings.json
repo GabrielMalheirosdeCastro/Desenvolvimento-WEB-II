@@ -122,5 +122,6 @@
   "latex-workshop.intellisense.package.enabled": true,
 
   // Sugere label ao criar \ref
-  "latex-workshop.intellisense.label.keyval": true
+  "latex-workshop.intellisense.label.keyval": true,
+  "prisma.pinToPrisma6": false
 }

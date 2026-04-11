@@ -1,0 +1,31 @@
+{
+  "name": "banco-dados-requisitos-projeto",
+  "version": "1.0.0",
+  "description": "Este diretorio consolida a base de banco de dados do projeto, com modelo relacional alinhado aos requisitos funcionais e nao funcionais definidos na documentacao.",
+  "type": "module",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "studio": "prisma studio --url file:./dev.db",
+    "check": "tsx script.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.6.0",
+    "prisma": "^7.7.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.7.0",
+    "@prisma/client": "^7.7.0",
+    "dotenv": "^17.4.1"
+  }
+}

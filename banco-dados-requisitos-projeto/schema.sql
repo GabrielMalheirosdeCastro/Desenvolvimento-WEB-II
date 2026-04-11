@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS turma_disciplinas (
     ano INTEGER NOT NULL,
     semestre INTEGER NOT NULL,
     professor_responsavel TEXT,
+    UNIQUE (turma_id, disciplina_id, ano, semestre),
     FOREIGN KEY (turma_id) REFERENCES turmas(id),
     FOREIGN KEY (disciplina_id) REFERENCES disciplinas(id)
 );
@@ -173,7 +174,8 @@ CREATE TABLE IF NOT EXISTS usuario_recursos (
     usuario_id INTEGER NOT NULL,
     recurso_id INTEGER NOT NULL,
     data_acesso TEXT,
-    favorito INTEGER,
+    favorito INTEGER CHECK (favorito IN (0, 1)),
+    UNIQUE (usuario_id, recurso_id),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (recurso_id) REFERENCES recursos(id)
 );
@@ -218,6 +220,7 @@ CREATE TABLE IF NOT EXISTS mentorias (
     data_inicio TEXT,
     data_fim TEXT,
     objetivo TEXT,
+    CHECK (mentor_id <> mentorado_id),
     FOREIGN KEY (mentor_id) REFERENCES usuarios(id),
     FOREIGN KEY (mentorado_id) REFERENCES usuarios(id)
 );
@@ -228,7 +231,7 @@ CREATE TABLE IF NOT EXISTS notificacoes (
     titulo TEXT,
     mensagem TEXT,
     tipo TEXT,
-    lida INTEGER,
+    lida INTEGER CHECK (lida IN (0, 1)),
     data_criacao TEXT,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
@@ -267,7 +270,8 @@ CREATE TABLE IF NOT EXISTS usuario_eventos (
     usuario_id INTEGER NOT NULL,
     evento_id INTEGER NOT NULL,
     data_inscricao TEXT,
-    presenca_confirmada INTEGER,
+    presenca_confirmada INTEGER CHECK (presenca_confirmada IN (0, 1)),
+    UNIQUE (usuario_id, evento_id),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (evento_id) REFERENCES eventos(id)
 );
@@ -299,7 +303,7 @@ CREATE TABLE IF NOT EXISTS chat_mensagens (
 CREATE TABLE IF NOT EXISTS chatbot_conversas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     usuario_id INTEGER NOT NULL,
-    faixa_etaria TEXT,
+    faixa_etaria TEXT CHECK (faixa_etaria IN ('17-20', '21-25', '26+')),
     canal TEXT,
     status TEXT,
     iniciou_em TEXT,
@@ -336,7 +340,7 @@ CREATE TABLE IF NOT EXISTS consentimentos_lgpd (
     usuario_id INTEGER NOT NULL,
     finalidade TEXT,
     versao_termo TEXT,
-    consentiu INTEGER NOT NULL,
+    consentiu INTEGER NOT NULL CHECK (consentiu IN (0, 1)),
     ip_origem TEXT,
     user_agent TEXT,
     data_consentimento TEXT,
@@ -357,3 +361,69 @@ CREATE TABLE IF NOT EXISTS auditoria_dados (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (relatorio_id) REFERENCES relatorios_anonimizados(id)
 );
+
+-- Integridade de relacionamento N:M
+CREATE UNIQUE INDEX IF NOT EXISTS idx_trilha_recursos_unico
+ON trilha_recursos (trilha_id, recurso_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_trilha_recursos_ordem_unica
+ON trilha_recursos (trilha_id, ordem);
+
+-- Indices de suporte para consultas por requisito
+CREATE INDEX IF NOT EXISTS idx_matriculas_turma
+ON matriculas_academicas (turma_id);
+
+CREATE INDEX IF NOT EXISTS idx_disciplinas_cursadas_matricula
+ON disciplinas_cursadas (matricula_id);
+
+CREATE INDEX IF NOT EXISTS idx_chatbot_conversas_faixa
+ON chatbot_conversas (faixa_etaria, usuario_id);
+
+CREATE INDEX IF NOT EXISTS idx_auditoria_data
+ON auditoria_dados (data_evento);
+
+CREATE INDEX IF NOT EXISTS idx_consentimentos_usuario_finalidade
+ON consentimentos_lgpd (usuario_id, finalidade, consentiu);
+
+-- RF14: relatorio agregado por turma, sem identificacao individual
+CREATE VIEW IF NOT EXISTS vw_rf14_relatorio_turma_desempenho AS
+SELECT
+    t.codigo AS turma,
+    t.ano,
+    t.semestre,
+    COUNT(DISTINCT ma.usuario_id) AS total_alunos,
+    ROUND(AVG(dc.frequencia_percentual), 2) AS frequencia_media,
+    ROUND(AVG(dc.media_final), 2) AS media_geral,
+    SUM(CASE WHEN dc.situacao = 'APROVADO' THEN 1 ELSE 0 END) AS aprovacoes,
+    SUM(CASE WHEN dc.situacao <> 'APROVADO' OR dc.situacao IS NULL THEN 1 ELSE 0 END) AS nao_aprovacoes
+FROM turmas t
+JOIN matriculas_academicas ma ON ma.turma_id = t.id
+JOIN disciplinas_cursadas dc ON dc.matricula_id = ma.id
+GROUP BY t.id, t.codigo, t.ano, t.semestre;
+
+-- RF16: contexto de conversas do chatbot por faixa etaria
+CREATE VIEW IF NOT EXISTS vw_rf16_chatbot_por_faixa AS
+SELECT
+    cc.faixa_etaria,
+    COUNT(DISTINCT cc.id) AS total_conversas,
+    COUNT(cm.id) AS total_mensagens,
+    SUM(CASE WHEN cm.origem = 'USUARIO' THEN 1 ELSE 0 END) AS mensagens_usuario,
+    SUM(CASE WHEN cm.origem = 'BOT' THEN 1 ELSE 0 END) AS mensagens_bot,
+    MAX(cc.iniciou_em) AS ultima_conversa
+FROM chatbot_conversas cc
+LEFT JOIN chatbot_mensagens cm ON cm.conversa_id = cc.id
+GROUP BY cc.faixa_etaria;
+
+-- RNF09: trilha de conformidade LGPD por finalidade
+CREATE VIEW IF NOT EXISTS vw_rnf09_lgpd_auditoria AS
+SELECT
+    c.finalidade,
+    COUNT(DISTINCT c.usuario_id) AS usuarios_com_consentimento,
+    SUM(CASE WHEN c.consentiu = 1 THEN 1 ELSE 0 END) AS total_consentimentos_validos,
+    COUNT(a.id) AS total_eventos_auditoria,
+    MAX(a.data_evento) AS ultimo_evento
+FROM consentimentos_lgpd c
+LEFT JOIN auditoria_dados a
+    ON a.usuario_id = c.usuario_id
+   AND a.finalidade = c.finalidade
+GROUP BY c.finalidade;

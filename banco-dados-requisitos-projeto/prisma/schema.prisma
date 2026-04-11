@@ -1,0 +1,511 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model InstituicaoFaesa {
+  id     Int     @id @default(autoincrement())
+  codigo String  @unique
+  nome   String
+  campus String?
+  ativo  Boolean @default(true)
+
+  cursos Curso[]
+
+  @@map("instituicoes_faesa")
+}
+
+model Curso {
+  id            Int     @id @default(autoincrement())
+  instituicaoId Int     @map("instituicao_id")
+  codigo        String
+  nome          String
+  nivel         String?
+  ativo         Boolean @default(true)
+
+  instituicao InstituicaoFaesa @relation(fields: [instituicaoId], references: [id])
+  turmas      Turma[]
+
+  @@map("cursos")
+}
+
+model Turma {
+  id       Int    @id @default(autoincrement())
+  cursoId  Int    @map("curso_id")
+  codigo   String
+  ano      Int
+  semestre Int
+  turno    String?
+  status   String?
+
+  curso            Curso               @relation(fields: [cursoId], references: [id])
+  turmaDisciplinas TurmaDisciplina[]
+  matriculas       MatriculaAcademica[]
+
+  @@map("turmas")
+}
+
+model Disciplina {
+  id           Int     @id @default(autoincrement())
+  codigo       String  @unique
+  nome         String
+  cargaHoraria Int?    @map("carga_horaria")
+  ativa        Boolean @default(true)
+
+  turmaDisciplinas TurmaDisciplina[]
+
+  @@map("disciplinas")
+}
+
+model TurmaDisciplina {
+  id                   Int     @id @default(autoincrement())
+  turmaId              Int     @map("turma_id")
+  disciplinaId         Int     @map("disciplina_id")
+  ano                  Int
+  semestre             Int
+  professorResponsavel String? @map("professor_responsavel")
+
+  turma             Turma               @relation(fields: [turmaId], references: [id])
+  disciplina        Disciplina          @relation(fields: [disciplinaId], references: [id])
+  disciplinasCursadas DisciplinaCursada[]
+
+  @@unique([turmaId, disciplinaId, ano, semestre])
+  @@map("turma_disciplinas")
+}
+
+model Usuario {
+  id                     Int      @id @default(autoincrement())
+  matriculaInstitucional String   @unique @map("matricula_institucional")
+  emailInstitucional     String   @unique @map("email_institucional")
+  nome                   String
+  tipoUsuario            String   @map("tipo_usuario")
+  dataNascimento         DateTime? @map("data_nascimento")
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  matriculasAcademicas    MatriculaAcademica[]
+  planosEstudo            PlanoEstudo[]
+  atividadesEstudo        AtividadeEstudo[]
+  exerciciosConcentracao  ExercicioConcentracao[]
+  usuarioRecursos         UsuarioRecurso[]
+  forunsCriados           ForumDiscussao[]
+  forumPosts              ForumPost[]
+  forumComentarios        ForumComentario[]
+  mentoriasComoMentor     Mentoria[]            @relation("Mentor")
+  mentoriasComoMentorado  Mentoria[]            @relation("Mentorado")
+  notificacoes            Notificacao[]
+  questionariosBemEstar   QuestionarioBemEstar[]
+  gamificacao             Gamificacao?
+  usuarioEventos          UsuarioEvento[]
+  chatTicketsCriados      ChatTicket[]          @relation("TicketUsuario")
+  chatTicketsAtendidos    ChatTicket[]          @relation("TicketAtendente")
+  chatMensagens           ChatMensagem[]
+  chatbotConversas        ChatbotConversa[]
+  chatbotMensagens        ChatbotMensagem[]
+  consentimentosLgpd      ConsentimentoLgpd[]
+  auditoriaDados          AuditoriaDado[]
+
+  @@map("usuarios")
+}
+
+model MatriculaAcademica {
+  id             Int      @id @default(autoincrement())
+  usuarioId      Int      @map("usuario_id")
+  turmaId        Int      @map("turma_id")
+  numeroMatricula String  @unique @map("numero_matricula")
+  periodoAtual   Int?     @map("periodo_atual")
+  cra            Float?
+  status         String?
+  dataIngresso   DateTime? @map("data_ingresso")
+  dataFim        DateTime? @map("data_fim")
+
+  usuario             Usuario            @relation(fields: [usuarioId], references: [id])
+  turma               Turma              @relation(fields: [turmaId], references: [id])
+  disciplinasCursadas DisciplinaCursada[]
+
+  @@index([turmaId], map: "idx_matriculas_turma")
+  @@map("matriculas_academicas")
+}
+
+model DisciplinaCursada {
+  id                  Int      @id @default(autoincrement())
+  matriculaId         Int      @map("matricula_id")
+  turmaDisciplinaId   Int      @map("turma_disciplina_id")
+  frequenciaPercentual Float?  @map("frequencia_percentual")
+  mediaFinal          Float?   @map("media_final")
+  situacao            String?
+
+  matricula          MatriculaAcademica   @relation(fields: [matriculaId], references: [id])
+  turmaDisciplina    TurmaDisciplina      @relation(fields: [turmaDisciplinaId], references: [id])
+  avaliacoes         AvaliacaoDisciplina[]
+
+  @@index([matriculaId], map: "idx_disciplinas_cursadas_matricula")
+  @@map("disciplinas_cursadas")
+}
+
+model AvaliacaoDisciplina {
+  id                  Int      @id @default(autoincrement())
+  disciplinaCursadaId Int      @map("disciplina_cursada_id")
+  tipo                String?
+  descricao           String?
+  nota                Float?
+  peso                Float?
+  dataAvaliacao       DateTime? @map("data_avaliacao")
+
+  disciplinaCursada DisciplinaCursada @relation(fields: [disciplinaCursadaId], references: [id])
+
+  @@map("avaliacoes_disciplina")
+}
+
+model PlanoEstudo {
+  id              Int      @id @default(autoincrement())
+  usuarioId       Int      @map("usuario_id")
+  titulo          String
+  descricao       String?
+  metaHorasSemanal Int?    @map("meta_horas_semanal")
+  metaHorasMensal Int?     @map("meta_horas_mensal")
+  dataInicio      DateTime? @map("data_inicio")
+  dataFim         DateTime? @map("data_fim")
+  status          String?
+
+  usuario        Usuario           @relation(fields: [usuarioId], references: [id])
+  metasSemanais  MetaSemanal[]
+  atividades     AtividadeEstudo[]
+
+  @@map("planos_estudo")
+}
+
+model MetaSemanal {
+  id             Int  @id @default(autoincrement())
+  planoEstudoId  Int  @map("plano_estudo_id")
+  numeroSemana   Int  @map("numero_semana")
+  horasMeta      Int? @map("horas_meta")
+  horasRealizadas Int? @map("horas_realizadas")
+
+  planoEstudo PlanoEstudo @relation(fields: [planoEstudoId], references: [id])
+
+  @@map("metas_semanais")
+}
+
+model AtividadeEstudo {
+  id             Int      @id @default(autoincrement())
+  planoEstudoId  Int      @map("plano_estudo_id")
+  usuarioId      Int      @map("usuario_id")
+  nome           String
+  descricao      String?
+  dataAgendada   DateTime? @map("data_agendada")
+  dataRealizacao DateTime? @map("data_realizacao")
+  duracaoMinutos Int?     @map("duracao_minutos")
+  status         String?
+
+  planoEstudo PlanoEstudo @relation(fields: [planoEstudoId], references: [id])
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id])
+
+  @@map("atividades_estudo")
+}
+
+model ExercicioConcentracao {
+  id             Int      @id @default(autoincrement())
+  usuarioId      Int      @map("usuario_id")
+  tipo           String?
+  duracaoMinutos Int?     @map("duracao_minutos")
+  dataRealizacao DateTime? @map("data_realizacao")
+  pontosGanhos   Int?     @map("pontos_ganhos")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("exercicios_concentracao")
+}
+
+model TrilhaAprendizagem {
+  id          Int     @id @default(autoincrement())
+  nome        String
+  descricao   String?
+  publicoAlvo String? @map("publico_alvo")
+
+  trilhaRecursos TrilhaRecurso[]
+
+  @@map("trilhas_aprendizagem")
+}
+
+model Recurso {
+  id           Int     @id @default(autoincrement())
+  titulo       String
+  descricao    String?
+  tipo         String?
+  url          String?
+  categoria    String?
+  visualizacoes Int?
+
+  trilhaRecursos TrilhaRecurso[]
+  usuarioRecursos UsuarioRecurso[]
+
+  @@map("recursos")
+}
+
+model TrilhaRecurso {
+  id        Int  @id @default(autoincrement())
+  trilhaId  Int  @map("trilha_id")
+  recursoId Int  @map("recurso_id")
+  ordem     Int?
+
+  trilha  TrilhaAprendizagem @relation(fields: [trilhaId], references: [id])
+  recurso Recurso            @relation(fields: [recursoId], references: [id])
+
+  @@unique([trilhaId, recursoId], map: "idx_trilha_recursos_unico")
+  @@unique([trilhaId, ordem], map: "idx_trilha_recursos_ordem_unica")
+  @@map("trilha_recursos")
+}
+
+model UsuarioRecurso {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int      @map("usuario_id")
+  recursoId Int      @map("recurso_id")
+  dataAcesso DateTime? @map("data_acesso")
+  favorito  Boolean?
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  recurso Recurso @relation(fields: [recursoId], references: [id])
+
+  @@unique([usuarioId, recursoId])
+  @@map("usuario_recursos")
+}
+
+model ForumDiscussao {
+  id        Int      @id @default(autoincrement())
+  criadoPor Int      @map("criado_por")
+  titulo    String
+  descricao String?
+  categoria String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  usuario Usuario    @relation(fields: [criadoPor], references: [id])
+  posts   ForumPost[]
+
+  @@map("foruns_discussao")
+}
+
+model ForumPost {
+  id            Int      @id @default(autoincrement())
+  forumId       Int      @map("forum_id")
+  usuarioId     Int      @map("usuario_id")
+  conteudo      String?
+  votosPositivos Int?    @map("votos_positivos")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  forum       ForumDiscussao    @relation(fields: [forumId], references: [id])
+  usuario     Usuario           @relation(fields: [usuarioId], references: [id])
+  comentarios ForumComentario[]
+
+  @@map("forum_posts")
+}
+
+model ForumComentario {
+  id        Int      @id @default(autoincrement())
+  postId    Int      @map("post_id")
+  usuarioId Int      @map("usuario_id")
+  conteudo  String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post    ForumPost @relation(fields: [postId], references: [id])
+  usuario Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@map("forum_comentarios")
+}
+
+model Mentoria {
+  id         Int      @id @default(autoincrement())
+  mentorId   Int      @map("mentor_id")
+  mentoradoId Int     @map("mentorado_id")
+  status     String?
+  dataInicio DateTime? @map("data_inicio")
+  dataFim    DateTime? @map("data_fim")
+  objetivo   String?
+
+  mentor    Usuario @relation("Mentor", fields: [mentorId], references: [id])
+  mentorado Usuario @relation("Mentorado", fields: [mentoradoId], references: [id])
+
+  @@map("mentorias")
+}
+
+model Notificacao {
+  id          Int      @id @default(autoincrement())
+  usuarioId   Int      @map("usuario_id")
+  titulo      String?
+  mensagem    String?
+  tipo        String?
+  lida        Boolean?
+  dataCriacao DateTime? @map("data_criacao")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("notificacoes")
+}
+
+model QuestionarioBemEstar {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int      @map("usuario_id")
+  dataAplicacao DateTime? @map("data_aplicacao")
+  respostas     String?
+  resultado     String?
+  observacoes   String?
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("questionarios_bem_estar")
+}
+
+model Gamificacao {
+  id            Int  @id @default(autoincrement())
+  usuarioId     Int  @unique @map("usuario_id")
+  pontosTotais  Int? @map("pontos_totais")
+  badges        String?
+  rankingPosicao Int? @map("ranking_posicao")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("gamificacao")
+}
+
+model Evento {
+  id         Int      @id @default(autoincrement())
+  titulo     String?
+  descricao  String?
+  tipo       String?
+  dataEvento DateTime? @map("data_evento")
+  local      String?
+  vagas      Int?
+
+  usuarioEventos UsuarioEvento[]
+
+  @@map("eventos")
+}
+
+model UsuarioEvento {
+  id                Int      @id @default(autoincrement())
+  usuarioId         Int      @map("usuario_id")
+  eventoId          Int      @map("evento_id")
+  dataInscricao     DateTime? @map("data_inscricao")
+  presencaConfirmada Boolean? @map("presenca_confirmada")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  evento  Evento  @relation(fields: [eventoId], references: [id])
+
+  @@unique([usuarioId, eventoId])
+  @@map("usuario_eventos")
+}
+
+model ChatTicket {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int      @map("usuario_id")
+  atendenteId   Int?     @map("atendente_id")
+  titulo        String?
+  descricao     String?
+  status        String?
+  dataCriacao   DateTime? @map("data_criacao")
+  dataFechamento DateTime? @map("data_fechamento")
+
+  usuario   Usuario       @relation("TicketUsuario", fields: [usuarioId], references: [id])
+  atendente Usuario?      @relation("TicketAtendente", fields: [atendenteId], references: [id])
+  mensagens ChatMensagem[]
+
+  @@map("chat_tickets")
+}
+
+model ChatMensagem {
+  id        Int      @id @default(autoincrement())
+  ticketId  Int      @map("ticket_id")
+  autorId   Int      @map("autor_id")
+  mensagem  String?
+  dataEnvio DateTime? @map("data_envio")
+
+  ticket ChatTicket @relation(fields: [ticketId], references: [id])
+  autor  Usuario    @relation(fields: [autorId], references: [id])
+
+  @@map("chat_mensagens")
+}
+
+model ChatbotConversa {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int      @map("usuario_id")
+  faixaEtaria String? @map("faixa_etaria")
+  canal      String?
+  status     String?
+  iniciouEm  DateTime? @map("iniciou_em")
+  encerrouEm DateTime? @map("encerrou_em")
+
+  usuario   Usuario           @relation(fields: [usuarioId], references: [id])
+  mensagens ChatbotMensagem[]
+
+  @@index([faixaEtaria, usuarioId], map: "idx_chatbot_conversas_faixa")
+  @@map("chatbot_conversas")
+}
+
+model ChatbotMensagem {
+  id         Int      @id @default(autoincrement())
+  conversaId Int      @map("conversa_id")
+  usuarioId  Int?     @map("usuario_id")
+  origem     String?
+  conteudo   String?
+  intencao   String?
+  sentimento String?
+  dataEnvio  DateTime? @map("data_envio")
+
+  conversa ChatbotConversa @relation(fields: [conversaId], references: [id])
+  usuario  Usuario?        @relation(fields: [usuarioId], references: [id])
+
+  @@map("chatbot_mensagens")
+}
+
+model RelatorioAnonimizado {
+  id             Int      @id @default(autoincrement())
+  tipoRelatorio  String?  @map("tipo_relatorio")
+  periodoInicio  DateTime? @map("periodo_inicio")
+  periodoFim     DateTime? @map("periodo_fim")
+  dimensao       String?
+  valorAgregado  Float?   @map("valor_agregado")
+  totalRegistros Int?     @map("total_registros")
+  geradoEm       DateTime? @map("gerado_em")
+
+  auditoriaDados AuditoriaDado[]
+
+  @@map("relatorios_anonimizados")
+}
+
+model ConsentimentoLgpd {
+  id               Int      @id @default(autoincrement())
+  usuarioId        Int      @map("usuario_id")
+  finalidade       String?
+  versaoTermo      String?  @map("versao_termo")
+  consentiu        Boolean
+  ipOrigem         String?  @map("ip_origem")
+  userAgent        String?  @map("user_agent")
+  dataConsentimento DateTime? @map("data_consentimento")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId, finalidade, consentiu], map: "idx_consentimentos_usuario_finalidade")
+  @@map("consentimentos_lgpd")
+}
+
+model AuditoriaDado {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int      @map("usuario_id")
+  relatorioId Int?    @map("relatorio_id")
+  ator       String?
+  acao       String?
+  entidade   String?
+  entidadeId Int?     @map("entidade_id")
+  baseLegal  String?  @map("base_legal")
+  finalidade String?
+  dataEvento DateTime? @map("data_evento")
+
+  usuario   Usuario              @relation(fields: [usuarioId], references: [id])
+  relatorio RelatorioAnonimizado? @relation(fields: [relatorioId], references: [id])
+
+  @@index([dataEvento], map: "idx_auditoria_data")
+  @@map("auditoria_dados")
+}
