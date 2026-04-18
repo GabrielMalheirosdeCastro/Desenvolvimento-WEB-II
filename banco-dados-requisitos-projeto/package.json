@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Este diretorio consolida a base de banco de dados do projeto, com modelo relacional alinhado aos requisitos funcionais e nao funcionais definidos na documentacao.",
   "type": "module",
-  "main": "index.js",
   "directories": {
     "lib": "lib"
   },

@@ -5,7 +5,8 @@ Este diretorio consolida a base de banco de dados do projeto, com modelo relacio
 ## O que existe aqui
 
 - `schema.sql`: estrutura relacional SQLite com 33 tabelas aderentes aos requisitos do projeto.
-- `scripts/setup_and_demo.py`: cria banco, valida as 33 tabelas, insere dados de exemplo e executa consultas.
+- `prisma/schema.prisma`: modelo de dados principal em Prisma.
+- `script.ts`: script de verificacao de leitura com Prisma Client.
 - `der-fonte.mmd`: fonte Mermaid das cardinalidades do DER.
 - `dev.db`: banco local gerado em tempo de execucao.
 
@@ -20,13 +21,9 @@ Este diretorio consolida a base de banco de dados do projeto, com modelo relacio
 No PowerShell, dentro deste diretorio:
 
 ```powershell
-python scripts/setup_and_demo.py
-```
-
-Ou:
-
-```powershell
-./run-lab.ps1
+npm install
+npm run generate
+npm run check
 ```
 
 ## Observacao de isolamento

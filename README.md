@@ -131,7 +131,7 @@ O arquivo [`site_acolhimento_faesa.tex`](site_acolhimento_faesa.tex) contém o d
 - ✅ Stack Tecnológica Recomendada
 - ✅ Personas e Histórias de Usuário
 
-Projeto inclui uma área permanente de banco de dados em [banco-dados-requisitos-projeto/README.md](banco-dados-requisitos-projeto/README.md), com modelo relacional SQLite de 33 tabelas aderente aos requisitos do projeto em [banco-dados-requisitos-projeto/schema.sql](banco-dados-requisitos-projeto/schema.sql), script de validação e carga em [banco-dados-requisitos-projeto/scripts/setup_and_demo.py](banco-dados-requisitos-projeto/scripts/setup_and_demo.py), e DER em Mermaid em [banco-dados-requisitos-projeto/der-fonte.mmd](banco-dados-requisitos-projeto/der-fonte.mmd) para apoio técnico às análises do banco.
+Projeto inclui uma área permanente de banco de dados em [banco-dados-requisitos-projeto/README.md](banco-dados-requisitos-projeto/README.md), com modelo relacional SQLite de 33 tabelas aderente aos requisitos do projeto em [banco-dados-requisitos-projeto/schema.sql](banco-dados-requisitos-projeto/schema.sql), modelagem em Prisma em [banco-dados-requisitos-projeto/prisma/schema.prisma](banco-dados-requisitos-projeto/prisma/schema.prisma), e DER em Mermaid em [banco-dados-requisitos-projeto/der-fonte.mmd](banco-dados-requisitos-projeto/der-fonte.mmd) para apoio técnico às análises do banco.
 
 ### Como compilar o documento LaTeX
 
