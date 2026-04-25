@@ -94,6 +94,7 @@ model Usuario {
   forunsCriados           ForumDiscussao[]
   forumPosts              ForumPost[]
   forumComentarios        ForumComentario[]
+  forumComentariosRemovidos ForumComentario[]   @relation("ComentarioRemovedor")
   mentoriasComoMentor     Mentoria[]            @relation("Mentor")
   mentoriasComoMentorado  Mentoria[]            @relation("Mentorado")
   notificacoes            Notificacao[]
@@ -304,15 +305,24 @@ model ForumPost {
 }
 
 model ForumComentario {
-  id        Int      @id @default(autoincrement())
-  postId    Int      @map("post_id")
-  usuarioId Int      @map("usuario_id")
-  conteudo  String?
-  createdAt DateTime @default(now()) @map("created_at")
+  id          Int       @id @default(autoincrement())
+  postId      Int       @map("post_id")
+  usuarioId   Int       @map("usuario_id")
+  conteudo    String
+  status      String    @default("aprovado")
+  editadoEm   DateTime? @map("editado_em")
+  deletedAt   DateTime? @map("deleted_at")
+  removidoPor Int?      @map("removido_por")
+  createdAt   DateTime  @default(now()) @map("created_at")
 
-  post    ForumPost @relation(fields: [postId], references: [id])
-  usuario Usuario   @relation(fields: [usuarioId], references: [id])
+  post      ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  removedor Usuario?  @relation("ComentarioRemovedor", fields: [removidoPor], references: [id], onDelete: SetNull)
 
+  @@index([postId])
+  @@index([usuarioId])
+  @@index([status])
+  @@index([deletedAt])
   @@map("forum_comentarios")
 }
 

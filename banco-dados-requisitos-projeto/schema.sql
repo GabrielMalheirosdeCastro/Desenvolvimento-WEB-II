@@ -206,11 +206,20 @@ CREATE TABLE IF NOT EXISTS forum_comentarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER NOT NULL,
     usuario_id INTEGER NOT NULL,
-    conteudo TEXT,
+    conteudo TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'aprovado',
+    editado_em TEXT,
+    deleted_at TEXT,
+    removido_por INTEGER,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_id) REFERENCES forum_posts(id),
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (post_id) REFERENCES forum_posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT,
+    FOREIGN KEY (removido_por) REFERENCES usuarios(id) ON DELETE SET NULL
 );
+CREATE INDEX IF NOT EXISTS idx_forum_comentarios_post_id    ON forum_comentarios(post_id);
+CREATE INDEX IF NOT EXISTS idx_forum_comentarios_usuario_id ON forum_comentarios(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_forum_comentarios_status     ON forum_comentarios(status);
+CREATE INDEX IF NOT EXISTS idx_forum_comentarios_deleted_at ON forum_comentarios(deleted_at);
 
 CREATE TABLE IF NOT EXISTS mentorias (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
