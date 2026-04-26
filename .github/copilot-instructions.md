@@ -125,6 +125,33 @@ de produção ocorre via túnel SSH (`scripts/dev-tunnel.ps1`) — ver
 > **Importante:** **não** sugerir Vercel, Supabase Cloud, Upstash Cloud ou qualquer
 > infraestrutura externa. Toda a stack roda na VPS.
 
+### 2.5 Ambiente de Execução de Testes — Playwright MCP (Regra Crítica)
+
+> **A VPS Ubuntu 24.04 onde o app é publicado NÃO tem interface gráfica (headless server).** Por consequência, **nenhum teste de navegação, end-to-end (E2E), de usabilidade ou de validação visual pode ser executado na VPS**. Esses testes rodam **somente na estação de trabalho do desenvolvedor (Windows 11)**.
+
+**Servidor MCP do Playwright é a ferramenta oficial** para o agente executar:
+- Testes E2E gerados via TDD (Seção 12).
+- Validação visual da tela de login (presença obrigatória de `Disciplina`, `Docente`, `Aluno`, `Repositório` e do badge `site-acolhimento-faesa · vX.Y.Z`).
+- Verificação pós-deploy do rótulo de versão em <https://acolhimento.faesa.gmcsistemas.com.br>.
+
+**Procedimento obrigatório do agente antes de qualquer teste UI/E2E:**
+1. Verificar se o servidor MCP `playwright` está listado e ativo na sessão atual do VS Code.
+2. **Se estiver ativo:** prosseguir com a execução dos testes.
+3. **Se NÃO estiver ativo ou se a sessão estiver rodando na VPS:** **parar imediatamente** e perguntar ao aluno (Seção 6.1):
+   - "O servidor MCP do Playwright não está disponível nesta sessão (ou estamos na VPS sem GUI). Opções: (a) abrir a sessão de trabalho na estação Windows com o MCP `@playwright/mcp` habilitado, (b) executar os testes E2E manualmente e me reportar o resultado, (c) adiar a validação visual."
+4. **NÃO tentar** instalar Chromium/Firefox/Xvfb na VPS para contornar a ausência de GUI — esse caminho não é suportado.
+
+**Matriz de execução por tipo de teste:**
+
+| Tipo de teste | Pode rodar na VPS? | Pode rodar na estação? | Ferramenta |
+|---------------|--------------------|--------------------------|------------|
+| Unitário (lógica pura) | Sim | Sim | Vitest/Jest |
+| Integração API/DB (sem browser) | Sim | Sim | Vitest/Jest + supertest |
+| HTTP smoke (`curl /version`, `/healthz`) | Sim | Sim | curl |
+| **E2E / navegação / visual** | **Não** | **Sim (obrigatório)** | **Playwright via MCP** |
+| **Validação visual da tela de login** | **Não** | **Sim (obrigatório)** | **Playwright via MCP** |
+| **Validação pós-deploy do badge de versão** | **Não** | **Sim (obrigatório)** | **Playwright via MCP** |
+
 ---
 
 ## 3. Estrutura do Repositório
@@ -363,10 +390,29 @@ Este projeto adota o padrão **Conventional Commits 1.0.0**
 
 1. A **descrição** deve estar em **português brasileiro**, no imperativo ("adiciona", "corrige", "remove").
 2. Máximo de **72 caracteres** na linha do assunto (tipo + escopo + descrição).
-3. O **corpo** deve explicar *o que* mudou e *por que*, não *como*.
+3. O **corpo** deve explicar *o que* mudou e *por que*, não *como*. Quebre linhas em até 100 caracteres e use bullets quando houver mais de um ponto.
 4. Referencie issues com `Refs: #numero` no rodapé quando aplicável.
 5. BREAKING CHANGE deve aparecer no rodapé e/ou com `!` após o tipo.
 6. **Nunca** use o log de commits como substituto do `CHANGELOG.md`.
+7. **Idioma obrigatório:** assunto, corpo e rodapé sempre em **português brasileiro**. Mensagens em inglês devem ser rejeitadas/refeitas.
+
+### 9.1 Commits Atômicos — Regra Obrigatória
+
+Todo commit deve ser **atômico, organizado e detalhado**. Isso significa:
+
+- **Atômico:** um commit = uma intenção lógica única. Não misture, no mesmo commit, refatoração + nova feature + correção de bug + atualização de docs não relacionada. Se a mudança não puder ser descrita em uma única frase no imperativo sem usar "e"/"além de", ela deve ser **dividida em vários commits**.
+- **Organizado:** ao concluir um conjunto de alterações, agrupe por escopo antes de commitar. Use `git add -p` (ou equivalente) para selecionar hunks específicos quando necessário. A ordem dos commits deve contar uma história linear e revisável.
+- **Detalhado:** todo commit não trivial deve ter **corpo** explicando o *porquê* da mudança, arquivos-chave afetados e impacto. Commits triviais (`docs:` de typo, `chore:` de versão) podem ficar apenas com o assunto.
+
+#### Procedimento de commit do agente
+
+Antes de executar `git commit`, o agente deve:
+
+1. Rodar `git status` e `git diff --stat` para revisar tudo que está em staging.
+2. Confirmar que o conteúdo em staging pertence a **uma única intenção lógica**. Se não, fazer `git reset` e re-stage por partes.
+3. Atualizar `CHANGELOG.md` e a versão na página de entrada do app (Seção 11.1) **dentro do mesmo commit** quando a mudança altera comportamento perceptível.
+4. Escrever a mensagem no formato Conventional Commits + corpo detalhado em pt-BR.
+5. Após o commit, rodar `git log -1 --stat` para validar.
 
 ### Exemplos corretos
 
@@ -479,6 +525,22 @@ O `CHANGELOG.md` segue o padrão **Keep a Changelog 1.1.0**
 - Tabela de requisitos não funcionais expandida com métricas mensuráveis.
 ```
 
+### 11.1 Bump de Versão Obrigatório antes do Commit
+
+A versão do projeto é a **fonte única de verdade** que conecta o `CHANGELOG.md`, o `package.json` e a interface visível ao usuário (página de entrada / login do app). Antes de qualquer `git commit` que feche um conjunto de alterações funcionais, o agente **deve** executar o seguinte procedimento de bump:
+
+1. **Determinar o tipo de bump** segundo SemVer ([semver.org](https://semver.org/lang/pt-BR/)):
+     - `MAJOR` (`X.0.0`) — mudança incompatível ou breaking change.
+     - `MINOR` (`x.Y.0`) — nova funcionalidade compatível (`feat`).
+     - `PATCH` (`x.y.Z`) — correção de bug ou ajuste interno (`fix`, `refactor`, `chore`, `docs` que altera comportamento visível).
+     - Mudanças puramente em `docs/`, `.tex` (Overleaf) ou planos de ação **não exigem** bump.
+2. **Atualizar o [`package.json`](../package.json)** (`"version"`) com a nova versão.
+3. **Atualizar o [`CHANGELOG.md`](../CHANGELOG.md)**: mover o conteúdo de `## [Unreleased]` para uma nova seção `## [X.Y.Z] - YYYY-MM-DD`, mantendo `## [Unreleased]` vazio no topo.
+4. **Atualizar a versão exibida na página de login / entrada do app** ([`public/index.html`](../public/index.html)). Hoje o projeto está em fase "Em Construção" e a versão é renderizada via `fetch('/version')` (que lê o `package.json`), portanto basta o passo 2. **Quando a página de login real existir**, a versão **deve** estar visível em rodapé/header (ex: `v1.4.2`) e seu valor deve bater com `package.json`. Se houver versão hard-coded em qualquer template (HTML, EJS, React, etc.), ela também deve ser atualizada no mesmo commit.
+5. Validar localmente que `/version` retorna a nova versão (`curl http://localhost:3000/version`) antes de commitar.
+
+> **Falha em qualquer um destes passos invalida o commit.** O agente deve abortar e refazer o stage incluindo as atualizações de versão.
+
 ---
 
 ## 12. Execução e Validação
@@ -492,8 +554,9 @@ equivale à **compilação bem-sucedida do documento LaTeX**.
 - [ ] Nenhum `overfull \hbox` ou `underfull \vbox` crítico nas mensagens de log
 - [ ] O PDF gerado abre corretamente e não tem páginas em branco inesperadas
 - [ ] O `CHANGELOG.md` foi atualizado se houve mudança relevante de conteúdo
+- [ ] A versão em `package.json` foi bumpada (Seção 11.1) e bate com a exibida na página de login/entrada
 - [ ] O `README.md` foi atualizado se houve mudança estrutural no projeto
-- [ ] A mensagem de commit segue o padrão Conventional Commits
+- [ ] A mensagem de commit segue o padrão Conventional Commits, está em pt-BR e é **atômica** (Seção 9.1)
 
 ### Compilação completa (PowerShell — Windows 11)
 
@@ -507,6 +570,41 @@ Test-Path "site_acolhimento_faesa.pdf"
 # Limpar arquivos auxiliares (manter apenas .tex e .pdf)
 latexmk -c
 ```
+
+### 12.1 Redeploy no EasyPanel — Procedimento Obrigatório de Encerramento
+
+Quando o agente **terminar de executar todas as alterações solicitadas** em uma sessão (commits feitos e push realizado para `master`), ele **deve obrigatoriamente**:
+
+1. **Disparar o redeploy no EasyPanel** usando o webhook configurado:
+     ```bash
+     # Linux/macOS/WSL
+     bash scripts/deploy.sh
+     # ou (multiplataforma, lendo .env automaticamente)
+     node scripts/deploy.mjs
+     ```
+     ```powershell
+     # Windows 11 / PowerShell
+     node scripts\deploy.mjs
+     ```
+     > Observação: o push em `master` também dispara `.github/workflows/deploy.yml`. Ainda assim, o agente **deve** executar manualmente o webhook para confirmação síncrona e capturar a resposta HTTP.
+
+2. **Aguardar a publicação** (Traefik + EasyPanel costumam levar de 30s a 2 min) e então **verificar a versão publicada**:
+     ```bash
+     curl -fsSL https://acolhimento.faesa.gmcsistemas.com.br/version
+     # Resposta esperada: {"name":"acolhimento-faesa","version":"X.Y.Z"}
+     ```
+     ```bash
+     curl -fsSL https://acolhimento.faesa.gmcsistemas.com.br/healthz
+     # Resposta esperada: {"status":"ok"}
+     ```
+
+3. **Comparar** a `version` retornada com a presente em `package.json` da branch local.
+     - **Se baterem:** reportar ao aluno: `Deploy concluído. Versão publicada vX.Y.Z confirmada em produção.`
+     - **Se NÃO baterem:** investigar (cache do Traefik, build falhou no EasyPanel, webhook não disparou). Apontar a causa-raiz (Seção 6.1) antes de propor correção. Não declarar a tarefa concluída até a versão publicada coincidir com a local.
+
+4. **Confirmar visualmente** que a página de login/entrada exibe a nova versão (quando aplicável — atualmente é o badge no rodapé da página "Em Construção").
+
+> **Esta etapa não é opcional.** Encerrar uma sessão de trabalho sem redeploy + verificação de versão equivale a entregar trabalho incompleto.
 
 ---
 
@@ -535,7 +633,18 @@ latexmk -c
   qualquer mudança com 3 ou mais etapas. Aguarde confirmação do aluno. Veja seção 8.
 - **LaTeX:** Use sempre `lualatex` como compilador alvo. Não sugira pacotes incompatíveis com LuaLaTeX.
 - **Commits:** Todas as mensagens de commit sugeridas DEVEM seguir o padrão Conventional Commits
-  em português (seção 9 deste arquivo).
+  em **português brasileiro** e ser **atômicas, organizadas e detalhadas** (Seção 9 e 9.1).
+- **Bump de versão antes do commit:** sempre que a mudança altere comportamento do app, atualize
+  `package.json`, `CHANGELOG.md` (movendo `[Unreleased]` para a nova versão) e a versão exibida
+  na página de login/entrada (`public/index.html` hoje) **no mesmo commit** (Seção 11.1).
+- **Encerramento de sessão = redeploy + verificação:** ao concluir todas as alterações solicitadas,
+  dispare o redeploy no EasyPanel via `scripts/deploy.mjs` e valide via `curl /version` que a
+  versão publicada bate com a do `package.json` (Seção 12.1). Sem essa validação, a tarefa não
+  está concluída.
+- **Testes UI/E2E só na estação via Playwright MCP:** a VPS é headless. Antes de executar qualquer
+  teste de navegação, E2E, usabilidade ou validação visual da tela de login, confirme que o
+  servidor MCP do Playwright está ativo na estação (Seção 2.5). Se não estiver, pare e pergunte
+  ao aluno antes de prosseguir.
 - **README/CHANGELOG:** Ao sugerir qualquer alteração de conteúdo no `.tex`, avise que o
   `README.md` e/ou `CHANGELOG.md` devem ser atualizados junto.
 - **Codificação:** Todos os arquivos de texto devem ser salvos em **UTF-8 sem BOM**.
