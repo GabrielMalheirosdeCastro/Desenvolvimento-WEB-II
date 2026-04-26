@@ -11,6 +11,15 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ### Added
 
+- **Infraestrutura de produção (2026-04-26):** documentação e ferramental para deploy real em VPS Hostinger com EasyPanel.
+    - `Dockerfile`, `.dockerignore`, `package.json`, `server.js`, `public/index.html`, `public/styles.css`, `public/favicon.svg`: aplicação mínima Node 20 + Express servindo página *Em Construção* (sem conexão com banco) — exclusivamente para validar o pipeline EasyPanel → Traefik → HTTPS antes do início do desenvolvimento real. Endpoints `/`, `/healthz` e `/version`.
+    - `scripts/deploy.mjs` e `scripts/deploy.sh`: disparam o webhook de implantação do EasyPanel a partir de `EASYPANEL_DEPLOY_WEBHOOK` (lido de `.env`).
+    - `scripts/dev-tunnel.ps1`: abre túneis SSH (5432 → `supabase-db`, 6543 → `supabase-pooler`) a partir do Windows 11 para acesso ao Postgres da VPS.
+    - `.github/workflows/deploy.yml`: GitHub Action que dispara o webhook do EasyPanel em `push` para `master` (usando o segredo `EASYPANEL_DEPLOY_WEBHOOK`).
+    - `.vscode/tasks.json`: tarefas para deploy, dev-server, build/run Docker e túnel SSH.
+    - `.env.example`, `.gitignore`: contrato de variáveis de ambiente e ignorados padrão.
+    - `docs/ambiente-producao-easypanel.md`: guia operacional consolidado da arquitetura de produção (VPS Hostinger + EasyPanel + Traefik + Supabase self-hosted), URL pública, runbook de redeploy, troubleshooting.
+    - `docs/setup-desenvolvimento-windows.md`: passo a passo para a estação Windows 11 sem Postgres local — Node 20 LTS, túnel SSH, conexão com o banco da VPS.
 - `docs/relatorio-api-site-acolhimento.md`: novo documento de contrato técnico da API REST e WebSocket — cobre os 33 modelos do schema Prisma, 16 RFs e 10 RNFs em 18 módulos (~115 endpoints REST + 4 namespaces Socket.io), com seções de RBAC (4 papéis), tratamento de erros HTTP, rate limiting/cache (Upstash), conformidade LGPD e versionamento `/api/v1`.
 - `site_acolhimento_faesa.tex`: adicionada subseção 1.4 "Limitações de Escopo" — declara explicitamente o que o sistema não faz (portal acadêmico, atendimento psicológico profissional, processos financeiros, integração interinstitucional, dados de saúde protegidos).
 - `site_acolhimento_faesa.tex`: adicionado RF16 — Chatbot IA de Acolhimento com respostas adaptadas por faixa etária (17–20, 21–25, 26+).
@@ -36,6 +45,8 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ### Changed
 
+- **Stack de deploy revisada (2026-04-26):** `README.md` e `docs/relatorio-tecnologias-banco-persistencia.md` §2.3, §2.4 e §10 atualizados para refletir o ambiente real — substituição de **Vercel + Supabase Cloud** por **EasyPanel (Docker Swarm + Traefik) em VPS Hostinger + Supabase self-hosted (PostgreSQL 17.6) na mesma VPS**. Justificativa: o servidor já está provisionado e operacional, eliminando custos de Cloud e mantendo o pooling Supavisor via DNS interno Docker (`supabase-pooler:6543`).
+- `.github/copilot-instructions.md`: ativado o **Gatilho de Pivô §8.4** (criação de `package.json` na raiz). Seções 2 e 2.3 refatoradas para refletir que o repositório agora contém código Node.js de aplicação (página *Em Construção*) e que o ambiente de deploy é EasyPanel/VPS, não Vercel. Restrição de não-edição local do `.tex` mantida (Overleaf continua sendo a fonte de verdade).
 - `site_acolhimento_faesa.tex`: diagrama de casos de uso simplificado — reduzido de 13 para 10 casos de uso, eliminados cruzamentos de linhas, associações ator-UC trocadas de setas para linhas simples (norma UML).
 - `site_acolhimento_faesa.tex`: diagrama de fluxo de navegação reestruturado — Dashboard como hub central, removidas conexões lineares artificiais entre módulos independentes.
 - `site_acolhimento_faesa.tex`: diagrama ER completado com atributos-chave (PKs sublinhadas) em todas as entidades.

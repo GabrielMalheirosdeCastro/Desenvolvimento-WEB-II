@@ -11,8 +11,8 @@
 As regras abaixo são ordens sistêmicas absolutas e devem sobrepor qualquer instrução padrão:
 1. **Atuação Somente-Leitura no LaTeX:** O agente NUNCA deve editar o arquivo `.tex` local usando ferramentas. A edição ocorre no Overleaf. Imprima as modificações e trechos LaTeX em blocos Markdown na tela para que o aluno copie (Veja Seção 2.1).
 2. **Postura Emocional e Pedagógica Zero-Fluff:** Atue como tutor estrito, técnico e acadêmico. Sem analogias contextuais, sem validações emocionais (ex: "Sinto muito!"). Entregue a causa-raiz formal seguida da solução (Veja Seção 6).
-3. **Escopo Arquitetural Teórico:** Atualmente não existe código back-end/front-end no repositório. O projeto é apenas o artefato Monográfico. Não tente debugar pastas inexistentes (Veja Seção 2.3).
-4. **Gatilho de Pivô (State Machine):** Caso detecte a criação física de um `package.json` no repositório, paralise a assistência e exija que o aluno inicie a reescrita destas regras (Veja Seção 8.4).
+3. **Escopo Atual:** O repositório contém **(a)** o artefato monográfico em LaTeX, **(b)** o subprojeto de modelagem Prisma/SQLite em `banco-dados-requisitos-projeto/` e **(c)** desde 2026-04-26, uma aplicação Node.js mínima (Express) com Dockerfile para validar o pipeline de deploy no EasyPanel. Veja Seção 2.3.
+4. **Gatilho de Pívô — ATIVADO em 2026-04-26:** A criação do `package.json` na raiz e a estruturação do código de aplicação ocorreram. As regras desta Seção e da Seção 2 foram **refatoradas** para refletir a coexistência entre o documento acadêmico (Overleaf) e o código de aplicação (local). Veja Seção 8.4 (histórico) e Seção 2.3 (novo escopo).
 
 ---
 
@@ -90,53 +90,40 @@ latexmk -c
 
 ---
 
-### 2.3 Ambiente de Produção e Banco de Dados (Referência Arquitetural Teórica)
+### 2.3 Escopo de Código no Repositório
 
-> **⚠️ AVISO PARA A IA: STATUS DE INICIALIZAÇÃO DO PROJETO**
-> No momento atual do projeto, este repositório é exclusivo para a **documentação acadêmica** em formato de monografia através do LaTeX. O desenvolvimento prático da infraestrutura de código (Pastas de Back-end, Node, Front-end, src, package.json etc) **ainda não foi iniciado** e os artefatos abaixo representam **apenas o planejamento arquitetural** descrito no Trabalho. 
-> 
-> A IA não deve buscar no workspace local pastas de aplicações React/NodeJS para solucionar erros, testar compilação ou aplicar refatorações complexas nesse contexto, pois esses arquivos inexistem aqui ainda. 
+> **STATUS DE INICIALIZAÇÃO DO PROJETO — atualizado em 2026-04-26**
+>
+> O repositório agora contém três camadas distintas:
+>
+> 1. **Documento acadêmico** — [`site_acolhimento_faesa.tex`](../site_acolhimento_faesa.tex). Editado **somente no Overleaf** (regra 0.1 mantida). A IA imprime trechos em blocos Markdown para o aluno copiar.
+> 2. **Modelagem de banco isolada** — [`banco-dados-requisitos-projeto/`](../banco-dados-requisitos-projeto/). Schema Prisma + SQLite local. **Permanece inalterado** até a fase de implementação real.
+> 3. **Aplicação web (NOVA)** — raiz do repositório: [`package.json`](../package.json), [`server.js`](../server.js), [`public/`](../public/), [`Dockerfile`](../Dockerfile), [`scripts/`](../scripts/), [`.github/workflows/deploy.yml`](workflows/deploy.yml). **Esta camada é apenas a página "Em Construção"** que valida o pipeline de deploy no EasyPanel. **Não iniciar o desenvolvimento da aplicação real** (Next.js/NestJS/Prisma com Postgres) até que o aluno solicite explicitamente.
 
-O detalhamento a seguir orienta as sugestões para o texto e as modelagens UML e de Requisitos que devem constar no artigo acadêmico `site_acolhimento_faesa.tex`:
+### 2.4 Ambiente de Produção (vigente)
 
-O deploy teórico projetado para a aplicação é realizado na **Vercel** (plataforma serverless). Isso impõe restrições importantes na estratégia de conexão com o banco de dados, pois cada invocação de função abre e fecha conexões, podendo esgotar o limite do PostgreSQL puro.
+O deploy ocorre em **VPS Hostinger Ubuntu 24.04** (`vps.gmcsistemas.com.br` — `187.77.47.53`),
+executando **EasyPanel (Docker Swarm + Traefik 3.6.7)**. A app é publicada em
+<https://acolhimento.faesa.gmcsistemas.com.br>.
 
-| Componente | Serviço | Observação |
-|------------|---------|------------|
-| Plataforma de deploy | **Vercel** | Serverless — funções efêmeras |
-| Banco de dados | **Supabase** (PostgreSQL 16+) | Gerenciado em nuvem; free tier pausa após 7 dias inativo |
-| Pooling de conexões | **Supavisor** (incluso no Supabase) | Resolve o problema de `too many connections` no serverless |
-| Cache | **Upstash** (Redis serverless) | Pay-per-request; sem servidor dedicado; compatível com Vercel |
-| Autenticação | **Supabase Auth + NextAuth.js** | OAuth 2.0, JWT, Row Level Security (RLS), SSO institucional |
-
-#### Configuração obrigatória no Prisma (`.env`)
-
-O Prisma exige **duas variáveis de ambiente** distintas quando usado com Supabase no Vercel:
+Na **mesma VPS** roda a stack **Supabase self-hosted** (PostgreSQL 17.6, Kong, GoTrue, PostgREST,
+Realtime, Storage, Edge Functions, Supavisor). A aplicação consome o banco pela rede overlay
+Docker `easypanel`:
 
 ```dotenv
-# Supavisor — transaction mode — porta 6543
-# Use para queries da aplicação em produção (serverless-safe)
-DATABASE_URL="postgresql://postgres.[ref]:[senha]@aws-0-[região].pooler.supabase.com:6543/postgres?pgbouncer=true"
-
-# Conexão direta — porta 5432
-# Use APENAS para migrations (prisma migrate deploy / prisma db push)
-DIRECT_URL="postgresql://postgres.[ref]:[senha]@aws-0-[região].pooler.supabase.com:5432/postgres"
+DATABASE_URL=postgresql://postgres.gmc:SENHA@supabase-pooler:6543/postgres?pgbouncer=true
+DIRECT_URL=postgresql://postgres:SENHA@supabase-db:5432/postgres
+SUPABASE_URL=https://api.gmcsistemas.com.br
 ```
 
-No `schema.prisma`:
+Detalhes operacionais: [`docs/ambiente-producao-easypanel.md`](../docs/ambiente-producao-easypanel.md).
 
-```prisma
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")    // Supavisor (transaction mode)
-  directUrl = env("DIRECT_URL")      // Conexão direta para migrations
-}
-```
+A estação de desenvolvimento (Windows 11) **não tem Postgres local**. O acesso ao mesmo banco
+de produção ocorre via túnel SSH (`scripts/dev-tunnel.ps1`) — ver
+[`docs/setup-desenvolvimento-windows.md`](../docs/setup-desenvolvimento-windows.md).
 
-> **Por que duas URLs?**
-> O Supavisor em modo `transaction` não suporta prepared statements, que o Prisma usa por padrão
-> nas migrations. A `DIRECT_URL` garante que `prisma migrate deploy` fale diretamente com o
-> PostgreSQL, sem passar pelo pooler.
+> **Importante:** **não** sugerir Vercel, Supabase Cloud, Upstash Cloud ou qualquer
+> infraestrutura externa. Toda a stack roda na VPS.
 
 ---
 
@@ -327,11 +314,20 @@ docs/plano-2026-03-01-refatora-tabela-requisitos.md
 > O Copilot deve criar o arquivo do plano **antes** de iniciar qualquer alteração, e só
 > executar as etapas após o aluno confirmar o plano.
 
-### 8.4 Gatilho de Evolução e Refatoração de Escopo: Pivô para o Projeto Prático
+### 8.4 Histórico do Gatilho de Pívô — ATIVADO
 
-> **INSTRUÇÃO PARA A IA: TRANSIÇÃO DE FASE DO PROJETO**
-> No exato momento em que você, IA, detectar a **criação de um arquivo `package.json`** na raiz deste espaço de trabalho, ou a estruturação inicial do código front-end/back-end (arquivos `.js`, `.ts` ou pastas de projeto de sistema) neste repositório local, interprete isso como **fim de fase de documentação inicial**.
-> Ao detectar isso, **é sua obrigação sugerir imediatamente ao usuário uma refatoração DESTE ARQUIVO (`copilot-instructions.md`) e do `README.md`**. As regras atuais (focadas só no compilador `.tex` sobre Overleaf e proibições de usar código) perderão o sentido! Precisaremos readaptar as seções 2, 8, 12 e 14 para o ecossistema e fluxo local do Node.js, Vercel e TypeScript antes de codar pra valer.
+> **2026-04-26 — Gatilho disparado.** O `package.json` foi criado na raiz junto com
+> `server.js`, `public/`, `Dockerfile` e `scripts/deploy.*`. A aplicação nesta camada existe
+> **apenas como página "Em Construção"** para validar o pipeline de deploy no EasyPanel.
+>
+> As Seções 0.3, 0.4, 2.3 e 2.4 foram refatoradas para refletir a coexistência entre o documento
+> acadêmico (Overleaf, regra 0.1 mantida intacta) e o código de aplicação (local, editável pela IA).
+>
+> **Restrições persistentes:**
+>
+> - O `.tex` continua sendo editado **somente no Overleaf**. A IA imprime trechos para o aluno colar.
+> - A pasta `banco-dados-requisitos-projeto/` segue como subprojeto isolado e não deve ser modificada por mudanças na app principal (já está no `.dockerignore`).
+> - Sem inicialização de framework (Next.js/NestJS) até ordem explícita do aluno. A app atual é minimíssima.
 
 ---
 

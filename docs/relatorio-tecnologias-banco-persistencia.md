@@ -88,16 +88,17 @@ O Site de Acolhimento FAESA adota uma **arquitetura monolítica modular em 4 cam
 
 ## 2. Camada de Persistência — Banco de Dados
 
-### 2.1 Tecnologia Escolhida: PostgreSQL 16+ via Supabase
+### 2.1 Tecnologia Escolhida: PostgreSQL 17 via Supabase self-hosted
 
 | Atributo | Valor |
 |----------|-------|
 | **Tipo** | Banco de dados relacional (SQL) |
 | **Modelo de dados** | Tabelas com linhas e colunas, relacionamentos via chaves primárias e estrangeiras |
-| **Hospedagem** | Supabase Cloud (DBaaS — Database as a Service) |
-| **Versão mínima** | PostgreSQL 16+ |
-| **Pooling de conexões** | Supavisor (incluso no Supabase) |
-| **Conformidade** | Transações ACID |
+| **Hospedagem** | **Supabase self-hosted** em VPS Hostinger (`vps.gmcsistemas.com.br` — `187.77.47.53`) |
+| **Versão em produção** | PostgreSQL **17.6.1.084** (imagem `supabase/postgres:17.6.1.084`) |
+| **Pooling de conexões** | **Supavisor** (container `supabase-pooler`, portas 5432 *session* / 6543 *transaction*) |
+| **Conformidade** | Transações ACID; extensões `pgvector`, `pgjwt`, `pgcrypto`, `supabase_vault` habilitadas |
+| **Coexistência** | Mesma VPS executa o **EasyPanel** (Docker Swarm + Traefik) que hospeda a aplicação |
 
 ### 2.2 Justificativa da Escolha — Por que SQL Relacional?
 
@@ -106,34 +107,49 @@ A raiz técnica da escolha por banco relacional está na natureza dos dados do p
 1. **Entidades com relacionamentos bem definidos** — Usuário cria Plano, Plano contém Metas, Usuário participa de Mentoria. Esses vínculos exigem integridade referencial garantida pelo banco.
 2. **Integridade referencial obrigatória** — Não pode existir uma Meta sem Plano, nem uma Mentoria sem dois Usuários vinculados. Foreign keys são essenciais.
 3. **Consultas complexas frequentes** — Dashboards e relatórios de coordenação (RF05, RF14) exigem JOINs entre múltiplas tabelas.
-4. **Transações ACID** — Operações como registrar pontuação e desbloquear badges simultaneamente (RF13) exigem atomicidade — ou ambas acontecem, ou nenhuma.
+4. **Transações ACID** — Operações como registrar pontuação e desbloquear badges simultaneamente (RF13) exigem atomicidade.
 
-### 2.3 Justificativa da Escolha — Por que Supabase e Não PostgreSQL Puro?
+### 2.3 Justificativa — Supabase self-hosted vs. PostgreSQL puro vs. Supabase Cloud
 
-| Fator | PostgreSQL puro | Supabase (PostgreSQL gerenciado) |
-|-------|----------------|----------------------------------|
-| **Conexão serverless** | Limite de ~100 conexões simultâneas; serverless (Vercel) esgota em picos | Supavisor (connection pooler nativo) resolve o problema |
-| **Autenticação** | Requer implementação separada | Supabase Auth integrado (OAuth 2.0, JWT, RLS, SSO) |
-| **Storage de arquivos** | Requer S3 ou similar separado | Supabase Storage integrado |
-| **Tempo real** | Requer Socket.io ou similar | Supabase Realtime integrado (WebSocket sobre PostgreSQL) |
-| **Backup** | Configuração manual | Backup automático gerenciado |
-| **Custo** | Self-hosted: servidor dedicado | Free tier disponível (pausa após 7 dias inativo); Pro: $25/mês |
+| Fator | PostgreSQL puro | Supabase Cloud (DBaaS) | **Supabase self-hosted (opção adotada)** |
+|-------|-----------------|------------------------|-------------------------------------------|
+| **Custo** | Servidor dedicado | Free tier limitado (pausa em 7 dias); Pro: USD 25/mês | **Zero adicional** — reaproveita VPS já paga |
+| **Limite de conexões** | ~100; pooler externo necessário | Supavisor incluído | **Supavisor incluído** |
+| **Auth** | Implementação separada | GoTrue gerenciado | **GoTrue self-hosted** (mesmas APIs) |
+| **Storage de arquivos** | Requer S3 separado | Storage gerenciado | **Storage self-hosted** (compat. S3) |
+| **Tempo real** | Requer Socket.io | Realtime gerenciado | **Realtime self-hosted** |
+| **Backup** | Manual | Automático (pago) | Manual via `pg_dumpall` em cron |
+| **Latência app↔DB** | Variável | Variável (região do Supabase) | **Mínima** (mesmo host, overlay Docker) |
+| **Lock-in** | Nenhum | Moderado | Nenhum (open-source) |
 
-### 2.4 Estratégia de Conexão em Ambiente Serverless
+**Decisão (2026-04-26):** o Supabase self-hosted foi adotado porque a VPS Hostinger já estava
+provisionada com EasyPanel para outros projetos. Reaproveitar a infra elimina custos de DBaaS,
+remove latência entre app e banco (mesmo host) e mantém intactas as APIs Supabase
+(Auth/REST/Realtime/Storage) que a documentação original previa.
 
-O deploy na Vercel (serverless) impõe que cada invocação de função abre e fecha conexões com o banco. Para evitar o esgotamento de conexões, o Prisma utiliza **duas URLs distintas**:
+### 2.4 Estratégia de Conexão
 
-| Variável de ambiente | Porta | Modo | Uso |
-|---------------------|-------|------|-----|
-| `DATABASE_URL` | 6543 | Supavisor (transaction mode) | Queries da aplicação em produção (serverless-safe) |
-| `DIRECT_URL` | 5432 | Conexão direta ao PostgreSQL | Exclusivamente para migrations (`prisma migrate deploy` / `prisma db push`) |
+O container da aplicação roda na overlay Docker `easypanel`, mesma rede do `supabase-pooler` e
+`supabase-db`. O Postgres **não está exposto na internet** (porta 5432 fechada na VPS).
 
-**Razão técnica:** O Supavisor em transaction mode não suporta prepared statements, que o Prisma utiliza internamente nas migrations. A `DIRECT_URL` garante que migrations conversem diretamente com o PostgreSQL sem intermediário.
+| Variável | Endereço em produção (rede `easypanel`) | Modo | Uso |
+|----------|-----------------------------------------|------|-----|
+| `DATABASE_URL` | `supabase-pooler:6543` | Supavisor *transaction mode* | Queries da aplicação (runtime) |
+| `DIRECT_URL` | `supabase-db:5432` | Conexão direta | Migrations (`prisma migrate deploy`) |
+
+Em desenvolvimento (Windows 11 sem Postgres local), os mesmos endereços ficam acessíveis via
+**túnel SSH** (`scripts/dev-tunnel.ps1`) mapeando `localhost:6543` → `supabase-pooler:6543` e
+`localhost:5432` → `supabase-db:5432`.
+
+**Razão técnica das duas URLs:** o Supavisor em transaction mode não suporta prepared
+statements, que o Prisma utiliza internamente nas migrations. A `DIRECT_URL` garante que
+`prisma migrate deploy` converse diretamente com o PostgreSQL sem intermediário.
 
 ### 2.5 Histórico da Decisão
 
-- **Versão 0.1.0 (2026-02-28):** PostgreSQL self-hosted definido como banco.
-- **Versão 0.3.0 (2026-02-28):** Migração para Supabase (PostgreSQL 16+ gerenciado) para compatibilidade com Vercel serverless. Registrado no CHANGELOG.
+- **Versão 0.1.0 (2026-02-28):** PostgreSQL self-hosted genérico definido como banco.
+- **Versão 0.3.0 (2026-02-28):** Migração documental para Supabase Cloud (assumindo deploy na Vercel).
+- **Versão 0.4.0 (2026-04-26):** Migração para **Supabase self-hosted** na VPS Hostinger (mesmo host do EasyPanel); deploy via EasyPanel substitui Vercel. Registrado no CHANGELOG.
 
 ---
 
@@ -144,9 +160,9 @@ O deploy na Vercel (serverless) impõe que cada invocação de função abre e f
 | Atributo | Valor |
 |----------|-------|
 | **Tipo** | Banco de dados em memória, estrutura chave-valor |
-| **Hospedagem** | Upstash (Redis serverless, pay-per-request) |
+| **Hospedagem** | A definir — opções: container Redis na própria VPS *vs.* Upstash serverless |
 | **Latência** | Microsegundos (vs milissegundos do PostgreSQL) |
-| **Compatibilidade** | Nativa com ambiente serverless Vercel |
+| **Compatibilidade** | Cliente `ioredis` funciona em qualquer host; `@upstash/redis` se Upstash for escolhido |
 
 ### 3.2 Finalidades no Projeto
 
@@ -161,7 +177,9 @@ O deploy na Vercel (serverless) impõe que cada invocação de função abre e f
 
 - PostgreSQL não é eficiente para dados efêmeros de alta frequência (sessões, cache).
 - Redis opera em memória — latência de microsegundos contra milissegundos do PostgreSQL para leituras de cache.
-- Upstash é serverless (pay-per-request) — não requer servidor Redis dedicado; compatível com o modelo da Vercel.
+- Opções de hospedagem em análise (decisão pendente):
+    - **Container Redis na VPS** — sem custo adicional, mesma rede overlay (latência mínima); requer ~256 MB de RAM e configurar persistência.
+    - **Upstash** (Redis serverless, pay-per-request) — sem servidor dedicado, free tier generoso; latência maior por sair da VPS.
 
 ### 3.4 Pacotes npm Associados
 
@@ -474,8 +492,8 @@ O Supabase permite definir **políticas de acesso direto nas tabelas** do Postgr
 | Medida | Implementação |
 |--------|--------------|
 | OAuth 2.0 | Supabase Auth + NextAuth.js |
-| TLS 1.3 | Forçado pela Vercel em produção (HTTPS obrigatório) |
-| Proteção XSS | React sanitiza output por padrão; CSP headers na Vercel |
+| TLS 1.3 | Terminação no Traefik com certificado Let's Encrypt automático |
+| Proteção XSS | React sanitiza output por padrão; CSP headers configuráveis no Traefik/EasyPanel |
 | Proteção CSRF | Server Actions do Next.js incluem tokens CSRF automáticos |
 | LGPD (RNF09) | Conformidade com Lei 13.709/2018 |
 
@@ -499,33 +517,72 @@ O Supabase permite definir **políticas de acesso direto nas tabelas** do Postgr
 
 ## 10. Infraestrutura de Deploy
 
-### 10.1 Vercel — Plataforma de Deploy
+### 10.1 EasyPanel + Traefik + VPS Hostinger
 
 | Atributo | Valor |
 |----------|-------|
-| **Modelo** | Serverless — funções efêmeras por requisição |
-| **Deploy nativo** | Next.js (zero-config) |
-| **CI/CD** | Automatizado via integração com GitHub (push → build → deploy) |
-| **Preview deployments** | Cada PR gera um ambiente de preview com URL única |
-| **HTTPS** | TLS automático em todos os domínios |
-| **Analytics** | Vercel Analytics para monitoramento de performance (substitui Grafana no escopo acadêmico) |
+| **Plataforma** | EasyPanel (Docker Swarm) em VPS Hostinger Ubuntu 24.04 |
+| **URL pública** | <https://acolhimento.faesa.gmcsistemas.com.br> |
+| **Reverse proxy** | Traefik 3.6.7 com Let's Encrypt automático (HTTP→43 redirect) |
+| **Build** | Dockerfile multi-stage (`node:20-alpine`, ~50 MB final, usuário não-root) |
+| **CI/CD** | GitHub Action ([`deploy.yml`](../.github/workflows/deploy.yml)) dispara webhook do EasyPanel em `push` para `master` |
+| **Mecanismos de deploy** | (1) GitHub Action automática, (2) `npm run deploy`, (3) `./scripts/deploy.sh`, (4) VS Code task, (5) `curl` manual |
+| **HTTPS** | Certificado Let's Encrypt válido até ~90 dias, renovação automática |
+| **Coexistência** | Aplicação, Postgres, Auth, Storage, Realtime e Studio rodam na **mesma VPS** |
 
-### 10.2 Impacto do Modelo Serverless na Arquitetura
+### 10.2 Arquitetura de Rede em Produção
 
-| Aspecto | Impacto | Solução adotada |
-|---------|---------|-----------------|
-| **Conexões com banco** | Cada invocação abre/fecha conexão | Supavisor (connection pooling) |
-| **Cold starts** | Primeira invocação após inatividade demora mais | Funções pequenas, Edge Runtime quando possível |
-| **Stateless** | Funções não mantêm estado entre invocações | Redis (Upstash) para sessões e cache |
-| **Timeout** | Funções serverless têm limite de execução (~10s default) | Operações pesadas delegadas a background jobs |
+```
+Internet (HTTPS)
+        │
+        ▼
+Cloudflare DNS (DNS-only) → 187.77.47.53
+        │
+        ▼
+Traefik 3.6.7 (overlay `easypanel`, ports 80/443)
+        │ routing por hostname
+        ├─▶ acolhimento.faesa.gmcsistemas.com.br → container da app (Express, port 3010 interno)
+        ├─▶ api.gmcsistemas.com.br             → supabase-kong:8000
+        └─▶ studio.gmcsistemas.com.br          → supabase-kong (basic-auth)
+                                                   │
+                                                   ▼
+                                            supabase-kong (Kong 3.9.1)
+                                            │ plugins key-auth
+                                            ├─▶ supabase-auth (GoTrue)
+                                            ├─▶ supabase-rest (PostgREST)
+                                            ├─▶ supabase-realtime
+                                            ├─▶ supabase-storage
+                                            ├─▶ supabase-edge-functions
+                                            └─▶ supabase-studio
+                                                   │
+                                                   ▼
+                                            supabase-pooler (Supavisor :6543/:5432)
+                                                   │
+                                                   ▼
+                                            supabase-db (PostgreSQL 17.6, não exposto p/ internet)
+```
 
-### 10.3 Docker
+A aplicação e o Postgres conversam **dentro da overlay `easypanel`** — sem saída para internet,
+latência sub-milissegundo.
 
-Docker está mencionado na stack, porém com escopo **restrito ao desenvolvimento local e testes**. A Vercel não utiliza Docker em produção diretamente. Docker pode ser utilizado para:
+### 10.3 Por que EasyPanel e não Vercel
 
-- Ambiente de desenvolvimento local padronizado.
-- PostgreSQL local para testes sem depender do Supabase.
-- Builds reproduzíveis para CI.
+| Fator | Vercel | **EasyPanel (opção adotada)** |
+|-------|--------|------------------------------|
+| **Custo** | Free tier limitado; Pro USD 20/mês | Zero adicional (VPS já paga) |
+| **Modelo de execução** | Serverless (cold starts, timeout 10s) | Container persistente (sem cold start) |
+| **Docker em produção** | Não suporta nativamente | **Build a partir de Dockerfile** |
+| **Postgres** | Externo (latência inter-região) | Mesmo host (`supabase-pooler:6543` interno) |
+| **TLS** | Automático | Automático (Traefik + Let's Encrypt) |
+| **CI/CD** | Push GitHub → build na Vercel | Push GitHub → GitHub Action → webhook EasyPanel → build na VPS |
+| **Lock-in** | Alto (next.config.js, edge runtime) | Nenhum — imagem Docker portável |
+| **Observabilidade** | Vercel Analytics incluído | A definir (Uptime Kuma + Sentry recomendados) |
+
+### 10.4 Docker em produção
+
+Docker é a base do deploy: o EasyPanel constrói a imagem da aplicação a partir do
+[`Dockerfile`](../Dockerfile) na raiz do repositório e a publica como container Swarm na overlay
+`easypanel`. **Não** é apenas para desenvolvimento local — é o runtime de produção.
 
 ---
 
@@ -545,9 +602,9 @@ Docker está mencionado na stack, porém com escopo **restrito ao desenvolviment
 | Ferramenta | Tipo | Escopo |
 |-----------|------|--------|
 | **Sentry** | Error tracking | Captura exceções em produção, stack traces, contexto do usuário |
-| **Vercel Analytics** | Performance e uso | Métricas de Core Web Vitals, latência por rota, uso por região |
+| **Uptime Kuma** (a configurar) | Monitoria de disponibilidade | HTTP probe de `/healthz` da aplicação e dos endpoints Supabase |
 
-**Nota:** Grafana foi listado na stack original, mas exige infraestrutura adicional (Prometheus como datasource). Para escopo acadêmico, **Vercel Analytics + Sentry** são suficientes.
+**Nota:** Grafana foi listado na stack original mas exige infraestrutura adicional (Prometheus). Para escopo acadêmico, **Sentry + Uptime Kuma** (ambos podem rodar na própria VPS via EasyPanel) são suficientes.
 
 ---
 

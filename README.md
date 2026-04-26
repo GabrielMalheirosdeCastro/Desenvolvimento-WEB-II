@@ -88,24 +88,100 @@ A plataforma segue uma arquitetura em 4 camadas:
 | **Frontend** | React.js / Next.js 14+ | SSR/SSG para performance, TypeScript |
 | **Estilização** | Tailwind CSS + shadcn/ui | Design system responsivo, dark mode |
 | **Backend** | Node.js + NestJS | Alta performance, ecossistema JS unificado |
-| **Banco de Dados** | Supabase (PostgreSQL 16+) | PostgreSQL gerenciado em nuvem; compatível com Vercel (serverless pooling via Supavisor) |
-| **Cache** | Redis (Upstash) | Serverless Redis compatível com Vercel; sessões e notificações em tempo real |
-| **ORM** | Prisma | Type-safe, migrations automáticas; integração oficial com Supabase |
-| **Autenticação** | Supabase Auth + NextAuth.js | Auth nativo do Supabase (OAuth 2.0, JWT, SSO) |
-| **Real-time** | Supabase Realtime / Socket.io | Chat e notificações ao vivo |
-| **Deploy** | Vercel + Docker | CI/CD automatizado, escalabilidade |
+| **Banco de Dados** | **Supabase self-hosted** (PostgreSQL 17.6) | Stack Supabase completa instalada na **mesma VPS** que hospeda a aplicação; pooler Supavisor incluso |
+| **Cache** | Redis (a definir) | Avaliação pendente: container Redis na própria VPS *vs.* Upstash serverless |
+| **ORM** | Prisma | Type-safe, migrations automáticas; conexão direta ao Postgres via rede overlay Docker |
+| **Autenticação** | Supabase Auth (GoTrue) + NextAuth.js | OAuth 2.0, JWT, RLS, SSO institucional |
+| **Real-time** | Supabase Realtime / Socket.io | Chat, fórum e notificações ao vivo |
+| **Deploy** | **EasyPanel (Docker Swarm) + Traefik** em **VPS Hostinger** | Build a partir de `Dockerfile`, TLS Let's Encrypt automático, redeploy via webhook |
 | **Testes** | Jest + Cypress + Playwright | Cobertura unitária, integração e E2E |
-| **Monitoramento** | Sentry + Grafana | Error tracking e métricas de performance |
+| **Monitoramento** | Sentry + (Grafana/Uptime Kuma a definir) | Error tracking; observabilidade pendente |
 
-> **Banco de Dados — Decisão Técnica (2026-02-28):** O Supabase foi adotado como solução de
-> banco de dados em nuvem em substituição ao PostgreSQL self-hosted. O Supabase **é** PostgreSQL
-> (v16+) com gerenciamento, pooling e Auth incluídos. A compatibilidade com Vercel (serverless) é
-> garantida pelo **Supavisor** (connection pooler nativo do Supabase), que evita o esgotamento de
-> conexões em funções serverless. No Prisma, usa-se `DATABASE_URL` (Supavisor transaction mode,
-> porta 6543) para queries em produção e `DIRECT_URL` (conexão direta, porta 5432) para migrations.
-> Fontes consultadas: [supabase.com/pricing](https://supabase.com/pricing),
-> [supabase.com/docs/guides/database/connecting-to-postgres](https://supabase.com/docs/guides/database/connecting-to-postgres),
-> [supabase.com/partners/integrations/prisma](https://supabase.com/partners/integrations/prisma).
+> **Banco de Dados — Decisão Técnica revisada (2026-04-26):** o projeto adota **Supabase self-hosted**
+> (PostgreSQL 17.6 + Kong + GoTrue + PostgREST + Realtime + Storage + Edge Functions + Supavisor)
+> rodando na **mesma VPS Hostinger** que executa o EasyPanel. A aplicação se conecta pela rede
+> overlay Docker `easypanel`, sem expor o Postgres na internet. O Prisma usa `DATABASE_URL`
+> (`supabase-pooler:6543`, transaction mode) para queries e `DIRECT_URL` (`supabase-db:5432`) para
+> migrations. Detalhes operacionais em [`/opt/supabase/.../DEPLOY-EXECUTADO-2026-04.md`](../postgres17-supabase-easypanel/docs/DEPLOY-EXECUTADO-2026-04.md)
+> e em [docs/ambiente-producao-easypanel.md](docs/ambiente-producao-easypanel.md).
+
+---
+
+## 🚀 Ambiente de Produção
+
+| Item | Valor |
+|---|---|
+| **URL pública** | <https://acolhimento.faesa.gmcsistemas.com.br> |
+| **Servidor** | VPS Hostinger — Ubuntu 24.04.4 LTS, 2 vCPU AMD EPYC 9354P, 7.8 GiB RAM, 96 GB SSD |
+| **IP** | `187.77.47.53` (DNS Cloudflare *DNS-only*) |
+| **Orquestrador** | Docker 29.4.1 + Swarm + EasyPanel |
+| **Reverse proxy** | Traefik 3.6.7 (gerenciado pelo EasyPanel) com Let's Encrypt automático |
+| **Banco de dados** | Supabase self-hosted (PostgreSQL 17.6) — **mesma VPS** |
+| **Build** | Dockerfile (multi-stage, `node:20-alpine`, usuário não-root) |
+| **Gatilho de deploy** | Webhook do EasyPanel (segredo `EASYPANEL_DEPLOY_WEBHOOK`) |
+| **GitHub Action** | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) — dispara em `push` para `master` |
+
+> O **mesmo banco de dados** é utilizado para desenvolvimento e produção (não há Postgres na
+> estação de trabalho Windows 11). O acesso de desenvolvimento ocorre via **túnel SSH** —
+> ver [docs/setup-desenvolvimento-windows.md](docs/setup-desenvolvimento-windows.md).
+
+---
+
+## 🗄️ Banco de Dados (Dev e Produção)
+
+A porta 5432 do Postgres **não está exposta na internet** (decisão de segurança). O acesso depende do contexto:
+
+| Contexto | Como conectar |
+|---|---|
+| **App em produção** (container EasyPanel anexo à overlay `easypanel`) | `DATABASE_URL=postgresql://postgres.gmc:SENHA@supabase-pooler:6543/postgres?pgbouncer=true`<br/>`DIRECT_URL=postgresql://postgres:SENHA@supabase-db:5432/postgres` |
+| **Dev na estação Windows 11** (sem Postgres local) | Abrir túnel SSH: `pwsh ./scripts/dev-tunnel.ps1` → conectar em `localhost:6543` (pooler) e `localhost:5432` (direct) |
+| **Administração via DBeaver/pgAdmin** | Mesmo túnel SSH (script PowerShell acima) |
+| **psql interativo no servidor** | `ssh root@vps.gmcsistemas.com.br "docker exec -it supabase-db psql -U postgres"` |
+
+> O subprojeto [`banco-dados-requisitos-projeto/`](banco-dados-requisitos-projeto/) contém uma
+> **modelagem isolada em SQLite** usada apenas para validar o schema Prisma de 33 tabelas.
+> A migração desse schema para o Postgres da VPS ocorrerá quando a fase de desenvolvimento da
+> aplicação iniciar.
+
+---
+
+## 📦 Deploy
+
+A aplicação é construída a partir do [`Dockerfile`](Dockerfile) na raiz e implantada via
+EasyPanel. Existem **cinco formas** de disparar o redeploy (todas levam ao mesmo webhook):
+
+| # | Forma | Quando usar |
+|---|---|---|
+| 1 | **Automática** — `git push origin master` | Fluxo padrão. A GitHub Action [`deploy.yml`](.github/workflows/deploy.yml) dispara o webhook automaticamente. |
+| 2 | `npm run deploy` | Disparo manual local — lê `.env`, valida o segredo, chama o webhook via `fetch`. |
+| 3 | `./scripts/deploy.sh` | Mesma coisa em bash (Linux/macOS/WSL). |
+| 4 | VS Code task **Deploy: trigger EasyPanel webhook** | Pelo Command Palette ▸ *Tasks: Run Task*. |
+| 5 | `curl` manual | `curl -fsS -X POST "$EASYPANEL_DEPLOY_WEBHOOK"` — *fallback* de emergência. |
+
+### Configuração do segredo
+
+1. **Local:** copie `.env.example` → `.env` e preencha `EASYPANEL_DEPLOY_WEBHOOK`.
+   `.env` já está no [.gitignore](.gitignore) — **nunca** comite o token.
+2. **GitHub Actions:** *Settings ▸ Secrets and variables ▸ Actions ▸ New repository secret* —
+   nome: `EASYPANEL_DEPLOY_WEBHOOK`, valor: a URL completa fornecida pelo EasyPanel.
+
+### Variáveis de ambiente da aplicação
+
+| Variável | Onde usa | Observação |
+|---|---|---|
+| `PORT` | Servidor Express | Default `3010` (escolhido para não conflitar com a UI do EasyPanel na porta 3000). EasyPanel injeta o valor real em produção. |
+| `NODE_ENV` | Servidor Express | `production` em produção. |
+| `DATABASE_URL` | Prisma (runtime) | Apontará para `supabase-pooler:6543` quando a app real for iniciada. |
+| `DIRECT_URL` | Prisma (migrations) | Apontará para `supabase-db:5432`. |
+| `SUPABASE_URL` / `SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` | SDK Supabase | Os dois primeiros são frontend-safe; o `service_role` é **backend only**. |
+| `EASYPANEL_DEPLOY_WEBHOOK` | Scripts de deploy | Tratar como segredo. |
+
+### Estado atual do deploy
+
+> Esta primeira versão (`v0.4.0`) é uma **página "Em Construção"** servida por
+> Node.js + Express, **sem conexão com o banco de dados**. Existe apenas para validar o
+> pipeline GitHub → EasyPanel → Traefik → HTTPS antes do início do desenvolvimento real.
+> Endpoints disponíveis: `/` (página), `/healthz` (JSON status), `/version` (JSON versão).
 
 ---
 
@@ -132,6 +208,11 @@ O arquivo [`site_acolhimento_faesa.tex`](site_acolhimento_faesa.tex) contém o d
 - ✅ Personas e Histórias de Usuário
 
 Projeto inclui uma área permanente de banco de dados em [banco-dados-requisitos-projeto/README.md](banco-dados-requisitos-projeto/README.md), com modelo relacional SQLite de 33 tabelas aderente aos requisitos do projeto em [banco-dados-requisitos-projeto/schema.sql](banco-dados-requisitos-projeto/schema.sql), modelagem em Prisma em [banco-dados-requisitos-projeto/prisma/schema.prisma](banco-dados-requisitos-projeto/prisma/schema.prisma), e DER em Mermaid em [banco-dados-requisitos-projeto/der-fonte.mmd](banco-dados-requisitos-projeto/der-fonte.mmd) para apoio técnico às análises do banco.
+
+Guias operacionais de infraestrutura/deploy:
+
+- [docs/ambiente-producao-easypanel.md](docs/ambiente-producao-easypanel.md) — arquitetura de produção, runbook, troubleshooting.
+- [docs/setup-desenvolvimento-windows.md](docs/setup-desenvolvimento-windows.md) — setup da estação Windows 11 com túnel SSH para o Postgres da VPS.
 
 ### Como compilar o documento LaTeX
 
