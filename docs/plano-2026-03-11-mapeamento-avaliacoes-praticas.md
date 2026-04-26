@@ -4,6 +4,13 @@
 **Solicitado por:** Gabriel Malheiros de Castro  
 **Contexto:** A disciplina D001508 — Desenvolvimento de Aplicações Web II possui critérios avaliativos que envolvem entregas práticas e provas. Este documento mapeia cada critério de avaliação ao contexto do projeto Site de Acolhimento FAESA, identificando o que precisa ser estudado, o que já está definido na documentação monográfica e quais decisões técnicas impactam cada avaliação.
 
+> **Aviso de supersessão (2026-04-26):** este plano cita **Vercel + Upstash** como
+> infraestrutura prevista. A decisão final foi **EasyPanel + Supabase self-hosted
+> (PostgreSQL 17.6) na mesma VPS Hostinger**, com o **mesmo banco** servindo dev (via
+> túnel SSH) e produção. Estado vigente em `README.md`,
+> [`ambiente-producao-easypanel.md`](ambiente-producao-easypanel.md) e
+> [`setup-desenvolvimento-windows.md`](setup-desenvolvimento-windows.md).
+
 ---
 
 ## Objetivo

@@ -4,6 +4,14 @@
 **Solicitado por:** Gabriel Malheiros de Castro  
 **Contexto:** Análise do documento `site_acolhimento_faesa.tex` para responder às perguntas da fase de Projeto (Design) do ciclo de desenvolvimento de software — identificando o que já está definido, o que precisa de aprofundamento e qual a recomendação técnica para cada eixo.
 
+> **Aviso de supersessão (2026-04-26):** este plano é um snapshot da fase de design e
+> menciona **Vercel + Supabase Cloud + Upstash** como stack candidata. A decisão final
+> foi outra: **EasyPanel + Supabase self-hosted (PostgreSQL 17.6) na mesma VPS
+> Hostinger**, com o **mesmo banco** servindo dev (via túnel SSH) e produção. Para o
+> estado vigente, consulte `README.md`, [`ambiente-producao-easypanel.md`](ambiente-producao-easypanel.md),
+> [`setup-desenvolvimento-windows.md`](setup-desenvolvimento-windows.md) e
+> [`relatorio-tecnologias-banco-persistencia.md`](relatorio-tecnologias-banco-persistencia.md).
+
 ---
 
 ## Objetivo
