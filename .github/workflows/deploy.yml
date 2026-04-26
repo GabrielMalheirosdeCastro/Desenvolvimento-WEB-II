@@ -1,0 +1,52 @@
+name: Deploy to EasyPanel
+
+# Dispara o webhook de implantação do EasyPanel após push em master.
+# Pré-requisitos:
+#   - GitHub Secret `EASYPANEL_DEPLOY_WEBHOOK` cadastrado em
+#     Settings ▸ Secrets and variables ▸ Actions ▸ New repository secret
+#     (valor: a URL completa fornecida pelo EasyPanel).
+
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - 'docs/**'
+      - '*.tex'
+      - '*.md'
+      - 'banco-dados-requisitos-projeto/**'
+      - '.vscode/**'
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-easypanel
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Trigger EasyPanel webhook
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate secret
+        run: |
+          if [ -z "${{ secrets.EASYPANEL_DEPLOY_WEBHOOK }}" ]; then
+            echo "::error::Secret EASYPANEL_DEPLOY_WEBHOOK não está configurado."
+            exit 1
+          fi
+
+      - name: POST webhook
+        env:
+          WEBHOOK: ${{ secrets.EASYPANEL_DEPLOY_WEBHOOK }}
+        run: |
+          set -euo pipefail
+          echo "[deploy] disparando webhook EasyPanel..."
+          HTTP_CODE=$(curl -fsS -o /tmp/resp.txt -w '%{http_code}' \
+            -X POST \
+            -H 'User-Agent: gha-site-acolhimento-faesa/1.0' \
+            "$WEBHOOK")
+          echo "[deploy] HTTP $HTTP_CODE"
+          if [ -s /tmp/resp.txt ]; then
+            echo "[deploy] resposta:"
+            head -c 1000 /tmp/resp.txt
+            echo ""
+          fi

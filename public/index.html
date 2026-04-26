@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#003366" />
+    <meta name="description" content="Site de Acolhimento FAESA — em construção. Plataforma de acolhimento estudantil em fase de documentação e desenvolvimento." />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Site de Acolhimento FAESA — Em Construção</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <main class="card" role="main">
+        <header class="brand">
+            <span class="brand__mark" aria-hidden="true">FAESA</span>
+            <p class="brand__tag">Desenvolvimento de Aplicações Web II · 2026</p>
+        </header>
+
+        <section class="hero">
+            <h1>Site de Acolhimento <span class="accent">FAESA</span></h1>
+            <p class="lead">
+                Plataforma de acolhimento estudantil em construção.
+                Estamos preparando os recursos que acompanharão o aluno do ingresso à conclusão do curso.
+            </p>
+            <div class="status" aria-live="polite">
+                <span class="status__dot"></span>
+                <span class="status__label">Em fase de documentação e desenvolvimento</span>
+            </div>
+        </section>
+
+        <section class="meta">
+            <dl>
+                <div>
+                    <dt>Disciplina</dt>
+                    <dd>D001508 — Desenvolvimento de Aplicações Web II</dd>
+                </div>
+                <div>
+                    <dt>Docente</dt>
+                    <dd>Otávio Lube dos Santos</dd>
+                </div>
+                <div>
+                    <dt>Aluno</dt>
+                    <dd>Gabriel Malheiros de Castro · 23110145</dd>
+                </div>
+                <div>
+                    <dt>Repositório</dt>
+                    <dd><a href="https://github.com/GabrielMalheirosdeCastro/Desenvolvimento-WEB-II" rel="noopener noreferrer" target="_blank">github.com/.../Desenvolvimento-WEB-II</a></dd>
+                </div>
+            </dl>
+        </section>
+
+        <footer class="foot">
+            <p>
+                <span id="build-info">Carregando build…</span>
+            </p>
+            <p class="foot__hint">
+                Endpoint de saúde: <code>/healthz</code> · Versão: <code>/version</code>
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        // Carrega versão do servidor para confirmar visualmente que o redeploy funcionou.
+        fetch('/version')
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(({ name, version }) => {
+                document.getElementById('build-info').textContent =
+                    `${name} · v${version}`;
+            })
+            .catch(() => {
+                document.getElementById('build-info').textContent = 'Build info indisponível';
+            });
+    </script>
+</body>
+</html>

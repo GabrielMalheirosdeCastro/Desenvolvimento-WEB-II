@@ -1,0 +1,26 @@
+{
+  "name": "site-acolhimento-faesa",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "description": "Site de Acolhimento FAESA — página Em Construção (validação do pipeline de deploy EasyPanel).",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "deploy": "node scripts/deploy.mjs",
+    "docker:build": "docker build -t site-acolhimento-faesa:local .",
+    "docker:run": "docker run --rm -p 3010:3010 -e NODE_ENV=production site-acolhimento-faesa:local"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GabrielMalheirosdeCastro/Desenvolvimento-WEB-II.git"
+  },
+  "license": "UNLICENSED",
+  "author": "Gabriel Malheiros de Castro <23110145>"
+}

@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Deploy: trigger EasyPanel webhook",
+            "type": "shell",
+            "command": "npm run deploy",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "detail": "Dispara o webhook de implantação do EasyPanel (lê .env)."
+        },
+        {
+            "label": "Dev: Express server (watch)",
+            "type": "shell",
+            "command": "npm run dev",
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "detail": "Sobe o servidor Express local em http://localhost:3010 com hot-reload."
+        },
+        {
+            "label": "Docker: build local image",
+            "type": "shell",
+            "command": "npm run docker:build",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "shared" }
+        },
+        {
+            "label": "Docker: run local image",
+            "type": "shell",
+            "command": "npm run docker:run",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "dedicated" }
+        },
+        {
+            "label": "Dev tunnel: SSH to Postgres VPS (Windows)",
+            "type": "shell",
+            "command": "pwsh -ExecutionPolicy Bypass -File ./scripts/dev-tunnel.ps1",
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "dedicated" },
+            "detail": "Abre túneis SSH 5432 e 6543 para o banco da VPS (Windows 11 / pwsh)."
+        }
+    ]
+}
