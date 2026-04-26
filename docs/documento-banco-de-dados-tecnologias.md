@@ -15,21 +15,31 @@ Descrever, em formato de lista e sem código, a estrutura do banco de dados do p
 
 ## 1. Tecnologia de Banco de Dados Escolhida
 
-### 1.1 Banco Principal — PostgreSQL 16+ (via Supabase)
+> **Decisão arquitetural (revisão 2026-04-26):** é utilizado **um único banco de dados**
+> — PostgreSQL 17.6 do **Supabase self-hosted** rodando na VPS Hostinger — tanto em
+> **produção** (container `acolhimento_faesa` na rede Docker `easypanel`) quanto em
+> **desenvolvimento** (estação Windows 11, sem Postgres local, via túnel SSH em
+> `localhost:6543` e `localhost:5432`). Não existe instância separada de banco para
+> dev. Consulte [`setup-desenvolvimento-windows.md`](setup-desenvolvimento-windows.md) e
+> [`ambiente-producao-easypanel.md`](ambiente-producao-easypanel.md) para detalhes
+> operacionais.
+
+### 1.1 Banco Principal — PostgreSQL 17.6 (via Supabase self-hosted)
 
 - **Tipo:** Banco de dados relacional (SQL)
 - **Modelo de dados:** Tabelas com linhas e colunas, relacionamentos via chaves primárias e estrangeiras
-- **Hospedagem:** Supabase (PostgreSQL gerenciado em nuvem)
+- **Hospedagem:** **Supabase self-hosted** (PostgreSQL 17.6 + Kong + GoTrue + PostgREST + Realtime + Storage + Edge Functions + Supavisor) na **VPS Hostinger Ubuntu 24.04** — a **mesma máquina** que executa o EasyPanel e o contêner da aplicação. Não utiliza Supabase Cloud (DBaaS).
 - **Por que relacional e não NoSQL:**
     - O sistema possui entidades com relacionamentos bem definidos (Usuário cria Plano, Plano contém Metas, Usuário participa de Mentoria)
     - Necessidade de integridade referencial (ex: não pode existir uma Meta sem Plano)
     - Consultas complexas com JOINs são frequentes (dashboards, relatórios de coordenação)
     - Suporte nativo a transações ACID — essencial para operações como registro de pontuação e badges simultâneos
 
-### 1.2 Cache — Redis (via Upstash)
+### 1.2 Cache — Redis (a definir)
 
 - **Tipo:** Banco de dados em memória, estrutura chave-valor
-- **Hospedagem:** Upstash (Redis serverless, pay-per-request)
+- **Hospedagem:** **a definir** — opções em avaliação: container Redis na própria VPS
+  ou Upstash serverless
 - **Finalidade no projeto:**
     - Cache de sessões de usuário autenticado
     - Armazenamento temporário de dados do dashboard (evita consultas repetidas ao PostgreSQL)
@@ -220,30 +230,31 @@ São valores fixos e pré-definidos que restringem o que pode ser armazenado em 
 
 | Camada | Tecnologia | Tipo | Papel no Projeto |
 |--------|-----------|------|------------------|
-| **Persistência principal** | PostgreSQL 16+ (Supabase) | Banco relacional SQL | Armazena todas as entidades, relacionamentos e dados permanentes |
-| **Cache e tempo real** | Redis (Upstash) | Banco chave-valor em memória | Sessões de autenticação, cache de dashboard, rate limiting, filas de notificação |
+| **Persistência principal** | PostgreSQL 17.6 (Supabase self-hosted na VPS) | Banco relacional SQL | Armazena todas as entidades, relacionamentos e dados permanentes — mesma instância em dev e produção |
+| **Cache e tempo real** | Redis (a definir) | Banco chave-valor em memória | Sessões de autenticação, cache de dashboard, rate limiting, filas de notificação |
 | **Mapeamento objeto-relacional** | Prisma | ORM para Node.js/TypeScript | Traduz operações JS em queries SQL, gerencia migrations, garante type-safety |
 | **Autenticação no banco** | Supabase Auth | Serviço de autenticação integrado | OAuth 2.0, JWT, Row Level Security (RLS) — políticas de acesso direto nas tabelas |
 | **Tempo real no banco** | Supabase Realtime | WebSocket integrado ao PostgreSQL | Notificações em tempo real quando dados mudam no banco (alternativa ao Socket.io) |
-| **Hospedagem do banco** | Supabase Cloud | DBaaS (Database as a Service) | PostgreSQL gerenciado, backup automático, pooling de conexões via Supavisor |
-| **Deploy da aplicação** | Vercel | Plataforma serverless | Funções efêmeras que se conectam ao banco via Supavisor (connection pooling na porta 6543) |
+| **Hospedagem do banco** | **Supabase self-hosted** na VPS Hostinger | Stack Docker própria | PostgreSQL 17.6 + Supavisor (pooling) + Kong + GoTrue + Storage; **mesma VPS** que executa o EasyPanel e o contêner da aplicação |
+| **Deploy da aplicação** | EasyPanel (Docker Swarm + Traefik) na mesma VPS | PaaS auto-hospedada | Build a partir de `Dockerfile`, TLS Let's Encrypt automático, conexão ao Postgres via DNS interno Docker (`supabase-pooler:6543`) |
 
 ---
 
 ## 7. Decisões Técnicas Relevantes
 
-### 7.1 Por que Supabase e não PostgreSQL puro?
+### 7.1 Por que Supabase self-hosted e não PostgreSQL puro?
 
-- O projeto será deployed na Vercel (serverless) — cada requisição abre e fecha uma conexão com o banco
-- PostgreSQL puro tem limite de conexões simultâneas (tipicamente 100) — serverless pode esgotar isso em picos
-- O Supabase inclui o **Supavisor** (connection pooler) que resolve este problema nativamente
-- Além do banco, o Supabase fornece autenticação, storage de arquivos e real-time — reduz a quantidade de serviços externos necessários
+- O projeto está deployed em uma VPS Hostinger própria (não serverless), com EasyPanel orquestrando containers Docker
+- Supabase self-hosted entrega, em uma única stack, o conjunto que seria necessário montar manualmente: Postgres 17.6, Supavisor (pooler), GoTrue (auth), PostgREST (REST automático do schema), Realtime, Storage e Edge Functions
+- O **Supavisor** (porta 6543, transaction mode) protege o Postgres contra exaustão de conexões, mesmo em picos vindos do contêner da aplicação
+- O banco roda na **mesma VPS** que a aplicação e que a estação de desenvolvimento acessa via túnel SSH — elimina latência de rede WAN e custos de DBaaS
+- Banco único para dev e prod garante paridade absoluta de dados, extensões e schema, eliminando classe inteira de bugs do tipo "funciona local mas quebra em produção"
 
-### 7.2 Por que Redis (Upstash) separado?
+### 7.2 Por que Redis em separado?
 
 - PostgreSQL não é eficiente para dados efêmeros de alta frequência (sessões de autenticação, cache de consultas repetidas)
 - Redis opera em memória — latência de microsegundos contra milissegundos do PostgreSQL
-- Upstash é serverless (pay-per-request) — compatível com o modelo da Vercel, sem servidor Redis dedicado
+- Hospedagem ainda em avaliação: container Redis na própria VPS (sem custo adicional, mesma rede Docker) *vs.* Upstash serverless (zero operação, pay-per-request)
 
 ### 7.3 Por que Prisma como ORM?
 
@@ -252,12 +263,13 @@ São valores fixos e pré-definidos que restringem o que pode ser armazenado em 
 - Integração oficial com Supabase — documentação e suporte direto da equipe Prisma
 - Todas as operações do Prisma retornam Promises — alinha diretamente com o conteúdo de Programação Assíncrona (Módulo 2)
 
-### 7.4 Relação com o Modelo Serverless (Vercel)
+### 7.4 Duas URLs de conexão ao mesmo banco (Prisma)
 
-- O Prisma precisa de duas URLs de conexão para funcionar na Vercel:
-    - **DATABASE_URL** — conexão via Supavisor (porta 6543, transaction mode) — usada pela aplicação em produção
-    - **DIRECT_URL** — conexão direta ao PostgreSQL (porta 5432) — usada exclusivamente para executar migrations
+- O Prisma utiliza duas URLs apontando para o **mesmo PostgreSQL** da VPS:
+    - **DATABASE_URL** — conexão via Supavisor (porta 6543, transaction mode) — usada pela aplicação em runtime (em produção resolve `supabase-pooler:6543`; em dev resolve `localhost:6543` via túnel SSH)
+    - **DIRECT_URL** — conexão direta ao PostgreSQL (porta 5432) — usada exclusivamente para executar migrations (`supabase-db:5432` em prod, `localhost:5432` em dev)
 - Motivo: o Supavisor em transaction mode não suporta prepared statements, que o Prisma utiliza internamente nas migrations
+- O único fator que muda entre dev e prod é **o host** (`localhost` vs nome de serviço Docker); credenciais, schema e dados são idênticos pois trata-se da mesma instância física
 
 ---
 
@@ -265,8 +277,8 @@ São valores fixos e pré-definidos que restringem o que pode ser armazenado em 
 
 | # | Item | Status |
 |---|------|--------|
-| 1 | Tecnologia principal definida (PostgreSQL/Supabase) | Definido |
-| 2 | Cache definido (Redis/Upstash) | Definido |
+| 1 | Tecnologia principal definida (PostgreSQL 17.6 / Supabase self-hosted, mesma instância em dev e prod) | Definido |
+| 2 | Cache definido (Redis — hospedagem em avaliação: container na VPS *vs.* Upstash) | Parcial |
 | 3 | ORM definido (Prisma) | Definido |
 | 4 | 8 entidades principais modeladas (diagrama de classes + ER) | Definido |
 | 5 | 6 entidades complementares identificadas (Post, Comentario, Notificacao, Trilha, Mensagem, PontuacaoUsuario) | Identificado — pendente modelagem formal |

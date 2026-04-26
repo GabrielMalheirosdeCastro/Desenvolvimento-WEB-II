@@ -623,18 +623,18 @@ A tabela abaixo consolida **todas as tecnologias** do projeto, organizadas por c
 | **Runtime backend** | Node.js | JavaScript | Servidor assíncrono, Event Loop, I/O não-bloqueante | Performance V8 |
 | **Framework API (avaliação)** | Express.js | JavaScript | Rotas REST, middleware, CRUD — requisito da disciplina | Conteúdo programático |
 | **Framework API (produção)** | NestJS | TypeScript | Arquitetura modular, WebSocket, lógica de domínio complexa | Escalabilidade |
-| **Persistência principal** | PostgreSQL 16+ (Supabase) | SQL | Entidades, relacionamentos, integridade referencial, ACID | Dados estruturados com JOINs |
-| **Cache e tempo real** | Redis (Upstash) | Chave-valor | Sessões, cache de dashboard, rate limiting, filas de notificação | Latência (microsegundos) |
+| **Persistência principal** | PostgreSQL 17.6 (Supabase self-hosted na VPS) | SQL | Entidades, relacionamentos, integridade referencial, ACID — **mesma instância em dev e prod** | Dados estruturados com JOINs |
+| **Cache e tempo real** | Redis (hospedagem a definir) | Chave-valor | Sessões, cache de dashboard, rate limiting, filas de notificação | Latência (microsegundos) |
 | **ORM** | Prisma | TypeScript | Mapeamento objeto-relacional, migrations, type-safety, anti-SQLi | Produtividade + segurança |
 | **Autenticação** | Supabase Auth + NextAuth.js (Auth.js v5) | — | OAuth 2.0, JWT, RLS, SSO institucional | RF01, RNF03 |
 | **Tempo real (dados)** | Supabase Realtime | WebSocket | Notificações automáticas por mudança de dados no banco | RF10 |
 | **Tempo real (chat)** | Socket.io | WebSocket (JS) | Chat de mentoria, presença online, typing indicators | RF15 |
-| **Deploy** | Vercel | Serverless | CI/CD, preview deployments, TLS automático | RNF05 (disponibilidade 99,5%) |
-| **Containers (dev)** | Docker | — | Ambiente local padronizado, PostgreSQL de teste | Reprodutibilidade |
+| **Deploy** | EasyPanel (Docker Swarm + Traefik) na VPS Hostinger | Container Docker | CI/CD via webhook, TLS Let's Encrypt automático, mesma VPS do banco | RNF05 (disponibilidade 99,5%) |
+| **Containers (dev)** | Docker Desktop (opcional) | — | Validar `Dockerfile` localmente; **não há Postgres local** — dev usa o mesmo Postgres da VPS via túnel SSH | Reprodutibilidade |
 | **Testes unitários** | Jest | JavaScript | Funções de negócio, serviços, utilitários | RNF08 (cobertura ≥80%) |
 | **Testes E2E** | Playwright | JavaScript | Fluxos completos no navegador | RNF08 |
 | **Error tracking** | Sentry | — | Captura exceções em produção | RNF05 |
-| **Analytics** | Vercel Analytics | — | Core Web Vitals, latência, uso | RNF02 |
+| **Analytics** | Uptime Kuma / Grafana (a definir) | — | Disponibilidade, latência, métricas operacionais | RNF02 |
 
 ---
 
