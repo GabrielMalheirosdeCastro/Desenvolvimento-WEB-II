@@ -73,54 +73,140 @@ EASYPANEL_DEPLOY_WEBHOOK=https://vps.gmcsistemas.com.br/api/deploy/<TOKEN>
 
 ## 5. Acesso ao banco da VPS — túnel SSH
 
-A porta 5432 do Postgres **não está exposta publicamente** (decisão de segurança). Para acessar o banco do Windows, abra um túnel SSH antes de iniciar o desenvolvimento:
+A porta 5432 do Postgres **não está exposta na internet** e o serviço roda dentro
+da rede Docker `supabase_default`, sem publicação no host. O acesso a partir do
+Windows é feito em **dois saltos**:
 
-### 5.1 Configurar chave SSH (uma vez só)
+```
+┌────────────────────┐     SSH (porta 22)      ┌─────────────────────────────────┐
+│ Windows 11         │ ──────────────────────▶ │ VPS  187.77.47.53               │
+│ localhost:5432     │  -L 5432:127.0.0.1:15433│   socat 127.0.0.1:15433 ─┐      │
+│ localhost:6543     │  -L 6543:127.0.0.1:15432│   socat 127.0.0.1:15432 ─┤      │
+│ Prisma / DBeaver   │                         │                          ▼      │
+└────────────────────┘                         │   Docker overlay supabase_default│
+                                               │   ├─ supabase-db:5432            │
+                                               │   └─ supabase-pooler:6543        │
+                                               └─────────────────────────────────┘
+```
+
+### 5.0 Pré-condição na VPS — containers proxy `pg-tunnel-*`
+
+Foi provisionado **uma única vez** dois containers `socat` permanentes que
+expõem o pooler e o Postgres direto no loopback do host. Já estão rodando com
+`--restart=unless-stopped`. Para conferir:
+
+```powershell
+ssh root@187.77.47.53 "docker ps --filter name=pg-tunnel --format '{{.Names}}: {{.Status}}'"
+```
+
+Saída esperada:
+
+```
+pg-tunnel-pooler: Up X minutes
+pg-tunnel-db: Up X minutes
+```
+
+Se algum deles sumir, recriar com:
+
+```bash
+docker run -d --name pg-tunnel-pooler --restart=unless-stopped --network supabase_default \
+  -p 127.0.0.1:15432:15432 alpine/socat \
+  -d -d TCP-LISTEN:15432,fork,reuseaddr TCP:supabase-pooler:6543
+
+docker run -d --name pg-tunnel-db --restart=unless-stopped --network supabase_default \
+  -p 127.0.0.1:15433:15433 alpine/socat \
+  -d -d TCP-LISTEN:15433,fork,reuseaddr TCP:supabase-db:5432
+```
+
+### 5.1 Autenticação SSH — duas opções
+
+**Opção A — chave SSH (recomendado, sem prompts):**
 
 ```powershell
 # Gerar par de chaves se ainda não tiver
 ssh-keygen -t ed25519 -C "gabriel.castro@dev-windows"
 
-# Copiar chave pública para a VPS (pedirá a senha root uma única vez)
-type $HOME\.ssh\id_ed25519.pub | ssh root@vps.gmcsistemas.com.br "cat >> ~/.ssh/authorized_keys"
+# Copiar chave pública para a VPS (pedirá a senha root UMA vez)
+type $HOME\.ssh\id_ed25519.pub | ssh root@187.77.47.53 "cat >> ~/.ssh/authorized_keys"
+
+# Validar
+ssh root@187.77.47.53 "hostname && uptime"
 ```
 
-Teste:
+**Opção B — senha (rápido para teste, prompt a cada conexão):**
+
+Para a primeira conexão e/ou enquanto não configura a chave, basta:
 
 ```powershell
-ssh root@vps.gmcsistemas.com.br "echo conectado em \$(hostname)"
+ssh root@187.77.47.53
+# Senha do root: ver `docs/secrets.md` (gitignored) ou `/root/SUPABASE-CREDENTIALS.txt` na VPS
 ```
+
+> ⚠️ Recomendação forte: trocar essa senha de root **e** desabilitar
+> `PasswordAuthentication` no `/etc/ssh/sshd_config` da VPS depois de validar a
+> chave SSH.
 
 ### 5.2 Abrir o túnel (a cada sessão de desenvolvimento)
 
 ```powershell
+# Com chave SSH (modo padrão):
 pwsh ./scripts/dev-tunnel.ps1
+
+# Sem chave SSH (vai pedir a senha do root no momento da conexão):
+pwsh ./scripts/dev-tunnel.ps1 -UsePassword
+
+# Conferir antes que os proxies estão de pé:
+pwsh ./scripts/dev-tunnel.ps1 -EnsureProxy -UsePassword
 ```
 
 O script mantém abertos:
 
-| Localhost | Destino na VPS | Uso |
-|---|---|---|
-| `localhost:5432` | `supabase-db:5432` | `DIRECT_URL` (migrations Prisma) |
-| `localhost:6543` | `supabase-pooler:6543` | `DATABASE_URL` (queries em runtime) |
+| Localhost (Windows) | Salto na VPS | Destino final | Uso |
+|---|---|---|---|
+| `localhost:5432` | `127.0.0.1:15433` | `supabase-db:5432` | `DIRECT_URL` — migrations Prisma |
+| `localhost:6543` | `127.0.0.1:15432` | `supabase-pooler:6543` | `DATABASE_URL` — queries runtime |
 
 Mantenha esse terminal aberto. **Em outro terminal**, prossiga para o próximo passo.
 
 ### 5.3 Conectar do app/Prisma
 
-Quando o desenvolvimento da aplicação real começar, configure no `.env`:
+Quando o desenvolvimento da aplicação real começar, configure no `.env` local
+(no Windows — não é o `.env` da VPS):
 
 ```dotenv
-DATABASE_URL=postgresql://postgres.gmc:SENHA@localhost:6543/postgres?pgbouncer=true
-DIRECT_URL=postgresql://postgres:SENHA@localhost:5432/postgres
+DATABASE_URL=postgresql://postgres.gmc:<SENHA_POSTGRES>@localhost:6543/postgres?pgbouncer=true&connection_limit=1
+DIRECT_URL=postgresql://postgres:<SENHA_POSTGRES>@localhost:5432/postgres
 ```
 
-> A senha está em `/root/SUPABASE-CREDENTIALS.txt` na VPS (chmod 600). Ver
-> `docs/ambiente-producao-easypanel.md` §1.
+> A senha do Postgres está em `/root/SUPABASE-CREDENTIALS.txt` na VPS (chmod 600)
+> e em `docs/secrets.md` local (gitignored).
+> Atenção: a senha do **Postgres** é diferente da senha **SSH de root**.
 
-### 5.4 Conectar do DBeaver / pgAdmin
+### 5.4 Conectar com DBeaver / pgAdmin / TablePlus
 
-Configure uma conexão Postgres apontando para `localhost:5432` (ou `:6543` para usar o pooler) — não use SSH dentro do DBeaver, o túnel já está aberto pelo PowerShell.
+Com o túnel já aberto pelo PowerShell, configure uma nova conexão Postgres
+direto em `localhost:6543` (pooler) ou `localhost:5432` (direto). **Não use** o
+recurso "SSH Tunnel" do DBeaver — o túnel já está em pé pelo `dev-tunnel.ps1`.
+
+| Campo | Valor |
+|---|---|
+| Host | `localhost` |
+| Port | `5432` (direto) ou `6543` (pooler) |
+| Database | `postgres` |
+| Username | `postgres` (direto) ou `postgres.gmc` (pooler) |
+| Password | `<ver docs/secrets.md>` |
+| SSL | desabilitar |
+
+### 5.5 Teste rápido sem cliente nativo
+
+Pelo PowerShell, com o túnel aberto:
+
+```powershell
+# Usando container Docker descartável (precisa Docker Desktop):
+docker run --rm --network host postgres:17-alpine psql `
+  "postgresql://postgres:<SENHA>@localhost:5432/postgres" `
+  -c "select version();"
+```
 
 ---
 

@@ -63,3 +63,4 @@ banco-dados-requisitos-projeto/.env
 
 # --- Auditoria infra (não versionar) ---
 infra-audit-*.txt
+docs/secrets.md
