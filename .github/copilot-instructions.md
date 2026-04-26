@@ -43,8 +43,8 @@ documento PDF com:
 | Shell padrão | PowerShell (`pwsh`) |
 | Editor LaTeX | **Overleaf** ([overleaf.com](https://www.overleaf.com/)) — edição do arquivo `.tex` |
 | Editor de código/configuração | Visual Studio Code |
-| Distribuição LaTeX local | MiKTeX (Windows) — apenas para compilação local e validação |
-| Compilador LaTeX | **lualatex** (obrigatório — requisito do documento) |
+| Distribuição LaTeX local | **Opcional** — MiKTeX só se o aluno quiser pré-visualizar fora do Overleaf. A IA **não** compila `.tex` local. |
+| Compilador LaTeX | **lualatex** (obrigatório no Overleaf — requisito do documento) |
 | Repositório remoto | GitHub — `GabrielMalheirosdeCastro/Desenvolvimento-WEB-II` / branch `master` |
 
 ### 2.1 Edição do Documento `.tex` — Overleaf
@@ -66,7 +66,9 @@ histórico de revisões integrado e acesso pelo navegador.
 > 4. O Aluno sincroniza as mudanças do Overleaf para o GitHub, gerando os devidos *commits*.
 > 5. Ações locais se darão apenas para ajustes em arquivos de *docs/*, planilhas gerenciais de IA, e os arquivos `README.md` e `CHANGELOG.md`.
 
-### 2.2 Configuração do Ambiente Local (Windows 11)
+### 2.2 Configuração LaTeX local (opcional)
+
+> Se MiKTeX não estiver instalado, **ignore esta seção** — o Overleaf cobre 100% da compilação. Os comandos abaixo só são úteis caso o aluno queira validar localmente. A IA não deve sugerir instalar MiKTeX nem rodar `latexmk`/`lualatex` em planos de ação.
 
 ```powershell
 # Verificar se o MiKTeX está instalado

@@ -14,7 +14,7 @@
 | Software | Versão mínima | Como instalar |
 |---|---|---|
 | **Git** | 2.40+ | <https://git-scm.com/download/win> ou `winget install Git.Git` |
-| **Node.js LTS** | 20.x | <https://nodejs.org/> (versão LTS) ou `winget install OpenJS.NodeJS.LTS` |
+| **Node.js LTS** | 20.x ou 22.x (LTS atual) | <https://nodejs.org/> (versão LTS) ou `winget install OpenJS.NodeJS.LTS` |
 | **OpenSSH Client** | (Windows 10/11 nativo) | *Configurações ▸ Aplicativos ▸ Recursos opcionais ▸ Cliente OpenSSH* |
 | **Docker Desktop** *(opcional)* | 4.x | Para validar o `Dockerfile` localmente antes de fazer push |
 | **VS Code** | atual | <https://code.visualstudio.com/> |
@@ -24,7 +24,7 @@ Confirme as versões:
 
 ```powershell
 git --version
-node --version            # deve mostrar v20.x.x
+node --version            # deve mostrar v20.x.x ou v22.x.x (LTS)
 npm --version
 ssh -V
 docker --version          # opcional
