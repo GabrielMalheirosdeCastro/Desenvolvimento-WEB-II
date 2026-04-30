@@ -474,6 +474,7 @@ export type NotificacaoCreateOrConnectWithoutUsuarioInput = {
 
 export type NotificacaoCreateManyUsuarioInputEnvelope = {
   data: Prisma.NotificacaoCreateManyUsuarioInput | Prisma.NotificacaoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type NotificacaoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -1274,6 +1275,7 @@ export type NotificacaoCreateManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * The data used to create many Notificacaos.
    */
   data: Prisma.NotificacaoCreateManyInput | Prisma.NotificacaoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1292,6 +1294,7 @@ export type NotificacaoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many Notificacaos.
    */
   data: Prisma.NotificacaoCreateManyInput | Prisma.NotificacaoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

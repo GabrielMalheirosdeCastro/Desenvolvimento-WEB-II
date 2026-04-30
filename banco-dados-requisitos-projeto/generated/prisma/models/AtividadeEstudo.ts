@@ -578,6 +578,7 @@ export type AtividadeEstudoCreateOrConnectWithoutUsuarioInput = {
 
 export type AtividadeEstudoCreateManyUsuarioInputEnvelope = {
   data: Prisma.AtividadeEstudoCreateManyUsuarioInput | Prisma.AtividadeEstudoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type AtividadeEstudoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -639,6 +640,7 @@ export type AtividadeEstudoCreateOrConnectWithoutPlanoEstudoInput = {
 
 export type AtividadeEstudoCreateManyPlanoEstudoInputEnvelope = {
   data: Prisma.AtividadeEstudoCreateManyPlanoEstudoInput | Prisma.AtividadeEstudoCreateManyPlanoEstudoInput[]
+  skipDuplicates?: boolean
 }
 
 export type AtividadeEstudoUpsertWithWhereUniqueWithoutPlanoEstudoInput = {
@@ -1497,6 +1499,7 @@ export type AtividadeEstudoCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many AtividadeEstudos.
    */
   data: Prisma.AtividadeEstudoCreateManyInput | Prisma.AtividadeEstudoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1515,6 +1518,7 @@ export type AtividadeEstudoCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many AtividadeEstudos.
    */
   data: Prisma.AtividadeEstudoCreateManyInput | Prisma.AtividadeEstudoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

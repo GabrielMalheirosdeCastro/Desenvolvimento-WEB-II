@@ -585,6 +585,7 @@ export type PlanoEstudoCreateOrConnectWithoutUsuarioInput = {
 
 export type PlanoEstudoCreateManyUsuarioInputEnvelope = {
   data: Prisma.PlanoEstudoCreateManyUsuarioInput | Prisma.PlanoEstudoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type PlanoEstudoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -1591,6 +1592,7 @@ export type PlanoEstudoCreateManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * The data used to create many PlanoEstudos.
    */
   data: Prisma.PlanoEstudoCreateManyInput | Prisma.PlanoEstudoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1609,6 +1611,7 @@ export type PlanoEstudoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many PlanoEstudos.
    */
   data: Prisma.PlanoEstudoCreateManyInput | Prisma.PlanoEstudoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

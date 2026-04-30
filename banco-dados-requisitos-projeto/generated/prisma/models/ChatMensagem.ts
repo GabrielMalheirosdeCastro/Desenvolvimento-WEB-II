@@ -476,6 +476,7 @@ export type ChatMensagemCreateOrConnectWithoutAutorInput = {
 
 export type ChatMensagemCreateManyAutorInputEnvelope = {
   data: Prisma.ChatMensagemCreateManyAutorInput | Prisma.ChatMensagemCreateManyAutorInput[]
+  skipDuplicates?: boolean
 }
 
 export type ChatMensagemUpsertWithWhereUniqueWithoutAutorInput = {
@@ -525,6 +526,7 @@ export type ChatMensagemCreateOrConnectWithoutTicketInput = {
 
 export type ChatMensagemCreateManyTicketInputEnvelope = {
   data: Prisma.ChatMensagemCreateManyTicketInput | Prisma.ChatMensagemCreateManyTicketInput[]
+  skipDuplicates?: boolean
 }
 
 export type ChatMensagemUpsertWithWhereUniqueWithoutTicketInput = {
@@ -1327,6 +1329,7 @@ export type ChatMensagemCreateManyArgs<ExtArgs extends runtime.Types.Extensions.
    * The data used to create many ChatMensagems.
    */
   data: Prisma.ChatMensagemCreateManyInput | Prisma.ChatMensagemCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1345,6 +1348,7 @@ export type ChatMensagemCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many ChatMensagems.
    */
   data: Prisma.ChatMensagemCreateManyInput | Prisma.ChatMensagemCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

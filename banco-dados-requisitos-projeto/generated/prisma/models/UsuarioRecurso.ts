@@ -486,6 +486,7 @@ export type UsuarioRecursoCreateOrConnectWithoutUsuarioInput = {
 
 export type UsuarioRecursoCreateManyUsuarioInputEnvelope = {
   data: Prisma.UsuarioRecursoCreateManyUsuarioInput | Prisma.UsuarioRecursoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type UsuarioRecursoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -535,6 +536,7 @@ export type UsuarioRecursoCreateOrConnectWithoutRecursoInput = {
 
 export type UsuarioRecursoCreateManyRecursoInputEnvelope = {
   data: Prisma.UsuarioRecursoCreateManyRecursoInput | Prisma.UsuarioRecursoCreateManyRecursoInput[]
+  skipDuplicates?: boolean
 }
 
 export type UsuarioRecursoUpsertWithWhereUniqueWithoutRecursoInput = {
@@ -1337,6 +1339,7 @@ export type UsuarioRecursoCreateManyArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many UsuarioRecursos.
    */
   data: Prisma.UsuarioRecursoCreateManyInput | Prisma.UsuarioRecursoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1355,6 +1358,7 @@ export type UsuarioRecursoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * The data used to create many UsuarioRecursos.
    */
   data: Prisma.UsuarioRecursoCreateManyInput | Prisma.UsuarioRecursoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

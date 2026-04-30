@@ -482,6 +482,7 @@ export type UsuarioEventoCreateOrConnectWithoutUsuarioInput = {
 
 export type UsuarioEventoCreateManyUsuarioInputEnvelope = {
   data: Prisma.UsuarioEventoCreateManyUsuarioInput | Prisma.UsuarioEventoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type UsuarioEventoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -531,6 +532,7 @@ export type UsuarioEventoCreateOrConnectWithoutEventoInput = {
 
 export type UsuarioEventoCreateManyEventoInputEnvelope = {
   data: Prisma.UsuarioEventoCreateManyEventoInput | Prisma.UsuarioEventoCreateManyEventoInput[]
+  skipDuplicates?: boolean
 }
 
 export type UsuarioEventoUpsertWithWhereUniqueWithoutEventoInput = {
@@ -1333,6 +1335,7 @@ export type UsuarioEventoCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many UsuarioEventos.
    */
   data: Prisma.UsuarioEventoCreateManyInput | Prisma.UsuarioEventoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1351,6 +1354,7 @@ export type UsuarioEventoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many UsuarioEventos.
    */
   data: Prisma.UsuarioEventoCreateManyInput | Prisma.UsuarioEventoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

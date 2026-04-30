@@ -138,6 +138,16 @@ export type QuestionarioBemEstar = Prisma.QuestionarioBemEstarModel
  */
 export type Gamificacao = Prisma.GamificacaoModel
 /**
+ * Model Conquista
+ * 
+ */
+export type Conquista = Prisma.ConquistaModel
+/**
+ * Model UsuarioConquista
+ * 
+ */
+export type UsuarioConquista = Prisma.UsuarioConquistaModel
+/**
  * Model Evento
  * 
  */

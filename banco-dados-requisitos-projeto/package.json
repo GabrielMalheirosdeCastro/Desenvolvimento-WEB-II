@@ -1,6 +1,6 @@
 {
   "name": "banco-dados-requisitos-projeto",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Este diretorio consolida a base de banco de dados do projeto, com modelo relacional alinhado aos requisitos funcionais e nao funcionais definidos na documentacao.",
   "type": "module",
   "directories": {
@@ -24,7 +24,9 @@
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.7.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.7.0",
-    "dotenv": "^17.4.1"
+    "dotenv": "^17.4.1",
+    "pg": "^8.20.0"
   }
 }

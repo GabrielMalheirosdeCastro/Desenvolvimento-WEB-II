@@ -1275,6 +1275,7 @@ export type RelatorioAnonimizadoCreateManyArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many RelatorioAnonimizados.
    */
   data: Prisma.RelatorioAnonimizadoCreateManyInput | Prisma.RelatorioAnonimizadoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1293,6 +1294,7 @@ export type RelatorioAnonimizadoCreateManyAndReturnArgs<ExtArgs extends runtime.
    * The data used to create many RelatorioAnonimizados.
    */
   data: Prisma.RelatorioAnonimizadoCreateManyInput | Prisma.RelatorioAnonimizadoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

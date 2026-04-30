@@ -524,6 +524,7 @@ export type MentoriaCreateOrConnectWithoutMentorInput = {
 
 export type MentoriaCreateManyMentorInputEnvelope = {
   data: Prisma.MentoriaCreateManyMentorInput | Prisma.MentoriaCreateManyMentorInput[]
+  skipDuplicates?: boolean
 }
 
 export type MentoriaCreateWithoutMentoradoInput = {
@@ -550,6 +551,7 @@ export type MentoriaCreateOrConnectWithoutMentoradoInput = {
 
 export type MentoriaCreateManyMentoradoInputEnvelope = {
   data: Prisma.MentoriaCreateManyMentoradoInput | Prisma.MentoriaCreateManyMentoradoInput[]
+  skipDuplicates?: boolean
 }
 
 export type MentoriaUpsertWithWhereUniqueWithoutMentorInput = {
@@ -1409,6 +1411,7 @@ export type MentoriaCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Mentorias.
    */
   data: Prisma.MentoriaCreateManyInput | Prisma.MentoriaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1427,6 +1430,7 @@ export type MentoriaCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Mentorias.
    */
   data: Prisma.MentoriaCreateManyInput | Prisma.MentoriaCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

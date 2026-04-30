@@ -470,6 +470,7 @@ export type TrilhaRecursoCreateOrConnectWithoutTrilhaInput = {
 
 export type TrilhaRecursoCreateManyTrilhaInputEnvelope = {
   data: Prisma.TrilhaRecursoCreateManyTrilhaInput | Prisma.TrilhaRecursoCreateManyTrilhaInput[]
+  skipDuplicates?: boolean
 }
 
 export type TrilhaRecursoUpsertWithWhereUniqueWithoutTrilhaInput = {
@@ -516,6 +517,7 @@ export type TrilhaRecursoCreateOrConnectWithoutRecursoInput = {
 
 export type TrilhaRecursoCreateManyRecursoInputEnvelope = {
   data: Prisma.TrilhaRecursoCreateManyRecursoInput | Prisma.TrilhaRecursoCreateManyRecursoInput[]
+  skipDuplicates?: boolean
 }
 
 export type TrilhaRecursoUpsertWithWhereUniqueWithoutRecursoInput = {
@@ -1304,6 +1306,7 @@ export type TrilhaRecursoCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many TrilhaRecursos.
    */
   data: Prisma.TrilhaRecursoCreateManyInput | Prisma.TrilhaRecursoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1322,6 +1325,7 @@ export type TrilhaRecursoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many TrilhaRecursos.
    */
   data: Prisma.TrilhaRecursoCreateManyInput | Prisma.TrilhaRecursoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

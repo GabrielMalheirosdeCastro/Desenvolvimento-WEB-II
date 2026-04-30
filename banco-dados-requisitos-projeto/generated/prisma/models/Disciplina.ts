@@ -1179,6 +1179,7 @@ export type DisciplinaCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * The data used to create many Disciplinas.
    */
   data: Prisma.DisciplinaCreateManyInput | Prisma.DisciplinaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1197,6 +1198,7 @@ export type DisciplinaCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many Disciplinas.
    */
   data: Prisma.DisciplinaCreateManyInput | Prisma.DisciplinaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

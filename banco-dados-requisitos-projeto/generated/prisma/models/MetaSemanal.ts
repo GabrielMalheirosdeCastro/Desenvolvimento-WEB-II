@@ -444,6 +444,7 @@ export type MetaSemanalCreateOrConnectWithoutPlanoEstudoInput = {
 
 export type MetaSemanalCreateManyPlanoEstudoInputEnvelope = {
   data: Prisma.MetaSemanalCreateManyPlanoEstudoInput | Prisma.MetaSemanalCreateManyPlanoEstudoInput[]
+  skipDuplicates?: boolean
 }
 
 export type MetaSemanalUpsertWithWhereUniqueWithoutPlanoEstudoInput = {
@@ -1222,6 +1223,7 @@ export type MetaSemanalCreateManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * The data used to create many MetaSemanals.
    */
   data: Prisma.MetaSemanalCreateManyInput | Prisma.MetaSemanalCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1240,6 +1242,7 @@ export type MetaSemanalCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many MetaSemanals.
    */
   data: Prisma.MetaSemanalCreateManyInput | Prisma.MetaSemanalCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

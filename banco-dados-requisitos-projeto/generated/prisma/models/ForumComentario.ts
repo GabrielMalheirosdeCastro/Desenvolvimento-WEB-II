@@ -30,12 +30,14 @@ export type ForumComentarioAvgAggregateOutputType = {
   id: number | null
   postId: number | null
   usuarioId: number | null
+  removidoPor: number | null
 }
 
 export type ForumComentarioSumAggregateOutputType = {
   id: number | null
   postId: number | null
   usuarioId: number | null
+  removidoPor: number | null
 }
 
 export type ForumComentarioMinAggregateOutputType = {
@@ -43,6 +45,10 @@ export type ForumComentarioMinAggregateOutputType = {
   postId: number | null
   usuarioId: number | null
   conteudo: string | null
+  status: string | null
+  editadoEm: Date | null
+  deletedAt: Date | null
+  removidoPor: number | null
   createdAt: Date | null
 }
 
@@ -51,6 +57,10 @@ export type ForumComentarioMaxAggregateOutputType = {
   postId: number | null
   usuarioId: number | null
   conteudo: string | null
+  status: string | null
+  editadoEm: Date | null
+  deletedAt: Date | null
+  removidoPor: number | null
   createdAt: Date | null
 }
 
@@ -59,6 +69,10 @@ export type ForumComentarioCountAggregateOutputType = {
   postId: number
   usuarioId: number
   conteudo: number
+  status: number
+  editadoEm: number
+  deletedAt: number
+  removidoPor: number
   createdAt: number
   _all: number
 }
@@ -68,12 +82,14 @@ export type ForumComentarioAvgAggregateInputType = {
   id?: true
   postId?: true
   usuarioId?: true
+  removidoPor?: true
 }
 
 export type ForumComentarioSumAggregateInputType = {
   id?: true
   postId?: true
   usuarioId?: true
+  removidoPor?: true
 }
 
 export type ForumComentarioMinAggregateInputType = {
@@ -81,6 +97,10 @@ export type ForumComentarioMinAggregateInputType = {
   postId?: true
   usuarioId?: true
   conteudo?: true
+  status?: true
+  editadoEm?: true
+  deletedAt?: true
+  removidoPor?: true
   createdAt?: true
 }
 
@@ -89,6 +109,10 @@ export type ForumComentarioMaxAggregateInputType = {
   postId?: true
   usuarioId?: true
   conteudo?: true
+  status?: true
+  editadoEm?: true
+  deletedAt?: true
+  removidoPor?: true
   createdAt?: true
 }
 
@@ -97,6 +121,10 @@ export type ForumComentarioCountAggregateInputType = {
   postId?: true
   usuarioId?: true
   conteudo?: true
+  status?: true
+  editadoEm?: true
+  deletedAt?: true
+  removidoPor?: true
   createdAt?: true
   _all?: true
 }
@@ -191,7 +219,11 @@ export type ForumComentarioGroupByOutputType = {
   id: number
   postId: number
   usuarioId: number
-  conteudo: string | null
+  conteudo: string
+  status: string
+  editadoEm: Date | null
+  deletedAt: Date | null
+  removidoPor: number | null
   createdAt: Date
   _count: ForumComentarioCountAggregateOutputType | null
   _avg: ForumComentarioAvgAggregateOutputType | null
@@ -222,20 +254,30 @@ export type ForumComentarioWhereInput = {
   id?: Prisma.IntFilter<"ForumComentario"> | number
   postId?: Prisma.IntFilter<"ForumComentario"> | number
   usuarioId?: Prisma.IntFilter<"ForumComentario"> | number
-  conteudo?: Prisma.StringNullableFilter<"ForumComentario"> | string | null
+  conteudo?: Prisma.StringFilter<"ForumComentario"> | string
+  status?: Prisma.StringFilter<"ForumComentario"> | string
+  editadoEm?: Prisma.DateTimeNullableFilter<"ForumComentario"> | Date | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"ForumComentario"> | Date | string | null
+  removidoPor?: Prisma.IntNullableFilter<"ForumComentario"> | number | null
   createdAt?: Prisma.DateTimeFilter<"ForumComentario"> | Date | string
   post?: Prisma.XOR<Prisma.ForumPostScalarRelationFilter, Prisma.ForumPostWhereInput>
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
+  removedor?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }
 
 export type ForumComentarioOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
-  conteudo?: Prisma.SortOrderInput | Prisma.SortOrder
+  conteudo?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  editadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  removidoPor?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   post?: Prisma.ForumPostOrderByWithRelationInput
   usuario?: Prisma.UsuarioOrderByWithRelationInput
+  removedor?: Prisma.UsuarioOrderByWithRelationInput
 }
 
 export type ForumComentarioWhereUniqueInput = Prisma.AtLeast<{
@@ -245,17 +287,26 @@ export type ForumComentarioWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ForumComentarioWhereInput | Prisma.ForumComentarioWhereInput[]
   postId?: Prisma.IntFilter<"ForumComentario"> | number
   usuarioId?: Prisma.IntFilter<"ForumComentario"> | number
-  conteudo?: Prisma.StringNullableFilter<"ForumComentario"> | string | null
+  conteudo?: Prisma.StringFilter<"ForumComentario"> | string
+  status?: Prisma.StringFilter<"ForumComentario"> | string
+  editadoEm?: Prisma.DateTimeNullableFilter<"ForumComentario"> | Date | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"ForumComentario"> | Date | string | null
+  removidoPor?: Prisma.IntNullableFilter<"ForumComentario"> | number | null
   createdAt?: Prisma.DateTimeFilter<"ForumComentario"> | Date | string
   post?: Prisma.XOR<Prisma.ForumPostScalarRelationFilter, Prisma.ForumPostWhereInput>
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
+  removedor?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }, "id">
 
 export type ForumComentarioOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
-  conteudo?: Prisma.SortOrderInput | Prisma.SortOrder
+  conteudo?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  editadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  removidoPor?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ForumComentarioCountOrderByAggregateInput
   _avg?: Prisma.ForumComentarioAvgOrderByAggregateInput
@@ -271,37 +322,57 @@ export type ForumComentarioScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"ForumComentario"> | number
   postId?: Prisma.IntWithAggregatesFilter<"ForumComentario"> | number
   usuarioId?: Prisma.IntWithAggregatesFilter<"ForumComentario"> | number
-  conteudo?: Prisma.StringNullableWithAggregatesFilter<"ForumComentario"> | string | null
+  conteudo?: Prisma.StringWithAggregatesFilter<"ForumComentario"> | string
+  status?: Prisma.StringWithAggregatesFilter<"ForumComentario"> | string
+  editadoEm?: Prisma.DateTimeNullableWithAggregatesFilter<"ForumComentario"> | Date | string | null
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ForumComentario"> | Date | string | null
+  removidoPor?: Prisma.IntNullableWithAggregatesFilter<"ForumComentario"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ForumComentario"> | Date | string
 }
 
 export type ForumComentarioCreateInput = {
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   post: Prisma.ForumPostCreateNestedOneWithoutComentariosInput
   usuario: Prisma.UsuarioCreateNestedOneWithoutForumComentariosInput
+  removedor?: Prisma.UsuarioCreateNestedOneWithoutForumComentariosRemovidosInput
 }
 
 export type ForumComentarioUncheckedCreateInput = {
   id?: number
   postId: number
   usuarioId: number
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  removidoPor?: number | null
   createdAt?: Date | string
 }
 
 export type ForumComentarioUpdateInput = {
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   post?: Prisma.ForumPostUpdateOneRequiredWithoutComentariosNestedInput
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutForumComentariosNestedInput
+  removedor?: Prisma.UsuarioUpdateOneWithoutForumComentariosRemovidosNestedInput
 }
 
 export type ForumComentarioUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  removidoPor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -309,12 +380,19 @@ export type ForumComentarioCreateManyInput = {
   id?: number
   postId: number
   usuarioId: number
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  removidoPor?: number | null
   createdAt?: Date | string
 }
 
 export type ForumComentarioUpdateManyMutationInput = {
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -322,7 +400,11 @@ export type ForumComentarioUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  removidoPor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -341,6 +423,10 @@ export type ForumComentarioCountOrderByAggregateInput = {
   postId?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   conteudo?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  editadoEm?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  removidoPor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -348,6 +434,7 @@ export type ForumComentarioAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
+  removidoPor?: Prisma.SortOrder
 }
 
 export type ForumComentarioMaxOrderByAggregateInput = {
@@ -355,6 +442,10 @@ export type ForumComentarioMaxOrderByAggregateInput = {
   postId?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   conteudo?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  editadoEm?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  removidoPor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -363,6 +454,10 @@ export type ForumComentarioMinOrderByAggregateInput = {
   postId?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   conteudo?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  editadoEm?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  removidoPor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -370,6 +465,7 @@ export type ForumComentarioSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
+  removidoPor?: Prisma.SortOrder
 }
 
 export type ForumComentarioCreateNestedManyWithoutUsuarioInput = {
@@ -379,10 +475,24 @@ export type ForumComentarioCreateNestedManyWithoutUsuarioInput = {
   connect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
 }
 
+export type ForumComentarioCreateNestedManyWithoutRemovedorInput = {
+  create?: Prisma.XOR<Prisma.ForumComentarioCreateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput> | Prisma.ForumComentarioCreateWithoutRemovedorInput[] | Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput[]
+  connectOrCreate?: Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput | Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput[]
+  createMany?: Prisma.ForumComentarioCreateManyRemovedorInputEnvelope
+  connect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+}
+
 export type ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput = {
   create?: Prisma.XOR<Prisma.ForumComentarioCreateWithoutUsuarioInput, Prisma.ForumComentarioUncheckedCreateWithoutUsuarioInput> | Prisma.ForumComentarioCreateWithoutUsuarioInput[] | Prisma.ForumComentarioUncheckedCreateWithoutUsuarioInput[]
   connectOrCreate?: Prisma.ForumComentarioCreateOrConnectWithoutUsuarioInput | Prisma.ForumComentarioCreateOrConnectWithoutUsuarioInput[]
   createMany?: Prisma.ForumComentarioCreateManyUsuarioInputEnvelope
+  connect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+}
+
+export type ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput = {
+  create?: Prisma.XOR<Prisma.ForumComentarioCreateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput> | Prisma.ForumComentarioCreateWithoutRemovedorInput[] | Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput[]
+  connectOrCreate?: Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput | Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput[]
+  createMany?: Prisma.ForumComentarioCreateManyRemovedorInputEnvelope
   connect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
 }
 
@@ -400,6 +510,20 @@ export type ForumComentarioUpdateManyWithoutUsuarioNestedInput = {
   deleteMany?: Prisma.ForumComentarioScalarWhereInput | Prisma.ForumComentarioScalarWhereInput[]
 }
 
+export type ForumComentarioUpdateManyWithoutRemovedorNestedInput = {
+  create?: Prisma.XOR<Prisma.ForumComentarioCreateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput> | Prisma.ForumComentarioCreateWithoutRemovedorInput[] | Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput[]
+  connectOrCreate?: Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput | Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput[]
+  upsert?: Prisma.ForumComentarioUpsertWithWhereUniqueWithoutRemovedorInput | Prisma.ForumComentarioUpsertWithWhereUniqueWithoutRemovedorInput[]
+  createMany?: Prisma.ForumComentarioCreateManyRemovedorInputEnvelope
+  set?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  disconnect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  delete?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  connect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  update?: Prisma.ForumComentarioUpdateWithWhereUniqueWithoutRemovedorInput | Prisma.ForumComentarioUpdateWithWhereUniqueWithoutRemovedorInput[]
+  updateMany?: Prisma.ForumComentarioUpdateManyWithWhereWithoutRemovedorInput | Prisma.ForumComentarioUpdateManyWithWhereWithoutRemovedorInput[]
+  deleteMany?: Prisma.ForumComentarioScalarWhereInput | Prisma.ForumComentarioScalarWhereInput[]
+}
+
 export type ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput = {
   create?: Prisma.XOR<Prisma.ForumComentarioCreateWithoutUsuarioInput, Prisma.ForumComentarioUncheckedCreateWithoutUsuarioInput> | Prisma.ForumComentarioCreateWithoutUsuarioInput[] | Prisma.ForumComentarioUncheckedCreateWithoutUsuarioInput[]
   connectOrCreate?: Prisma.ForumComentarioCreateOrConnectWithoutUsuarioInput | Prisma.ForumComentarioCreateOrConnectWithoutUsuarioInput[]
@@ -411,6 +535,20 @@ export type ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput = {
   connect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
   update?: Prisma.ForumComentarioUpdateWithWhereUniqueWithoutUsuarioInput | Prisma.ForumComentarioUpdateWithWhereUniqueWithoutUsuarioInput[]
   updateMany?: Prisma.ForumComentarioUpdateManyWithWhereWithoutUsuarioInput | Prisma.ForumComentarioUpdateManyWithWhereWithoutUsuarioInput[]
+  deleteMany?: Prisma.ForumComentarioScalarWhereInput | Prisma.ForumComentarioScalarWhereInput[]
+}
+
+export type ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput = {
+  create?: Prisma.XOR<Prisma.ForumComentarioCreateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput> | Prisma.ForumComentarioCreateWithoutRemovedorInput[] | Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput[]
+  connectOrCreate?: Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput | Prisma.ForumComentarioCreateOrConnectWithoutRemovedorInput[]
+  upsert?: Prisma.ForumComentarioUpsertWithWhereUniqueWithoutRemovedorInput | Prisma.ForumComentarioUpsertWithWhereUniqueWithoutRemovedorInput[]
+  createMany?: Prisma.ForumComentarioCreateManyRemovedorInputEnvelope
+  set?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  disconnect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  delete?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  connect?: Prisma.ForumComentarioWhereUniqueInput | Prisma.ForumComentarioWhereUniqueInput[]
+  update?: Prisma.ForumComentarioUpdateWithWhereUniqueWithoutRemovedorInput | Prisma.ForumComentarioUpdateWithWhereUniqueWithoutRemovedorInput[]
+  updateMany?: Prisma.ForumComentarioUpdateManyWithWhereWithoutRemovedorInput | Prisma.ForumComentarioUpdateManyWithWhereWithoutRemovedorInput[]
   deleteMany?: Prisma.ForumComentarioScalarWhereInput | Prisma.ForumComentarioScalarWhereInput[]
 }
 
@@ -457,15 +595,23 @@ export type ForumComentarioUncheckedUpdateManyWithoutPostNestedInput = {
 }
 
 export type ForumComentarioCreateWithoutUsuarioInput = {
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   post: Prisma.ForumPostCreateNestedOneWithoutComentariosInput
+  removedor?: Prisma.UsuarioCreateNestedOneWithoutForumComentariosRemovidosInput
 }
 
 export type ForumComentarioUncheckedCreateWithoutUsuarioInput = {
   id?: number
   postId: number
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  removidoPor?: number | null
   createdAt?: Date | string
 }
 
@@ -476,6 +622,38 @@ export type ForumComentarioCreateOrConnectWithoutUsuarioInput = {
 
 export type ForumComentarioCreateManyUsuarioInputEnvelope = {
   data: Prisma.ForumComentarioCreateManyUsuarioInput | Prisma.ForumComentarioCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
+}
+
+export type ForumComentarioCreateWithoutRemovedorInput = {
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  post: Prisma.ForumPostCreateNestedOneWithoutComentariosInput
+  usuario: Prisma.UsuarioCreateNestedOneWithoutForumComentariosInput
+}
+
+export type ForumComentarioUncheckedCreateWithoutRemovedorInput = {
+  id?: number
+  postId: number
+  usuarioId: number
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+}
+
+export type ForumComentarioCreateOrConnectWithoutRemovedorInput = {
+  where: Prisma.ForumComentarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.ForumComentarioCreateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput>
+}
+
+export type ForumComentarioCreateManyRemovedorInputEnvelope = {
+  data: Prisma.ForumComentarioCreateManyRemovedorInput | Prisma.ForumComentarioCreateManyRemovedorInput[]
+  skipDuplicates?: boolean
 }
 
 export type ForumComentarioUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -501,20 +679,48 @@ export type ForumComentarioScalarWhereInput = {
   id?: Prisma.IntFilter<"ForumComentario"> | number
   postId?: Prisma.IntFilter<"ForumComentario"> | number
   usuarioId?: Prisma.IntFilter<"ForumComentario"> | number
-  conteudo?: Prisma.StringNullableFilter<"ForumComentario"> | string | null
+  conteudo?: Prisma.StringFilter<"ForumComentario"> | string
+  status?: Prisma.StringFilter<"ForumComentario"> | string
+  editadoEm?: Prisma.DateTimeNullableFilter<"ForumComentario"> | Date | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"ForumComentario"> | Date | string | null
+  removidoPor?: Prisma.IntNullableFilter<"ForumComentario"> | number | null
   createdAt?: Prisma.DateTimeFilter<"ForumComentario"> | Date | string
 }
 
+export type ForumComentarioUpsertWithWhereUniqueWithoutRemovedorInput = {
+  where: Prisma.ForumComentarioWhereUniqueInput
+  update: Prisma.XOR<Prisma.ForumComentarioUpdateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedUpdateWithoutRemovedorInput>
+  create: Prisma.XOR<Prisma.ForumComentarioCreateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedCreateWithoutRemovedorInput>
+}
+
+export type ForumComentarioUpdateWithWhereUniqueWithoutRemovedorInput = {
+  where: Prisma.ForumComentarioWhereUniqueInput
+  data: Prisma.XOR<Prisma.ForumComentarioUpdateWithoutRemovedorInput, Prisma.ForumComentarioUncheckedUpdateWithoutRemovedorInput>
+}
+
+export type ForumComentarioUpdateManyWithWhereWithoutRemovedorInput = {
+  where: Prisma.ForumComentarioScalarWhereInput
+  data: Prisma.XOR<Prisma.ForumComentarioUpdateManyMutationInput, Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorInput>
+}
+
 export type ForumComentarioCreateWithoutPostInput = {
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   usuario: Prisma.UsuarioCreateNestedOneWithoutForumComentariosInput
+  removedor?: Prisma.UsuarioCreateNestedOneWithoutForumComentariosRemovidosInput
 }
 
 export type ForumComentarioUncheckedCreateWithoutPostInput = {
   id?: number
   usuarioId: number
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  removidoPor?: number | null
   createdAt?: Date | string
 }
 
@@ -525,6 +731,7 @@ export type ForumComentarioCreateOrConnectWithoutPostInput = {
 
 export type ForumComentarioCreateManyPostInputEnvelope = {
   data: Prisma.ForumComentarioCreateManyPostInput | Prisma.ForumComentarioCreateManyPostInput[]
+  skipDuplicates?: boolean
 }
 
 export type ForumComentarioUpsertWithWhereUniqueWithoutPostInput = {
@@ -546,54 +753,129 @@ export type ForumComentarioUpdateManyWithWhereWithoutPostInput = {
 export type ForumComentarioCreateManyUsuarioInput = {
   id?: number
   postId: number
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  removidoPor?: number | null
+  createdAt?: Date | string
+}
+
+export type ForumComentarioCreateManyRemovedorInput = {
+  id?: number
+  postId: number
+  usuarioId: number
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type ForumComentarioUpdateWithoutUsuarioInput = {
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   post?: Prisma.ForumPostUpdateOneRequiredWithoutComentariosNestedInput
+  removedor?: Prisma.UsuarioUpdateOneWithoutForumComentariosRemovidosNestedInput
 }
 
 export type ForumComentarioUncheckedUpdateWithoutUsuarioInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.IntFieldUpdateOperationsInput | number
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  removidoPor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ForumComentarioUncheckedUpdateManyWithoutUsuarioInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.IntFieldUpdateOperationsInput | number
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  removidoPor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ForumComentarioUpdateWithoutRemovedorInput = {
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  post?: Prisma.ForumPostUpdateOneRequiredWithoutComentariosNestedInput
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutForumComentariosNestedInput
+}
+
+export type ForumComentarioUncheckedUpdateWithoutRemovedorInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ForumComentarioUncheckedUpdateManyWithoutRemovedorInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ForumComentarioCreateManyPostInput = {
   id?: number
   usuarioId: number
-  conteudo?: string | null
+  conteudo: string
+  status?: string
+  editadoEm?: Date | string | null
+  deletedAt?: Date | string | null
+  removidoPor?: number | null
   createdAt?: Date | string
 }
 
 export type ForumComentarioUpdateWithoutPostInput = {
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutForumComentariosNestedInput
+  removedor?: Prisma.UsuarioUpdateOneWithoutForumComentariosRemovidosNestedInput
 }
 
 export type ForumComentarioUncheckedUpdateWithoutPostInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  removidoPor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ForumComentarioUncheckedUpdateManyWithoutPostInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
-  conteudo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conteudo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  editadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  removidoPor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -604,9 +886,14 @@ export type ForumComentarioSelect<ExtArgs extends runtime.Types.Extensions.Inter
   postId?: boolean
   usuarioId?: boolean
   conteudo?: boolean
+  status?: boolean
+  editadoEm?: boolean
+  deletedAt?: boolean
+  removidoPor?: boolean
   createdAt?: boolean
   post?: boolean | Prisma.ForumPostDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  removedor?: boolean | Prisma.ForumComentario$removedorArgs<ExtArgs>
 }, ExtArgs["result"]["forumComentario"]>
 
 export type ForumComentarioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -614,9 +901,14 @@ export type ForumComentarioSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   postId?: boolean
   usuarioId?: boolean
   conteudo?: boolean
+  status?: boolean
+  editadoEm?: boolean
+  deletedAt?: boolean
+  removidoPor?: boolean
   createdAt?: boolean
   post?: boolean | Prisma.ForumPostDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  removedor?: boolean | Prisma.ForumComentario$removedorArgs<ExtArgs>
 }, ExtArgs["result"]["forumComentario"]>
 
 export type ForumComentarioSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -624,9 +916,14 @@ export type ForumComentarioSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   postId?: boolean
   usuarioId?: boolean
   conteudo?: boolean
+  status?: boolean
+  editadoEm?: boolean
+  deletedAt?: boolean
+  removidoPor?: boolean
   createdAt?: boolean
   post?: boolean | Prisma.ForumPostDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  removedor?: boolean | Prisma.ForumComentario$removedorArgs<ExtArgs>
 }, ExtArgs["result"]["forumComentario"]>
 
 export type ForumComentarioSelectScalar = {
@@ -634,21 +931,28 @@ export type ForumComentarioSelectScalar = {
   postId?: boolean
   usuarioId?: boolean
   conteudo?: boolean
+  status?: boolean
+  editadoEm?: boolean
+  deletedAt?: boolean
+  removidoPor?: boolean
   createdAt?: boolean
 }
 
-export type ForumComentarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postId" | "usuarioId" | "conteudo" | "createdAt", ExtArgs["result"]["forumComentario"]>
+export type ForumComentarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postId" | "usuarioId" | "conteudo" | "status" | "editadoEm" | "deletedAt" | "removidoPor" | "createdAt", ExtArgs["result"]["forumComentario"]>
 export type ForumComentarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   post?: boolean | Prisma.ForumPostDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  removedor?: boolean | Prisma.ForumComentario$removedorArgs<ExtArgs>
 }
 export type ForumComentarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   post?: boolean | Prisma.ForumPostDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  removedor?: boolean | Prisma.ForumComentario$removedorArgs<ExtArgs>
 }
 export type ForumComentarioIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   post?: boolean | Prisma.ForumPostDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  removedor?: boolean | Prisma.ForumComentario$removedorArgs<ExtArgs>
 }
 
 export type $ForumComentarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -656,12 +960,17 @@ export type $ForumComentarioPayload<ExtArgs extends runtime.Types.Extensions.Int
   objects: {
     post: Prisma.$ForumPostPayload<ExtArgs>
     usuario: Prisma.$UsuarioPayload<ExtArgs>
+    removedor: Prisma.$UsuarioPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     postId: number
     usuarioId: number
-    conteudo: string | null
+    conteudo: string
+    status: string
+    editadoEm: Date | null
+    deletedAt: Date | null
+    removidoPor: number | null
     createdAt: Date
   }, ExtArgs["result"]["forumComentario"]>
   composites: {}
@@ -1059,6 +1368,7 @@ export interface Prisma__ForumComentarioClient<T, Null = never, ExtArgs extends 
   readonly [Symbol.toStringTag]: "PrismaPromise"
   post<T extends Prisma.ForumPostDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumPostDefaultArgs<ExtArgs>>): Prisma.Prisma__ForumPostClient<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   usuario<T extends Prisma.UsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  removedor<T extends Prisma.ForumComentario$removedorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ForumComentario$removedorArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1092,6 +1402,10 @@ export interface ForumComentarioFieldRefs {
   readonly postId: Prisma.FieldRef<"ForumComentario", 'Int'>
   readonly usuarioId: Prisma.FieldRef<"ForumComentario", 'Int'>
   readonly conteudo: Prisma.FieldRef<"ForumComentario", 'String'>
+  readonly status: Prisma.FieldRef<"ForumComentario", 'String'>
+  readonly editadoEm: Prisma.FieldRef<"ForumComentario", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"ForumComentario", 'DateTime'>
+  readonly removidoPor: Prisma.FieldRef<"ForumComentario", 'Int'>
   readonly createdAt: Prisma.FieldRef<"ForumComentario", 'DateTime'>
 }
     
@@ -1327,6 +1641,7 @@ export type ForumComentarioCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many ForumComentarios.
    */
   data: Prisma.ForumComentarioCreateManyInput | Prisma.ForumComentarioCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1345,6 +1660,7 @@ export type ForumComentarioCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many ForumComentarios.
    */
   data: Prisma.ForumComentarioCreateManyInput | Prisma.ForumComentarioCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
@@ -1489,6 +1805,25 @@ export type ForumComentarioDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many ForumComentarios to delete.
    */
   limit?: number
+}
+
+/**
+ * ForumComentario.removedor
+ */
+export type ForumComentario$removedorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Usuario
+   */
+  select?: Prisma.UsuarioSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Usuario
+   */
+  omit?: Prisma.UsuarioOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UsuarioInclude<ExtArgs> | null
+  where?: Prisma.UsuarioWhereInput
 }
 
 /**

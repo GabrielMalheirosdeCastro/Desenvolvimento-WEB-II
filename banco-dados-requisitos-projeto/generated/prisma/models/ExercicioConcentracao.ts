@@ -462,6 +462,7 @@ export type ExercicioConcentracaoCreateOrConnectWithoutUsuarioInput = {
 
 export type ExercicioConcentracaoCreateManyUsuarioInputEnvelope = {
   data: Prisma.ExercicioConcentracaoCreateManyUsuarioInput | Prisma.ExercicioConcentracaoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type ExercicioConcentracaoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -1251,6 +1252,7 @@ export type ExercicioConcentracaoCreateManyArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many ExercicioConcentracaos.
    */
   data: Prisma.ExercicioConcentracaoCreateManyInput | Prisma.ExercicioConcentracaoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1269,6 +1271,7 @@ export type ExercicioConcentracaoCreateManyAndReturnArgs<ExtArgs extends runtime
    * The data used to create many ExercicioConcentracaos.
    */
   data: Prisma.ExercicioConcentracaoCreateManyInput | Prisma.ExercicioConcentracaoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

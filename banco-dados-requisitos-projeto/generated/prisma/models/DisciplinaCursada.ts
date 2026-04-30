@@ -540,6 +540,7 @@ export type DisciplinaCursadaCreateOrConnectWithoutTurmaDisciplinaInput = {
 
 export type DisciplinaCursadaCreateManyTurmaDisciplinaInputEnvelope = {
   data: Prisma.DisciplinaCursadaCreateManyTurmaDisciplinaInput | Prisma.DisciplinaCursadaCreateManyTurmaDisciplinaInput[]
+  skipDuplicates?: boolean
 }
 
 export type DisciplinaCursadaUpsertWithWhereUniqueWithoutTurmaDisciplinaInput = {
@@ -594,6 +595,7 @@ export type DisciplinaCursadaCreateOrConnectWithoutMatriculaInput = {
 
 export type DisciplinaCursadaCreateManyMatriculaInputEnvelope = {
   data: Prisma.DisciplinaCursadaCreateManyMatriculaInput | Prisma.DisciplinaCursadaCreateManyMatriculaInput[]
+  skipDuplicates?: boolean
 }
 
 export type DisciplinaCursadaUpsertWithWhereUniqueWithoutMatriculaInput = {
@@ -1499,6 +1501,7 @@ export type DisciplinaCursadaCreateManyArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many DisciplinaCursadas.
    */
   data: Prisma.DisciplinaCursadaCreateManyInput | Prisma.DisciplinaCursadaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1517,6 +1520,7 @@ export type DisciplinaCursadaCreateManyAndReturnArgs<ExtArgs extends runtime.Typ
    * The data used to create many DisciplinaCursadas.
    */
   data: Prisma.DisciplinaCursadaCreateManyInput | Prisma.DisciplinaCursadaCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

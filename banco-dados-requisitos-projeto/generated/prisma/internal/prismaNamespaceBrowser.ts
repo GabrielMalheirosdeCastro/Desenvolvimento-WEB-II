@@ -75,6 +75,8 @@ export const ModelName = {
   Notificacao: 'Notificacao',
   QuestionarioBemEstar: 'QuestionarioBemEstar',
   Gamificacao: 'Gamificacao',
+  Conquista: 'Conquista',
+  UsuarioConquista: 'UsuarioConquista',
   Evento: 'Evento',
   UsuarioEvento: 'UsuarioEvento',
   ChatTicket: 'ChatTicket',
@@ -93,6 +95,9 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
  */
 
 export const TransactionIsolationLevel = runtime.makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 } as const)
 
@@ -165,6 +170,7 @@ export const UsuarioScalarFieldEnum = {
   nome: 'nome',
   tipoUsuario: 'tipoUsuario',
   dataNascimento: 'dataNascimento',
+  eMentor: 'eMentor',
   createdAt: 'createdAt'
 } as const
 
@@ -337,6 +343,10 @@ export const ForumComentarioScalarFieldEnum = {
   postId: 'postId',
   usuarioId: 'usuarioId',
   conteudo: 'conteudo',
+  status: 'status',
+  editadoEm: 'editadoEm',
+  deletedAt: 'deletedAt',
+  removidoPor: 'removidoPor',
   createdAt: 'createdAt'
 } as const
 
@@ -385,11 +395,35 @@ export const GamificacaoScalarFieldEnum = {
   id: 'id',
   usuarioId: 'usuarioId',
   pontosTotais: 'pontosTotais',
-  badges: 'badges',
-  rankingPosicao: 'rankingPosicao'
+  rankingPosicao: 'rankingPosicao',
+  streakAtual: 'streakAtual',
+  streakRecorde: 'streakRecorde',
+  dataUltimaAtividade: 'dataUltimaAtividade'
 } as const
 
 export type GamificacaoScalarFieldEnum = (typeof GamificacaoScalarFieldEnum)[keyof typeof GamificacaoScalarFieldEnum]
+
+
+export const ConquistaScalarFieldEnum = {
+  id: 'id',
+  codigo: 'codigo',
+  titulo: 'titulo',
+  descricao: 'descricao',
+  icone: 'icone',
+  pontos: 'pontos'
+} as const
+
+export type ConquistaScalarFieldEnum = (typeof ConquistaScalarFieldEnum)[keyof typeof ConquistaScalarFieldEnum]
+
+
+export const UsuarioConquistaScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  conquistaId: 'conquistaId',
+  conquistadaEm: 'conquistadaEm'
+} as const
+
+export type UsuarioConquistaScalarFieldEnum = (typeof UsuarioConquistaScalarFieldEnum)[keyof typeof UsuarioConquistaScalarFieldEnum]
 
 
 export const EventoScalarFieldEnum = {
@@ -518,6 +552,14 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
 export const NullsOrder = {

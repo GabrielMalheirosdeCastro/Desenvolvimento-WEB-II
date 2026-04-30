@@ -41,6 +41,7 @@ export type UsuarioMinAggregateOutputType = {
   nome: string | null
   tipoUsuario: string | null
   dataNascimento: Date | null
+  eMentor: boolean | null
   createdAt: Date | null
 }
 
@@ -51,6 +52,7 @@ export type UsuarioMaxAggregateOutputType = {
   nome: string | null
   tipoUsuario: string | null
   dataNascimento: Date | null
+  eMentor: boolean | null
   createdAt: Date | null
 }
 
@@ -61,6 +63,7 @@ export type UsuarioCountAggregateOutputType = {
   nome: number
   tipoUsuario: number
   dataNascimento: number
+  eMentor: number
   createdAt: number
   _all: number
 }
@@ -81,6 +84,7 @@ export type UsuarioMinAggregateInputType = {
   nome?: true
   tipoUsuario?: true
   dataNascimento?: true
+  eMentor?: true
   createdAt?: true
 }
 
@@ -91,6 +95,7 @@ export type UsuarioMaxAggregateInputType = {
   nome?: true
   tipoUsuario?: true
   dataNascimento?: true
+  eMentor?: true
   createdAt?: true
 }
 
@@ -101,6 +106,7 @@ export type UsuarioCountAggregateInputType = {
   nome?: true
   tipoUsuario?: true
   dataNascimento?: true
+  eMentor?: true
   createdAt?: true
   _all?: true
 }
@@ -198,6 +204,7 @@ export type UsuarioGroupByOutputType = {
   nome: string
   tipoUsuario: string
   dataNascimento: Date | null
+  eMentor: boolean
   createdAt: Date
   _count: UsuarioCountAggregateOutputType | null
   _avg: UsuarioAvgAggregateOutputType | null
@@ -231,6 +238,7 @@ export type UsuarioWhereInput = {
   nome?: Prisma.StringFilter<"Usuario"> | string
   tipoUsuario?: Prisma.StringFilter<"Usuario"> | string
   dataNascimento?: Prisma.DateTimeNullableFilter<"Usuario"> | Date | string | null
+  eMentor?: Prisma.BoolFilter<"Usuario"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaListRelationFilter
   planosEstudo?: Prisma.PlanoEstudoListRelationFilter
@@ -240,6 +248,7 @@ export type UsuarioWhereInput = {
   forunsCriados?: Prisma.ForumDiscussaoListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
   forumComentarios?: Prisma.ForumComentarioListRelationFilter
+  forumComentariosRemovidos?: Prisma.ForumComentarioListRelationFilter
   mentoriasComoMentor?: Prisma.MentoriaListRelationFilter
   mentoriasComoMentorado?: Prisma.MentoriaListRelationFilter
   notificacoes?: Prisma.NotificacaoListRelationFilter
@@ -253,6 +262,7 @@ export type UsuarioWhereInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemListRelationFilter
   consentimentosLgpd?: Prisma.ConsentimentoLgpdListRelationFilter
   auditoriaDados?: Prisma.AuditoriaDadoListRelationFilter
+  usuarioConquistas?: Prisma.UsuarioConquistaListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -262,6 +272,7 @@ export type UsuarioOrderByWithRelationInput = {
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrderInput | Prisma.SortOrder
+  eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   matriculasAcademicas?: Prisma.MatriculaAcademicaOrderByRelationAggregateInput
   planosEstudo?: Prisma.PlanoEstudoOrderByRelationAggregateInput
@@ -271,6 +282,7 @@ export type UsuarioOrderByWithRelationInput = {
   forunsCriados?: Prisma.ForumDiscussaoOrderByRelationAggregateInput
   forumPosts?: Prisma.ForumPostOrderByRelationAggregateInput
   forumComentarios?: Prisma.ForumComentarioOrderByRelationAggregateInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioOrderByRelationAggregateInput
   mentoriasComoMentor?: Prisma.MentoriaOrderByRelationAggregateInput
   mentoriasComoMentorado?: Prisma.MentoriaOrderByRelationAggregateInput
   notificacoes?: Prisma.NotificacaoOrderByRelationAggregateInput
@@ -284,6 +296,7 @@ export type UsuarioOrderByWithRelationInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemOrderByRelationAggregateInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdOrderByRelationAggregateInput
   auditoriaDados?: Prisma.AuditoriaDadoOrderByRelationAggregateInput
+  usuarioConquistas?: Prisma.UsuarioConquistaOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -296,6 +309,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   nome?: Prisma.StringFilter<"Usuario"> | string
   tipoUsuario?: Prisma.StringFilter<"Usuario"> | string
   dataNascimento?: Prisma.DateTimeNullableFilter<"Usuario"> | Date | string | null
+  eMentor?: Prisma.BoolFilter<"Usuario"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaListRelationFilter
   planosEstudo?: Prisma.PlanoEstudoListRelationFilter
@@ -305,6 +319,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   forunsCriados?: Prisma.ForumDiscussaoListRelationFilter
   forumPosts?: Prisma.ForumPostListRelationFilter
   forumComentarios?: Prisma.ForumComentarioListRelationFilter
+  forumComentariosRemovidos?: Prisma.ForumComentarioListRelationFilter
   mentoriasComoMentor?: Prisma.MentoriaListRelationFilter
   mentoriasComoMentorado?: Prisma.MentoriaListRelationFilter
   notificacoes?: Prisma.NotificacaoListRelationFilter
@@ -318,6 +333,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   chatbotMensagens?: Prisma.ChatbotMensagemListRelationFilter
   consentimentosLgpd?: Prisma.ConsentimentoLgpdListRelationFilter
   auditoriaDados?: Prisma.AuditoriaDadoListRelationFilter
+  usuarioConquistas?: Prisma.UsuarioConquistaListRelationFilter
 }, "id" | "matriculaInstitucional" | "emailInstitucional">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -327,6 +343,7 @@ export type UsuarioOrderByWithAggregationInput = {
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrderInput | Prisma.SortOrder
+  eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.UsuarioCountOrderByAggregateInput
   _avg?: Prisma.UsuarioAvgOrderByAggregateInput
@@ -345,6 +362,7 @@ export type UsuarioScalarWhereWithAggregatesInput = {
   nome?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
   tipoUsuario?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
   dataNascimento?: Prisma.DateTimeNullableWithAggregatesFilter<"Usuario"> | Date | string | null
+  eMentor?: Prisma.BoolWithAggregatesFilter<"Usuario"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Usuario"> | Date | string
 }
 
@@ -354,6 +372,7 @@ export type UsuarioCreateInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -363,6 +382,7 @@ export type UsuarioCreateInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -376,6 +396,7 @@ export type UsuarioCreateInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -385,6 +406,7 @@ export type UsuarioUncheckedCreateInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -394,6 +416,7 @@ export type UsuarioUncheckedCreateInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -407,6 +430,7 @@ export type UsuarioUncheckedCreateInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUpdateInput = {
@@ -415,6 +439,7 @@ export type UsuarioUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -424,6 +449,7 @@ export type UsuarioUpdateInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -437,6 +463,7 @@ export type UsuarioUpdateInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -446,6 +473,7 @@ export type UsuarioUncheckedUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -455,6 +483,7 @@ export type UsuarioUncheckedUpdateInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -468,6 +497,7 @@ export type UsuarioUncheckedUpdateInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -477,6 +507,7 @@ export type UsuarioCreateManyInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
 }
 
@@ -486,6 +517,7 @@ export type UsuarioUpdateManyMutationInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -496,6 +528,7 @@ export type UsuarioUncheckedUpdateManyInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -506,6 +539,7 @@ export type UsuarioCountOrderByAggregateInput = {
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrder
+  eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -520,6 +554,7 @@ export type UsuarioMaxOrderByAggregateInput = {
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrder
+  eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -530,6 +565,7 @@ export type UsuarioMinOrderByAggregateInput = {
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrder
+  eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -659,12 +695,28 @@ export type UsuarioCreateNestedOneWithoutForumComentariosInput = {
   connect?: Prisma.UsuarioWhereUniqueInput
 }
 
+export type UsuarioCreateNestedOneWithoutForumComentariosRemovidosInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutForumComentariosRemovidosInput, Prisma.UsuarioUncheckedCreateWithoutForumComentariosRemovidosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutForumComentariosRemovidosInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
 export type UsuarioUpdateOneRequiredWithoutForumComentariosNestedInput = {
   create?: Prisma.XOR<Prisma.UsuarioCreateWithoutForumComentariosInput, Prisma.UsuarioUncheckedCreateWithoutForumComentariosInput>
   connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutForumComentariosInput
   upsert?: Prisma.UsuarioUpsertWithoutForumComentariosInput
   connect?: Prisma.UsuarioWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutForumComentariosInput, Prisma.UsuarioUpdateWithoutForumComentariosInput>, Prisma.UsuarioUncheckedUpdateWithoutForumComentariosInput>
+}
+
+export type UsuarioUpdateOneWithoutForumComentariosRemovidosNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutForumComentariosRemovidosInput, Prisma.UsuarioUncheckedCreateWithoutForumComentariosRemovidosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutForumComentariosRemovidosInput
+  upsert?: Prisma.UsuarioUpsertWithoutForumComentariosRemovidosInput
+  disconnect?: Prisma.UsuarioWhereInput | boolean
+  delete?: Prisma.UsuarioWhereInput | boolean
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutForumComentariosRemovidosInput, Prisma.UsuarioUpdateWithoutForumComentariosRemovidosInput>, Prisma.UsuarioUncheckedUpdateWithoutForumComentariosRemovidosInput>
 }
 
 export type UsuarioCreateNestedOneWithoutMentoriasComoMentorInput = {
@@ -735,6 +787,20 @@ export type UsuarioUpdateOneRequiredWithoutGamificacaoNestedInput = {
   upsert?: Prisma.UsuarioUpsertWithoutGamificacaoInput
   connect?: Prisma.UsuarioWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutGamificacaoInput, Prisma.UsuarioUpdateWithoutGamificacaoInput>, Prisma.UsuarioUncheckedUpdateWithoutGamificacaoInput>
+}
+
+export type UsuarioCreateNestedOneWithoutUsuarioConquistasInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutUsuarioConquistasInput, Prisma.UsuarioUncheckedCreateWithoutUsuarioConquistasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutUsuarioConquistasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneRequiredWithoutUsuarioConquistasNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutUsuarioConquistasInput, Prisma.UsuarioUncheckedCreateWithoutUsuarioConquistasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutUsuarioConquistasInput
+  upsert?: Prisma.UsuarioUpsertWithoutUsuarioConquistasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutUsuarioConquistasInput, Prisma.UsuarioUpdateWithoutUsuarioConquistasInput>, Prisma.UsuarioUncheckedUpdateWithoutUsuarioConquistasInput>
 }
 
 export type UsuarioCreateNestedOneWithoutUsuarioEventosInput = {
@@ -859,6 +925,7 @@ export type UsuarioCreateWithoutMatriculasAcademicasInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
   atividadesEstudo?: Prisma.AtividadeEstudoCreateNestedManyWithoutUsuarioInput
@@ -867,6 +934,7 @@ export type UsuarioCreateWithoutMatriculasAcademicasInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -880,6 +948,7 @@ export type UsuarioCreateWithoutMatriculasAcademicasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutMatriculasAcademicasInput = {
@@ -889,6 +958,7 @@ export type UsuarioUncheckedCreateWithoutMatriculasAcademicasInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
   atividadesEstudo?: Prisma.AtividadeEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -897,6 +967,7 @@ export type UsuarioUncheckedCreateWithoutMatriculasAcademicasInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -910,6 +981,7 @@ export type UsuarioUncheckedCreateWithoutMatriculasAcademicasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutMatriculasAcademicasInput = {
@@ -934,6 +1006,7 @@ export type UsuarioUpdateWithoutMatriculasAcademicasInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
   atividadesEstudo?: Prisma.AtividadeEstudoUpdateManyWithoutUsuarioNestedInput
@@ -942,6 +1015,7 @@ export type UsuarioUpdateWithoutMatriculasAcademicasInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -955,6 +1029,7 @@ export type UsuarioUpdateWithoutMatriculasAcademicasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutMatriculasAcademicasInput = {
@@ -964,6 +1039,7 @@ export type UsuarioUncheckedUpdateWithoutMatriculasAcademicasInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
   atividadesEstudo?: Prisma.AtividadeEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -972,6 +1048,7 @@ export type UsuarioUncheckedUpdateWithoutMatriculasAcademicasInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -985,6 +1062,7 @@ export type UsuarioUncheckedUpdateWithoutMatriculasAcademicasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutPlanosEstudoInput = {
@@ -993,6 +1071,7 @@ export type UsuarioCreateWithoutPlanosEstudoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   atividadesEstudo?: Prisma.AtividadeEstudoCreateNestedManyWithoutUsuarioInput
@@ -1001,6 +1080,7 @@ export type UsuarioCreateWithoutPlanosEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -1014,6 +1094,7 @@ export type UsuarioCreateWithoutPlanosEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutPlanosEstudoInput = {
@@ -1023,6 +1104,7 @@ export type UsuarioUncheckedCreateWithoutPlanosEstudoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   atividadesEstudo?: Prisma.AtividadeEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1031,6 +1113,7 @@ export type UsuarioUncheckedCreateWithoutPlanosEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1044,6 +1127,7 @@ export type UsuarioUncheckedCreateWithoutPlanosEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutPlanosEstudoInput = {
@@ -1068,6 +1152,7 @@ export type UsuarioUpdateWithoutPlanosEstudoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   atividadesEstudo?: Prisma.AtividadeEstudoUpdateManyWithoutUsuarioNestedInput
@@ -1076,6 +1161,7 @@ export type UsuarioUpdateWithoutPlanosEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -1089,6 +1175,7 @@ export type UsuarioUpdateWithoutPlanosEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutPlanosEstudoInput = {
@@ -1098,6 +1185,7 @@ export type UsuarioUncheckedUpdateWithoutPlanosEstudoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   atividadesEstudo?: Prisma.AtividadeEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1106,6 +1194,7 @@ export type UsuarioUncheckedUpdateWithoutPlanosEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1119,6 +1208,7 @@ export type UsuarioUncheckedUpdateWithoutPlanosEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutAtividadesEstudoInput = {
@@ -1127,6 +1217,7 @@ export type UsuarioCreateWithoutAtividadesEstudoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -1135,6 +1226,7 @@ export type UsuarioCreateWithoutAtividadesEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -1148,6 +1240,7 @@ export type UsuarioCreateWithoutAtividadesEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutAtividadesEstudoInput = {
@@ -1157,6 +1250,7 @@ export type UsuarioUncheckedCreateWithoutAtividadesEstudoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1165,6 +1259,7 @@ export type UsuarioUncheckedCreateWithoutAtividadesEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1178,6 +1273,7 @@ export type UsuarioUncheckedCreateWithoutAtividadesEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutAtividadesEstudoInput = {
@@ -1202,6 +1298,7 @@ export type UsuarioUpdateWithoutAtividadesEstudoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -1210,6 +1307,7 @@ export type UsuarioUpdateWithoutAtividadesEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -1223,6 +1321,7 @@ export type UsuarioUpdateWithoutAtividadesEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutAtividadesEstudoInput = {
@@ -1232,6 +1331,7 @@ export type UsuarioUncheckedUpdateWithoutAtividadesEstudoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1240,6 +1340,7 @@ export type UsuarioUncheckedUpdateWithoutAtividadesEstudoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1253,6 +1354,7 @@ export type UsuarioUncheckedUpdateWithoutAtividadesEstudoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutExerciciosConcentracaoInput = {
@@ -1261,6 +1363,7 @@ export type UsuarioCreateWithoutExerciciosConcentracaoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -1269,6 +1372,7 @@ export type UsuarioCreateWithoutExerciciosConcentracaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -1282,6 +1386,7 @@ export type UsuarioCreateWithoutExerciciosConcentracaoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutExerciciosConcentracaoInput = {
@@ -1291,6 +1396,7 @@ export type UsuarioUncheckedCreateWithoutExerciciosConcentracaoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1299,6 +1405,7 @@ export type UsuarioUncheckedCreateWithoutExerciciosConcentracaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1312,6 +1419,7 @@ export type UsuarioUncheckedCreateWithoutExerciciosConcentracaoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutExerciciosConcentracaoInput = {
@@ -1336,6 +1444,7 @@ export type UsuarioUpdateWithoutExerciciosConcentracaoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -1344,6 +1453,7 @@ export type UsuarioUpdateWithoutExerciciosConcentracaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -1357,6 +1467,7 @@ export type UsuarioUpdateWithoutExerciciosConcentracaoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutExerciciosConcentracaoInput = {
@@ -1366,6 +1477,7 @@ export type UsuarioUncheckedUpdateWithoutExerciciosConcentracaoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1374,6 +1486,7 @@ export type UsuarioUncheckedUpdateWithoutExerciciosConcentracaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1387,6 +1500,7 @@ export type UsuarioUncheckedUpdateWithoutExerciciosConcentracaoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutUsuarioRecursosInput = {
@@ -1395,6 +1509,7 @@ export type UsuarioCreateWithoutUsuarioRecursosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -1403,6 +1518,7 @@ export type UsuarioCreateWithoutUsuarioRecursosInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -1416,6 +1532,7 @@ export type UsuarioCreateWithoutUsuarioRecursosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutUsuarioRecursosInput = {
@@ -1425,6 +1542,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioRecursosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1433,6 +1551,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioRecursosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1446,6 +1565,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioRecursosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutUsuarioRecursosInput = {
@@ -1470,6 +1590,7 @@ export type UsuarioUpdateWithoutUsuarioRecursosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -1478,6 +1599,7 @@ export type UsuarioUpdateWithoutUsuarioRecursosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -1491,6 +1613,7 @@ export type UsuarioUpdateWithoutUsuarioRecursosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutUsuarioRecursosInput = {
@@ -1500,6 +1623,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioRecursosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1508,6 +1632,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioRecursosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1521,6 +1646,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioRecursosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutForunsCriadosInput = {
@@ -1529,6 +1655,7 @@ export type UsuarioCreateWithoutForunsCriadosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -1537,6 +1664,7 @@ export type UsuarioCreateWithoutForunsCriadosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -1550,6 +1678,7 @@ export type UsuarioCreateWithoutForunsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutForunsCriadosInput = {
@@ -1559,6 +1688,7 @@ export type UsuarioUncheckedCreateWithoutForunsCriadosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1567,6 +1697,7 @@ export type UsuarioUncheckedCreateWithoutForunsCriadosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1580,6 +1711,7 @@ export type UsuarioUncheckedCreateWithoutForunsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutForunsCriadosInput = {
@@ -1604,6 +1736,7 @@ export type UsuarioUpdateWithoutForunsCriadosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -1612,6 +1745,7 @@ export type UsuarioUpdateWithoutForunsCriadosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -1625,6 +1759,7 @@ export type UsuarioUpdateWithoutForunsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutForunsCriadosInput = {
@@ -1634,6 +1769,7 @@ export type UsuarioUncheckedUpdateWithoutForunsCriadosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1642,6 +1778,7 @@ export type UsuarioUncheckedUpdateWithoutForunsCriadosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1655,6 +1792,7 @@ export type UsuarioUncheckedUpdateWithoutForunsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutForumPostsInput = {
@@ -1663,6 +1801,7 @@ export type UsuarioCreateWithoutForumPostsInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -1671,6 +1810,7 @@ export type UsuarioCreateWithoutForumPostsInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoCreateNestedManyWithoutUsuarioInput
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -1684,6 +1824,7 @@ export type UsuarioCreateWithoutForumPostsInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutForumPostsInput = {
@@ -1693,6 +1834,7 @@ export type UsuarioUncheckedCreateWithoutForumPostsInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1701,6 +1843,7 @@ export type UsuarioUncheckedCreateWithoutForumPostsInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUncheckedCreateNestedManyWithoutUsuarioInput
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1714,6 +1857,7 @@ export type UsuarioUncheckedCreateWithoutForumPostsInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutForumPostsInput = {
@@ -1738,6 +1882,7 @@ export type UsuarioUpdateWithoutForumPostsInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -1746,6 +1891,7 @@ export type UsuarioUpdateWithoutForumPostsInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUpdateManyWithoutUsuarioNestedInput
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -1759,6 +1905,7 @@ export type UsuarioUpdateWithoutForumPostsInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutForumPostsInput = {
@@ -1768,6 +1915,7 @@ export type UsuarioUncheckedUpdateWithoutForumPostsInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1776,6 +1924,7 @@ export type UsuarioUncheckedUpdateWithoutForumPostsInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUncheckedUpdateManyWithoutUsuarioNestedInput
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1789,6 +1938,7 @@ export type UsuarioUncheckedUpdateWithoutForumPostsInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutForumComentariosInput = {
@@ -1797,6 +1947,7 @@ export type UsuarioCreateWithoutForumComentariosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -1805,6 +1956,7 @@ export type UsuarioCreateWithoutForumComentariosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoCreateNestedManyWithoutUsuarioInput
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -1818,6 +1970,7 @@ export type UsuarioCreateWithoutForumComentariosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutForumComentariosInput = {
@@ -1827,6 +1980,7 @@ export type UsuarioUncheckedCreateWithoutForumComentariosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1835,6 +1989,7 @@ export type UsuarioUncheckedCreateWithoutForumComentariosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUncheckedCreateNestedManyWithoutUsuarioInput
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1848,11 +2003,82 @@ export type UsuarioUncheckedCreateWithoutForumComentariosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutForumComentariosInput = {
   where: Prisma.UsuarioWhereUniqueInput
   create: Prisma.XOR<Prisma.UsuarioCreateWithoutForumComentariosInput, Prisma.UsuarioUncheckedCreateWithoutForumComentariosInput>
+}
+
+export type UsuarioCreateWithoutForumComentariosRemovidosInput = {
+  matriculaInstitucional: string
+  emailInstitucional: string
+  nome: string
+  tipoUsuario: string
+  dataNascimento?: Date | string | null
+  eMentor?: boolean
+  createdAt?: Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
+  planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
+  atividadesEstudo?: Prisma.AtividadeEstudoCreateNestedManyWithoutUsuarioInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoCreateNestedManyWithoutUsuarioInput
+  usuarioRecursos?: Prisma.UsuarioRecursoCreateNestedManyWithoutUsuarioInput
+  forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
+  forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
+  mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarCreateNestedManyWithoutUsuarioInput
+  gamificacao?: Prisma.GamificacaoCreateNestedOneWithoutUsuarioInput
+  usuarioEventos?: Prisma.UsuarioEventoCreateNestedManyWithoutUsuarioInput
+  chatTicketsCriados?: Prisma.ChatTicketCreateNestedManyWithoutUsuarioInput
+  chatTicketsAtendidos?: Prisma.ChatTicketCreateNestedManyWithoutAtendenteInput
+  chatMensagens?: Prisma.ChatMensagemCreateNestedManyWithoutAutorInput
+  chatbotConversas?: Prisma.ChatbotConversaCreateNestedManyWithoutUsuarioInput
+  chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
+  auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioUncheckedCreateWithoutForumComentariosRemovidosInput = {
+  id?: number
+  matriculaInstitucional: string
+  emailInstitucional: string
+  nome: string
+  tipoUsuario: string
+  dataNascimento?: Date | string | null
+  eMentor?: boolean
+  createdAt?: Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
+  planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
+  atividadesEstudo?: Prisma.AtividadeEstudoUncheckedCreateNestedManyWithoutUsuarioInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioRecursos?: Prisma.UsuarioRecursoUncheckedCreateNestedManyWithoutUsuarioInput
+  forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
+  mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedCreateNestedManyWithoutUsuarioInput
+  gamificacao?: Prisma.GamificacaoUncheckedCreateNestedOneWithoutUsuarioInput
+  usuarioEventos?: Prisma.UsuarioEventoUncheckedCreateNestedManyWithoutUsuarioInput
+  chatTicketsCriados?: Prisma.ChatTicketUncheckedCreateNestedManyWithoutUsuarioInput
+  chatTicketsAtendidos?: Prisma.ChatTicketUncheckedCreateNestedManyWithoutAtendenteInput
+  chatMensagens?: Prisma.ChatMensagemUncheckedCreateNestedManyWithoutAutorInput
+  chatbotConversas?: Prisma.ChatbotConversaUncheckedCreateNestedManyWithoutUsuarioInput
+  chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
+  auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioCreateOrConnectWithoutForumComentariosRemovidosInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutForumComentariosRemovidosInput, Prisma.UsuarioUncheckedCreateWithoutForumComentariosRemovidosInput>
 }
 
 export type UsuarioUpsertWithoutForumComentariosInput = {
@@ -1872,6 +2098,7 @@ export type UsuarioUpdateWithoutForumComentariosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -1880,6 +2107,7 @@ export type UsuarioUpdateWithoutForumComentariosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUpdateManyWithoutUsuarioNestedInput
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -1893,6 +2121,7 @@ export type UsuarioUpdateWithoutForumComentariosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutForumComentariosInput = {
@@ -1902,6 +2131,7 @@ export type UsuarioUncheckedUpdateWithoutForumComentariosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1910,6 +2140,7 @@ export type UsuarioUncheckedUpdateWithoutForumComentariosInput = {
   usuarioRecursos?: Prisma.UsuarioRecursoUncheckedUpdateManyWithoutUsuarioNestedInput
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -1923,6 +2154,83 @@ export type UsuarioUncheckedUpdateWithoutForumComentariosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioUpsertWithoutForumComentariosRemovidosInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutForumComentariosRemovidosInput, Prisma.UsuarioUncheckedUpdateWithoutForumComentariosRemovidosInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutForumComentariosRemovidosInput, Prisma.UsuarioUncheckedCreateWithoutForumComentariosRemovidosInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutForumComentariosRemovidosInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutForumComentariosRemovidosInput, Prisma.UsuarioUncheckedUpdateWithoutForumComentariosRemovidosInput>
+}
+
+export type UsuarioUpdateWithoutForumComentariosRemovidosInput = {
+  matriculaInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
+  planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
+  atividadesEstudo?: Prisma.AtividadeEstudoUpdateManyWithoutUsuarioNestedInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoUpdateManyWithoutUsuarioNestedInput
+  usuarioRecursos?: Prisma.UsuarioRecursoUpdateManyWithoutUsuarioNestedInput
+  forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
+  forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
+  mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarUpdateManyWithoutUsuarioNestedInput
+  gamificacao?: Prisma.GamificacaoUpdateOneWithoutUsuarioNestedInput
+  usuarioEventos?: Prisma.UsuarioEventoUpdateManyWithoutUsuarioNestedInput
+  chatTicketsCriados?: Prisma.ChatTicketUpdateManyWithoutUsuarioNestedInput
+  chatTicketsAtendidos?: Prisma.ChatTicketUpdateManyWithoutAtendenteNestedInput
+  chatMensagens?: Prisma.ChatMensagemUpdateManyWithoutAutorNestedInput
+  chatbotConversas?: Prisma.ChatbotConversaUpdateManyWithoutUsuarioNestedInput
+  chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
+  auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutForumComentariosRemovidosInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  matriculaInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
+  planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
+  atividadesEstudo?: Prisma.AtividadeEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioRecursos?: Prisma.UsuarioRecursoUncheckedUpdateManyWithoutUsuarioNestedInput
+  forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
+  mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedUpdateManyWithoutUsuarioNestedInput
+  gamificacao?: Prisma.GamificacaoUncheckedUpdateOneWithoutUsuarioNestedInput
+  usuarioEventos?: Prisma.UsuarioEventoUncheckedUpdateManyWithoutUsuarioNestedInput
+  chatTicketsCriados?: Prisma.ChatTicketUncheckedUpdateManyWithoutUsuarioNestedInput
+  chatTicketsAtendidos?: Prisma.ChatTicketUncheckedUpdateManyWithoutAtendenteNestedInput
+  chatMensagens?: Prisma.ChatMensagemUncheckedUpdateManyWithoutAutorNestedInput
+  chatbotConversas?: Prisma.ChatbotConversaUncheckedUpdateManyWithoutUsuarioNestedInput
+  chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
+  auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutMentoriasComoMentorInput = {
@@ -1931,6 +2239,7 @@ export type UsuarioCreateWithoutMentoriasComoMentorInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -1940,6 +2249,7 @@ export type UsuarioCreateWithoutMentoriasComoMentorInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarCreateNestedManyWithoutUsuarioInput
@@ -1952,6 +2262,7 @@ export type UsuarioCreateWithoutMentoriasComoMentorInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutMentoriasComoMentorInput = {
@@ -1961,6 +2272,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentorInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1970,6 +2282,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentorInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedCreateNestedManyWithoutUsuarioInput
@@ -1982,6 +2295,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentorInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutMentoriasComoMentorInput = {
@@ -1995,6 +2309,7 @@ export type UsuarioCreateWithoutMentoriasComoMentoradoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -2004,6 +2319,7 @@ export type UsuarioCreateWithoutMentoriasComoMentoradoInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarCreateNestedManyWithoutUsuarioInput
@@ -2016,6 +2332,7 @@ export type UsuarioCreateWithoutMentoriasComoMentoradoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutMentoriasComoMentoradoInput = {
@@ -2025,6 +2342,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentoradoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2034,6 +2352,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentoradoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2046,6 +2365,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentoradoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutMentoriasComoMentoradoInput = {
@@ -2070,6 +2390,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentorInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2079,6 +2400,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentorInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUpdateManyWithoutUsuarioNestedInput
@@ -2091,6 +2413,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentorInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutMentoriasComoMentorInput = {
@@ -2100,6 +2423,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentorInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2109,6 +2433,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentorInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2121,6 +2446,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentorInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUpsertWithoutMentoriasComoMentoradoInput = {
@@ -2140,6 +2466,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentoradoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2149,6 +2476,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentoradoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUpdateManyWithoutUsuarioNestedInput
@@ -2161,6 +2489,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentoradoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutMentoriasComoMentoradoInput = {
@@ -2170,6 +2499,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentoradoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2179,6 +2509,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentoradoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2191,6 +2522,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentoradoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutNotificacoesInput = {
@@ -2199,6 +2531,7 @@ export type UsuarioCreateWithoutNotificacoesInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -2208,6 +2541,7 @@ export type UsuarioCreateWithoutNotificacoesInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarCreateNestedManyWithoutUsuarioInput
@@ -2220,6 +2554,7 @@ export type UsuarioCreateWithoutNotificacoesInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutNotificacoesInput = {
@@ -2229,6 +2564,7 @@ export type UsuarioUncheckedCreateWithoutNotificacoesInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2238,6 +2574,7 @@ export type UsuarioUncheckedCreateWithoutNotificacoesInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2250,6 +2587,7 @@ export type UsuarioUncheckedCreateWithoutNotificacoesInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutNotificacoesInput = {
@@ -2274,6 +2612,7 @@ export type UsuarioUpdateWithoutNotificacoesInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2283,6 +2622,7 @@ export type UsuarioUpdateWithoutNotificacoesInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUpdateManyWithoutUsuarioNestedInput
@@ -2295,6 +2635,7 @@ export type UsuarioUpdateWithoutNotificacoesInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutNotificacoesInput = {
@@ -2304,6 +2645,7 @@ export type UsuarioUncheckedUpdateWithoutNotificacoesInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2313,6 +2655,7 @@ export type UsuarioUncheckedUpdateWithoutNotificacoesInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2325,6 +2668,7 @@ export type UsuarioUncheckedUpdateWithoutNotificacoesInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutQuestionariosBemEstarInput = {
@@ -2333,6 +2677,7 @@ export type UsuarioCreateWithoutQuestionariosBemEstarInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -2342,6 +2687,7 @@ export type UsuarioCreateWithoutQuestionariosBemEstarInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -2354,6 +2700,7 @@ export type UsuarioCreateWithoutQuestionariosBemEstarInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutQuestionariosBemEstarInput = {
@@ -2363,6 +2710,7 @@ export type UsuarioUncheckedCreateWithoutQuestionariosBemEstarInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2372,6 +2720,7 @@ export type UsuarioUncheckedCreateWithoutQuestionariosBemEstarInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2384,6 +2733,7 @@ export type UsuarioUncheckedCreateWithoutQuestionariosBemEstarInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutQuestionariosBemEstarInput = {
@@ -2408,6 +2758,7 @@ export type UsuarioUpdateWithoutQuestionariosBemEstarInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2417,6 +2768,7 @@ export type UsuarioUpdateWithoutQuestionariosBemEstarInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -2429,6 +2781,7 @@ export type UsuarioUpdateWithoutQuestionariosBemEstarInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutQuestionariosBemEstarInput = {
@@ -2438,6 +2791,7 @@ export type UsuarioUncheckedUpdateWithoutQuestionariosBemEstarInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2447,6 +2801,7 @@ export type UsuarioUncheckedUpdateWithoutQuestionariosBemEstarInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2459,6 +2814,7 @@ export type UsuarioUncheckedUpdateWithoutQuestionariosBemEstarInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutGamificacaoInput = {
@@ -2467,6 +2823,7 @@ export type UsuarioCreateWithoutGamificacaoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -2476,6 +2833,7 @@ export type UsuarioCreateWithoutGamificacaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -2488,6 +2846,7 @@ export type UsuarioCreateWithoutGamificacaoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutGamificacaoInput = {
@@ -2497,6 +2856,7 @@ export type UsuarioUncheckedCreateWithoutGamificacaoInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2506,6 +2866,7 @@ export type UsuarioUncheckedCreateWithoutGamificacaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2518,6 +2879,7 @@ export type UsuarioUncheckedCreateWithoutGamificacaoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutGamificacaoInput = {
@@ -2542,6 +2904,7 @@ export type UsuarioUpdateWithoutGamificacaoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2551,6 +2914,7 @@ export type UsuarioUpdateWithoutGamificacaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -2563,6 +2927,7 @@ export type UsuarioUpdateWithoutGamificacaoInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutGamificacaoInput = {
@@ -2572,6 +2937,7 @@ export type UsuarioUncheckedUpdateWithoutGamificacaoInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2581,10 +2947,158 @@ export type UsuarioUncheckedUpdateWithoutGamificacaoInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
   questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioEventos?: Prisma.UsuarioEventoUncheckedUpdateManyWithoutUsuarioNestedInput
+  chatTicketsCriados?: Prisma.ChatTicketUncheckedUpdateManyWithoutUsuarioNestedInput
+  chatTicketsAtendidos?: Prisma.ChatTicketUncheckedUpdateManyWithoutAtendenteNestedInput
+  chatMensagens?: Prisma.ChatMensagemUncheckedUpdateManyWithoutAutorNestedInput
+  chatbotConversas?: Prisma.ChatbotConversaUncheckedUpdateManyWithoutUsuarioNestedInput
+  chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
+  auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioCreateWithoutUsuarioConquistasInput = {
+  matriculaInstitucional: string
+  emailInstitucional: string
+  nome: string
+  tipoUsuario: string
+  dataNascimento?: Date | string | null
+  eMentor?: boolean
+  createdAt?: Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
+  planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
+  atividadesEstudo?: Prisma.AtividadeEstudoCreateNestedManyWithoutUsuarioInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoCreateNestedManyWithoutUsuarioInput
+  usuarioRecursos?: Prisma.UsuarioRecursoCreateNestedManyWithoutUsuarioInput
+  forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
+  forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
+  forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
+  mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
+  mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarCreateNestedManyWithoutUsuarioInput
+  gamificacao?: Prisma.GamificacaoCreateNestedOneWithoutUsuarioInput
+  usuarioEventos?: Prisma.UsuarioEventoCreateNestedManyWithoutUsuarioInput
+  chatTicketsCriados?: Prisma.ChatTicketCreateNestedManyWithoutUsuarioInput
+  chatTicketsAtendidos?: Prisma.ChatTicketCreateNestedManyWithoutAtendenteInput
+  chatMensagens?: Prisma.ChatMensagemCreateNestedManyWithoutAutorInput
+  chatbotConversas?: Prisma.ChatbotConversaCreateNestedManyWithoutUsuarioInput
+  chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
+  auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioUncheckedCreateWithoutUsuarioConquistasInput = {
+  id?: number
+  matriculaInstitucional: string
+  emailInstitucional: string
+  nome: string
+  tipoUsuario: string
+  dataNascimento?: Date | string | null
+  eMentor?: boolean
+  createdAt?: Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
+  planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
+  atividadesEstudo?: Prisma.AtividadeEstudoUncheckedCreateNestedManyWithoutUsuarioInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioRecursos?: Prisma.UsuarioRecursoUncheckedCreateNestedManyWithoutUsuarioInput
+  forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
+  forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
+  mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
+  mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedCreateNestedManyWithoutUsuarioInput
+  gamificacao?: Prisma.GamificacaoUncheckedCreateNestedOneWithoutUsuarioInput
+  usuarioEventos?: Prisma.UsuarioEventoUncheckedCreateNestedManyWithoutUsuarioInput
+  chatTicketsCriados?: Prisma.ChatTicketUncheckedCreateNestedManyWithoutUsuarioInput
+  chatTicketsAtendidos?: Prisma.ChatTicketUncheckedCreateNestedManyWithoutAtendenteInput
+  chatMensagens?: Prisma.ChatMensagemUncheckedCreateNestedManyWithoutAutorInput
+  chatbotConversas?: Prisma.ChatbotConversaUncheckedCreateNestedManyWithoutUsuarioInput
+  chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
+  auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioCreateOrConnectWithoutUsuarioConquistasInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutUsuarioConquistasInput, Prisma.UsuarioUncheckedCreateWithoutUsuarioConquistasInput>
+}
+
+export type UsuarioUpsertWithoutUsuarioConquistasInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutUsuarioConquistasInput, Prisma.UsuarioUncheckedUpdateWithoutUsuarioConquistasInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutUsuarioConquistasInput, Prisma.UsuarioUncheckedCreateWithoutUsuarioConquistasInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutUsuarioConquistasInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutUsuarioConquistasInput, Prisma.UsuarioUncheckedUpdateWithoutUsuarioConquistasInput>
+}
+
+export type UsuarioUpdateWithoutUsuarioConquistasInput = {
+  matriculaInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
+  planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
+  atividadesEstudo?: Prisma.AtividadeEstudoUpdateManyWithoutUsuarioNestedInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoUpdateManyWithoutUsuarioNestedInput
+  usuarioRecursos?: Prisma.UsuarioRecursoUpdateManyWithoutUsuarioNestedInput
+  forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
+  forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
+  forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
+  mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
+  mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarUpdateManyWithoutUsuarioNestedInput
+  gamificacao?: Prisma.GamificacaoUpdateOneWithoutUsuarioNestedInput
+  usuarioEventos?: Prisma.UsuarioEventoUpdateManyWithoutUsuarioNestedInput
+  chatTicketsCriados?: Prisma.ChatTicketUpdateManyWithoutUsuarioNestedInput
+  chatTicketsAtendidos?: Prisma.ChatTicketUpdateManyWithoutAtendenteNestedInput
+  chatMensagens?: Prisma.ChatMensagemUpdateManyWithoutAutorNestedInput
+  chatbotConversas?: Prisma.ChatbotConversaUpdateManyWithoutUsuarioNestedInput
+  chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
+  consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
+  auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutUsuarioConquistasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  matriculaInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
+  planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
+  atividadesEstudo?: Prisma.AtividadeEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
+  exerciciosConcentracao?: Prisma.ExercicioConcentracaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioRecursos?: Prisma.UsuarioRecursoUncheckedUpdateManyWithoutUsuarioNestedInput
+  forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
+  mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
+  mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  questionariosBemEstar?: Prisma.QuestionarioBemEstarUncheckedUpdateManyWithoutUsuarioNestedInput
+  gamificacao?: Prisma.GamificacaoUncheckedUpdateOneWithoutUsuarioNestedInput
   usuarioEventos?: Prisma.UsuarioEventoUncheckedUpdateManyWithoutUsuarioNestedInput
   chatTicketsCriados?: Prisma.ChatTicketUncheckedUpdateManyWithoutUsuarioNestedInput
   chatTicketsAtendidos?: Prisma.ChatTicketUncheckedUpdateManyWithoutAtendenteNestedInput
@@ -2601,6 +3115,7 @@ export type UsuarioCreateWithoutUsuarioEventosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -2610,6 +3125,7 @@ export type UsuarioCreateWithoutUsuarioEventosInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -2622,6 +3138,7 @@ export type UsuarioCreateWithoutUsuarioEventosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutUsuarioEventosInput = {
@@ -2631,6 +3148,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioEventosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2640,6 +3158,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioEventosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2652,6 +3171,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioEventosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutUsuarioEventosInput = {
@@ -2676,6 +3196,7 @@ export type UsuarioUpdateWithoutUsuarioEventosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2685,6 +3206,7 @@ export type UsuarioUpdateWithoutUsuarioEventosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -2697,6 +3219,7 @@ export type UsuarioUpdateWithoutUsuarioEventosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutUsuarioEventosInput = {
@@ -2706,6 +3229,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioEventosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2715,6 +3239,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioEventosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2727,6 +3252,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioEventosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutChatTicketsCriadosInput = {
@@ -2735,6 +3261,7 @@ export type UsuarioCreateWithoutChatTicketsCriadosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -2744,6 +3271,7 @@ export type UsuarioCreateWithoutChatTicketsCriadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -2756,6 +3284,7 @@ export type UsuarioCreateWithoutChatTicketsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutChatTicketsCriadosInput = {
@@ -2765,6 +3294,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsCriadosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2774,6 +3304,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsCriadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2786,6 +3317,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutChatTicketsCriadosInput = {
@@ -2799,6 +3331,7 @@ export type UsuarioCreateWithoutChatTicketsAtendidosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -2808,6 +3341,7 @@ export type UsuarioCreateWithoutChatTicketsAtendidosInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -2820,6 +3354,7 @@ export type UsuarioCreateWithoutChatTicketsAtendidosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutChatTicketsAtendidosInput = {
@@ -2829,6 +3364,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsAtendidosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2838,6 +3374,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsAtendidosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -2850,6 +3387,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsAtendidosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutChatTicketsAtendidosInput = {
@@ -2874,6 +3412,7 @@ export type UsuarioUpdateWithoutChatTicketsCriadosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2883,6 +3422,7 @@ export type UsuarioUpdateWithoutChatTicketsCriadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -2895,6 +3435,7 @@ export type UsuarioUpdateWithoutChatTicketsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutChatTicketsCriadosInput = {
@@ -2904,6 +3445,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsCriadosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2913,6 +3455,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsCriadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2925,6 +3468,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsCriadosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUpsertWithoutChatTicketsAtendidosInput = {
@@ -2944,6 +3488,7 @@ export type UsuarioUpdateWithoutChatTicketsAtendidosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -2953,6 +3498,7 @@ export type UsuarioUpdateWithoutChatTicketsAtendidosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -2965,6 +3511,7 @@ export type UsuarioUpdateWithoutChatTicketsAtendidosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutChatTicketsAtendidosInput = {
@@ -2974,6 +3521,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsAtendidosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2983,6 +3531,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsAtendidosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -2995,6 +3544,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsAtendidosInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutChatMensagensInput = {
@@ -3003,6 +3553,7 @@ export type UsuarioCreateWithoutChatMensagensInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -3012,6 +3563,7 @@ export type UsuarioCreateWithoutChatMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -3024,6 +3576,7 @@ export type UsuarioCreateWithoutChatMensagensInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutChatMensagensInput = {
@@ -3033,6 +3586,7 @@ export type UsuarioUncheckedCreateWithoutChatMensagensInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3042,6 +3596,7 @@ export type UsuarioUncheckedCreateWithoutChatMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3054,6 +3609,7 @@ export type UsuarioUncheckedCreateWithoutChatMensagensInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutChatMensagensInput = {
@@ -3078,6 +3634,7 @@ export type UsuarioUpdateWithoutChatMensagensInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -3087,6 +3644,7 @@ export type UsuarioUpdateWithoutChatMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -3099,6 +3657,7 @@ export type UsuarioUpdateWithoutChatMensagensInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutChatMensagensInput = {
@@ -3108,6 +3667,7 @@ export type UsuarioUncheckedUpdateWithoutChatMensagensInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3117,6 +3677,7 @@ export type UsuarioUncheckedUpdateWithoutChatMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3129,6 +3690,7 @@ export type UsuarioUncheckedUpdateWithoutChatMensagensInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutChatbotConversasInput = {
@@ -3137,6 +3699,7 @@ export type UsuarioCreateWithoutChatbotConversasInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -3146,6 +3709,7 @@ export type UsuarioCreateWithoutChatbotConversasInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -3158,6 +3722,7 @@ export type UsuarioCreateWithoutChatbotConversasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutChatbotConversasInput = {
@@ -3167,6 +3732,7 @@ export type UsuarioUncheckedCreateWithoutChatbotConversasInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3176,6 +3742,7 @@ export type UsuarioUncheckedCreateWithoutChatbotConversasInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3188,6 +3755,7 @@ export type UsuarioUncheckedCreateWithoutChatbotConversasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutChatbotConversasInput = {
@@ -3212,6 +3780,7 @@ export type UsuarioUpdateWithoutChatbotConversasInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -3221,6 +3790,7 @@ export type UsuarioUpdateWithoutChatbotConversasInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -3233,6 +3803,7 @@ export type UsuarioUpdateWithoutChatbotConversasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutChatbotConversasInput = {
@@ -3242,6 +3813,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotConversasInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3251,6 +3823,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotConversasInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3263,6 +3836,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotConversasInput = {
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutChatbotMensagensInput = {
@@ -3271,6 +3845,7 @@ export type UsuarioCreateWithoutChatbotMensagensInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -3280,6 +3855,7 @@ export type UsuarioCreateWithoutChatbotMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -3292,6 +3868,7 @@ export type UsuarioCreateWithoutChatbotMensagensInput = {
   chatbotConversas?: Prisma.ChatbotConversaCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutChatbotMensagensInput = {
@@ -3301,6 +3878,7 @@ export type UsuarioUncheckedCreateWithoutChatbotMensagensInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3310,6 +3888,7 @@ export type UsuarioUncheckedCreateWithoutChatbotMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3322,6 +3901,7 @@ export type UsuarioUncheckedCreateWithoutChatbotMensagensInput = {
   chatbotConversas?: Prisma.ChatbotConversaUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutChatbotMensagensInput = {
@@ -3346,6 +3926,7 @@ export type UsuarioUpdateWithoutChatbotMensagensInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -3355,6 +3936,7 @@ export type UsuarioUpdateWithoutChatbotMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -3367,6 +3949,7 @@ export type UsuarioUpdateWithoutChatbotMensagensInput = {
   chatbotConversas?: Prisma.ChatbotConversaUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutChatbotMensagensInput = {
@@ -3376,6 +3959,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotMensagensInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3385,6 +3969,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotMensagensInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3397,6 +3982,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotMensagensInput = {
   chatbotConversas?: Prisma.ChatbotConversaUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutConsentimentosLgpdInput = {
@@ -3405,6 +3991,7 @@ export type UsuarioCreateWithoutConsentimentosLgpdInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -3414,6 +4001,7 @@ export type UsuarioCreateWithoutConsentimentosLgpdInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -3426,6 +4014,7 @@ export type UsuarioCreateWithoutConsentimentosLgpdInput = {
   chatbotConversas?: Prisma.ChatbotConversaCreateNestedManyWithoutUsuarioInput
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutConsentimentosLgpdInput = {
@@ -3435,6 +4024,7 @@ export type UsuarioUncheckedCreateWithoutConsentimentosLgpdInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3444,6 +4034,7 @@ export type UsuarioUncheckedCreateWithoutConsentimentosLgpdInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3456,6 +4047,7 @@ export type UsuarioUncheckedCreateWithoutConsentimentosLgpdInput = {
   chatbotConversas?: Prisma.ChatbotConversaUncheckedCreateNestedManyWithoutUsuarioInput
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutConsentimentosLgpdInput = {
@@ -3480,6 +4072,7 @@ export type UsuarioUpdateWithoutConsentimentosLgpdInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -3489,6 +4082,7 @@ export type UsuarioUpdateWithoutConsentimentosLgpdInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -3501,6 +4095,7 @@ export type UsuarioUpdateWithoutConsentimentosLgpdInput = {
   chatbotConversas?: Prisma.ChatbotConversaUpdateManyWithoutUsuarioNestedInput
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutConsentimentosLgpdInput = {
@@ -3510,6 +4105,7 @@ export type UsuarioUncheckedUpdateWithoutConsentimentosLgpdInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3519,6 +4115,7 @@ export type UsuarioUncheckedUpdateWithoutConsentimentosLgpdInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3531,6 +4128,7 @@ export type UsuarioUncheckedUpdateWithoutConsentimentosLgpdInput = {
   chatbotConversas?: Prisma.ChatbotConversaUncheckedUpdateManyWithoutUsuarioNestedInput
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   auditoriaDados?: Prisma.AuditoriaDadoUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutAuditoriaDadosInput = {
@@ -3539,6 +4137,7 @@ export type UsuarioCreateWithoutAuditoriaDadosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoCreateNestedManyWithoutUsuarioInput
@@ -3548,6 +4147,7 @@ export type UsuarioCreateWithoutAuditoriaDadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutUsuarioInput
@@ -3560,6 +4160,7 @@ export type UsuarioCreateWithoutAuditoriaDadosInput = {
   chatbotConversas?: Prisma.ChatbotConversaCreateNestedManyWithoutUsuarioInput
   chatbotMensagens?: Prisma.ChatbotMensagemCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutAuditoriaDadosInput = {
@@ -3569,6 +4170,7 @@ export type UsuarioUncheckedCreateWithoutAuditoriaDadosInput = {
   nome: string
   tipoUsuario: string
   dataNascimento?: Date | string | null
+  eMentor?: boolean
   createdAt?: Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedCreateNestedManyWithoutUsuarioInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3578,6 +4180,7 @@ export type UsuarioUncheckedCreateWithoutAuditoriaDadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedCreateNestedManyWithoutUsuarioInput
   forumPosts?: Prisma.ForumPostUncheckedCreateNestedManyWithoutUsuarioInput
   forumComentarios?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutUsuarioInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedCreateNestedManyWithoutRemovedorInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentorInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedCreateNestedManyWithoutMentoradoInput
   notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutUsuarioInput
@@ -3590,6 +4193,7 @@ export type UsuarioUncheckedCreateWithoutAuditoriaDadosInput = {
   chatbotConversas?: Prisma.ChatbotConversaUncheckedCreateNestedManyWithoutUsuarioInput
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedCreateNestedManyWithoutUsuarioInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedCreateNestedManyWithoutUsuarioInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutAuditoriaDadosInput = {
@@ -3614,6 +4218,7 @@ export type UsuarioUpdateWithoutAuditoriaDadosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUpdateManyWithoutUsuarioNestedInput
@@ -3623,6 +4228,7 @@ export type UsuarioUpdateWithoutAuditoriaDadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUpdateManyWithoutUsuarioNestedInput
@@ -3635,6 +4241,7 @@ export type UsuarioUpdateWithoutAuditoriaDadosInput = {
   chatbotConversas?: Prisma.ChatbotConversaUpdateManyWithoutUsuarioNestedInput
   chatbotMensagens?: Prisma.ChatbotMensagemUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutAuditoriaDadosInput = {
@@ -3644,6 +4251,7 @@ export type UsuarioUncheckedUpdateWithoutAuditoriaDadosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   matriculasAcademicas?: Prisma.MatriculaAcademicaUncheckedUpdateManyWithoutUsuarioNestedInput
   planosEstudo?: Prisma.PlanoEstudoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3653,6 +4261,7 @@ export type UsuarioUncheckedUpdateWithoutAuditoriaDadosInput = {
   forunsCriados?: Prisma.ForumDiscussaoUncheckedUpdateManyWithoutUsuarioNestedInput
   forumPosts?: Prisma.ForumPostUncheckedUpdateManyWithoutUsuarioNestedInput
   forumComentarios?: Prisma.ForumComentarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  forumComentariosRemovidos?: Prisma.ForumComentarioUncheckedUpdateManyWithoutRemovedorNestedInput
   mentoriasComoMentor?: Prisma.MentoriaUncheckedUpdateManyWithoutMentorNestedInput
   mentoriasComoMentorado?: Prisma.MentoriaUncheckedUpdateManyWithoutMentoradoNestedInput
   notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutUsuarioNestedInput
@@ -3665,6 +4274,7 @@ export type UsuarioUncheckedUpdateWithoutAuditoriaDadosInput = {
   chatbotConversas?: Prisma.ChatbotConversaUncheckedUpdateManyWithoutUsuarioNestedInput
   chatbotMensagens?: Prisma.ChatbotMensagemUncheckedUpdateManyWithoutUsuarioNestedInput
   consentimentosLgpd?: Prisma.ConsentimentoLgpdUncheckedUpdateManyWithoutUsuarioNestedInput
+  usuarioConquistas?: Prisma.UsuarioConquistaUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 
@@ -3681,6 +4291,7 @@ export type UsuarioCountOutputType = {
   forunsCriados: number
   forumPosts: number
   forumComentarios: number
+  forumComentariosRemovidos: number
   mentoriasComoMentor: number
   mentoriasComoMentorado: number
   notificacoes: number
@@ -3693,6 +4304,7 @@ export type UsuarioCountOutputType = {
   chatbotMensagens: number
   consentimentosLgpd: number
   auditoriaDados: number
+  usuarioConquistas: number
 }
 
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3704,6 +4316,7 @@ export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   forunsCriados?: boolean | UsuarioCountOutputTypeCountForunsCriadosArgs
   forumPosts?: boolean | UsuarioCountOutputTypeCountForumPostsArgs
   forumComentarios?: boolean | UsuarioCountOutputTypeCountForumComentariosArgs
+  forumComentariosRemovidos?: boolean | UsuarioCountOutputTypeCountForumComentariosRemovidosArgs
   mentoriasComoMentor?: boolean | UsuarioCountOutputTypeCountMentoriasComoMentorArgs
   mentoriasComoMentorado?: boolean | UsuarioCountOutputTypeCountMentoriasComoMentoradoArgs
   notificacoes?: boolean | UsuarioCountOutputTypeCountNotificacoesArgs
@@ -3716,6 +4329,7 @@ export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   chatbotMensagens?: boolean | UsuarioCountOutputTypeCountChatbotMensagensArgs
   consentimentosLgpd?: boolean | UsuarioCountOutputTypeCountConsentimentosLgpdArgs
   auditoriaDados?: boolean | UsuarioCountOutputTypeCountAuditoriaDadosArgs
+  usuarioConquistas?: boolean | UsuarioCountOutputTypeCountUsuarioConquistasArgs
 }
 
 /**
@@ -3781,6 +4395,13 @@ export type UsuarioCountOutputTypeCountForumPostsArgs<ExtArgs extends runtime.Ty
  * UsuarioCountOutputType without action
  */
 export type UsuarioCountOutputTypeCountForumComentariosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ForumComentarioWhereInput
+}
+
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountForumComentariosRemovidosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ForumComentarioWhereInput
 }
 
@@ -3868,6 +4489,13 @@ export type UsuarioCountOutputTypeCountAuditoriaDadosArgs<ExtArgs extends runtim
   where?: Prisma.AuditoriaDadoWhereInput
 }
 
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountUsuarioConquistasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UsuarioConquistaWhereInput
+}
+
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3876,6 +4504,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   nome?: boolean
   tipoUsuario?: boolean
   dataNascimento?: boolean
+  eMentor?: boolean
   createdAt?: boolean
   matriculasAcademicas?: boolean | Prisma.Usuario$matriculasAcademicasArgs<ExtArgs>
   planosEstudo?: boolean | Prisma.Usuario$planosEstudoArgs<ExtArgs>
@@ -3885,6 +4514,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   forunsCriados?: boolean | Prisma.Usuario$forunsCriadosArgs<ExtArgs>
   forumPosts?: boolean | Prisma.Usuario$forumPostsArgs<ExtArgs>
   forumComentarios?: boolean | Prisma.Usuario$forumComentariosArgs<ExtArgs>
+  forumComentariosRemovidos?: boolean | Prisma.Usuario$forumComentariosRemovidosArgs<ExtArgs>
   mentoriasComoMentor?: boolean | Prisma.Usuario$mentoriasComoMentorArgs<ExtArgs>
   mentoriasComoMentorado?: boolean | Prisma.Usuario$mentoriasComoMentoradoArgs<ExtArgs>
   notificacoes?: boolean | Prisma.Usuario$notificacoesArgs<ExtArgs>
@@ -3898,6 +4528,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   chatbotMensagens?: boolean | Prisma.Usuario$chatbotMensagensArgs<ExtArgs>
   consentimentosLgpd?: boolean | Prisma.Usuario$consentimentosLgpdArgs<ExtArgs>
   auditoriaDados?: boolean | Prisma.Usuario$auditoriaDadosArgs<ExtArgs>
+  usuarioConquistas?: boolean | Prisma.Usuario$usuarioConquistasArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
@@ -3908,6 +4539,7 @@ export type UsuarioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   nome?: boolean
   tipoUsuario?: boolean
   dataNascimento?: boolean
+  eMentor?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["usuario"]>
 
@@ -3918,6 +4550,7 @@ export type UsuarioSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   nome?: boolean
   tipoUsuario?: boolean
   dataNascimento?: boolean
+  eMentor?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["usuario"]>
 
@@ -3928,10 +4561,11 @@ export type UsuarioSelectScalar = {
   nome?: boolean
   tipoUsuario?: boolean
   dataNascimento?: boolean
+  eMentor?: boolean
   createdAt?: boolean
 }
 
-export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "matriculaInstitucional" | "emailInstitucional" | "nome" | "tipoUsuario" | "dataNascimento" | "createdAt", ExtArgs["result"]["usuario"]>
+export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "matriculaInstitucional" | "emailInstitucional" | "nome" | "tipoUsuario" | "dataNascimento" | "eMentor" | "createdAt", ExtArgs["result"]["usuario"]>
 export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   matriculasAcademicas?: boolean | Prisma.Usuario$matriculasAcademicasArgs<ExtArgs>
   planosEstudo?: boolean | Prisma.Usuario$planosEstudoArgs<ExtArgs>
@@ -3941,6 +4575,7 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   forunsCriados?: boolean | Prisma.Usuario$forunsCriadosArgs<ExtArgs>
   forumPosts?: boolean | Prisma.Usuario$forumPostsArgs<ExtArgs>
   forumComentarios?: boolean | Prisma.Usuario$forumComentariosArgs<ExtArgs>
+  forumComentariosRemovidos?: boolean | Prisma.Usuario$forumComentariosRemovidosArgs<ExtArgs>
   mentoriasComoMentor?: boolean | Prisma.Usuario$mentoriasComoMentorArgs<ExtArgs>
   mentoriasComoMentorado?: boolean | Prisma.Usuario$mentoriasComoMentoradoArgs<ExtArgs>
   notificacoes?: boolean | Prisma.Usuario$notificacoesArgs<ExtArgs>
@@ -3954,6 +4589,7 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   chatbotMensagens?: boolean | Prisma.Usuario$chatbotMensagensArgs<ExtArgs>
   consentimentosLgpd?: boolean | Prisma.Usuario$consentimentosLgpdArgs<ExtArgs>
   auditoriaDados?: boolean | Prisma.Usuario$auditoriaDadosArgs<ExtArgs>
+  usuarioConquistas?: boolean | Prisma.Usuario$usuarioConquistasArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3970,6 +4606,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     forunsCriados: Prisma.$ForumDiscussaoPayload<ExtArgs>[]
     forumPosts: Prisma.$ForumPostPayload<ExtArgs>[]
     forumComentarios: Prisma.$ForumComentarioPayload<ExtArgs>[]
+    forumComentariosRemovidos: Prisma.$ForumComentarioPayload<ExtArgs>[]
     mentoriasComoMentor: Prisma.$MentoriaPayload<ExtArgs>[]
     mentoriasComoMentorado: Prisma.$MentoriaPayload<ExtArgs>[]
     notificacoes: Prisma.$NotificacaoPayload<ExtArgs>[]
@@ -3983,6 +4620,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     chatbotMensagens: Prisma.$ChatbotMensagemPayload<ExtArgs>[]
     consentimentosLgpd: Prisma.$ConsentimentoLgpdPayload<ExtArgs>[]
     auditoriaDados: Prisma.$AuditoriaDadoPayload<ExtArgs>[]
+    usuarioConquistas: Prisma.$UsuarioConquistaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -3991,6 +4629,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     nome: string
     tipoUsuario: string
     dataNascimento: Date | null
+    eMentor: boolean
     createdAt: Date
   }, ExtArgs["result"]["usuario"]>
   composites: {}
@@ -4394,6 +5033,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   forunsCriados<T extends Prisma.Usuario$forunsCriadosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$forunsCriadosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumDiscussaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   forumPosts<T extends Prisma.Usuario$forumPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$forumPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   forumComentarios<T extends Prisma.Usuario$forumComentariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$forumComentariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumComentarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  forumComentariosRemovidos<T extends Prisma.Usuario$forumComentariosRemovidosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$forumComentariosRemovidosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ForumComentarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mentoriasComoMentor<T extends Prisma.Usuario$mentoriasComoMentorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$mentoriasComoMentorArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MentoriaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mentoriasComoMentorado<T extends Prisma.Usuario$mentoriasComoMentoradoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$mentoriasComoMentoradoArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MentoriaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificacoes<T extends Prisma.Usuario$notificacoesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$notificacoesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4407,6 +5047,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   chatbotMensagens<T extends Prisma.Usuario$chatbotMensagensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$chatbotMensagensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatbotMensagemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   consentimentosLgpd<T extends Prisma.Usuario$consentimentosLgpdArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$consentimentosLgpdArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConsentimentoLgpdPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditoriaDados<T extends Prisma.Usuario$auditoriaDadosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$auditoriaDadosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditoriaDadoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  usuarioConquistas<T extends Prisma.Usuario$usuarioConquistasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$usuarioConquistasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioConquistaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4442,6 +5083,7 @@ export interface UsuarioFieldRefs {
   readonly nome: Prisma.FieldRef<"Usuario", 'String'>
   readonly tipoUsuario: Prisma.FieldRef<"Usuario", 'String'>
   readonly dataNascimento: Prisma.FieldRef<"Usuario", 'DateTime'>
+  readonly eMentor: Prisma.FieldRef<"Usuario", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Usuario", 'DateTime'>
 }
     
@@ -4677,6 +5319,7 @@ export type UsuarioCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Usuarios.
    */
   data: Prisma.UsuarioCreateManyInput | Prisma.UsuarioCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -4695,6 +5338,7 @@ export type UsuarioCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Usuarios.
    */
   data: Prisma.UsuarioCreateManyInput | Prisma.UsuarioCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -5026,6 +5670,30 @@ export type Usuario$forumComentariosArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * Usuario.forumComentariosRemovidos
+ */
+export type Usuario$forumComentariosRemovidosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ForumComentario
+   */
+  select?: Prisma.ForumComentarioSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ForumComentario
+   */
+  omit?: Prisma.ForumComentarioOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ForumComentarioInclude<ExtArgs> | null
+  where?: Prisma.ForumComentarioWhereInput
+  orderBy?: Prisma.ForumComentarioOrderByWithRelationInput | Prisma.ForumComentarioOrderByWithRelationInput[]
+  cursor?: Prisma.ForumComentarioWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ForumComentarioScalarFieldEnum | Prisma.ForumComentarioScalarFieldEnum[]
+}
+
+/**
  * Usuario.mentoriasComoMentor
  */
 export type Usuario$mentoriasComoMentorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5330,6 +5998,30 @@ export type Usuario$auditoriaDadosArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.AuditoriaDadoScalarFieldEnum | Prisma.AuditoriaDadoScalarFieldEnum[]
+}
+
+/**
+ * Usuario.usuarioConquistas
+ */
+export type Usuario$usuarioConquistasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UsuarioConquista
+   */
+  select?: Prisma.UsuarioConquistaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UsuarioConquista
+   */
+  omit?: Prisma.UsuarioConquistaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UsuarioConquistaInclude<ExtArgs> | null
+  where?: Prisma.UsuarioConquistaWhereInput
+  orderBy?: Prisma.UsuarioConquistaOrderByWithRelationInput | Prisma.UsuarioConquistaOrderByWithRelationInput[]
+  cursor?: Prisma.UsuarioConquistaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UsuarioConquistaScalarFieldEnum | Prisma.UsuarioConquistaScalarFieldEnum[]
 }
 
 /**

@@ -548,6 +548,7 @@ export type TurmaDisciplinaCreateOrConnectWithoutTurmaInput = {
 
 export type TurmaDisciplinaCreateManyTurmaInputEnvelope = {
   data: Prisma.TurmaDisciplinaCreateManyTurmaInput | Prisma.TurmaDisciplinaCreateManyTurmaInput[]
+  skipDuplicates?: boolean
 }
 
 export type TurmaDisciplinaUpsertWithWhereUniqueWithoutTurmaInput = {
@@ -602,6 +603,7 @@ export type TurmaDisciplinaCreateOrConnectWithoutDisciplinaInput = {
 
 export type TurmaDisciplinaCreateManyDisciplinaInputEnvelope = {
   data: Prisma.TurmaDisciplinaCreateManyDisciplinaInput | Prisma.TurmaDisciplinaCreateManyDisciplinaInput[]
+  skipDuplicates?: boolean
 }
 
 export type TurmaDisciplinaUpsertWithWhereUniqueWithoutDisciplinaInput = {
@@ -1507,6 +1509,7 @@ export type TurmaDisciplinaCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many TurmaDisciplinas.
    */
   data: Prisma.TurmaDisciplinaCreateManyInput | Prisma.TurmaDisciplinaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1525,6 +1528,7 @@ export type TurmaDisciplinaCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many TurmaDisciplinas.
    */
   data: Prisma.TurmaDisciplinaCreateManyInput | Prisma.TurmaDisciplinaCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

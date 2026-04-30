@@ -486,6 +486,7 @@ export type AvaliacaoDisciplinaCreateOrConnectWithoutDisciplinaCursadaInput = {
 
 export type AvaliacaoDisciplinaCreateManyDisciplinaCursadaInputEnvelope = {
   data: Prisma.AvaliacaoDisciplinaCreateManyDisciplinaCursadaInput | Prisma.AvaliacaoDisciplinaCreateManyDisciplinaCursadaInput[]
+  skipDuplicates?: boolean
 }
 
 export type AvaliacaoDisciplinaUpsertWithWhereUniqueWithoutDisciplinaCursadaInput = {
@@ -1286,6 +1287,7 @@ export type AvaliacaoDisciplinaCreateManyArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many AvaliacaoDisciplinas.
    */
   data: Prisma.AvaliacaoDisciplinaCreateManyInput | Prisma.AvaliacaoDisciplinaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1304,6 +1306,7 @@ export type AvaliacaoDisciplinaCreateManyAndReturnArgs<ExtArgs extends runtime.T
    * The data used to create many AvaliacaoDisciplinas.
    */
   data: Prisma.AvaliacaoDisciplinaCreateManyInput | Prisma.AvaliacaoDisciplinaCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

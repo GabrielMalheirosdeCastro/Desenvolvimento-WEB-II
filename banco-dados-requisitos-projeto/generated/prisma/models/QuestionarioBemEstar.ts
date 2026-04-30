@@ -450,6 +450,7 @@ export type QuestionarioBemEstarCreateOrConnectWithoutUsuarioInput = {
 
 export type QuestionarioBemEstarCreateManyUsuarioInputEnvelope = {
   data: Prisma.QuestionarioBemEstarCreateManyUsuarioInput | Prisma.QuestionarioBemEstarCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type QuestionarioBemEstarUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -1239,6 +1240,7 @@ export type QuestionarioBemEstarCreateManyArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many QuestionarioBemEstars.
    */
   data: Prisma.QuestionarioBemEstarCreateManyInput | Prisma.QuestionarioBemEstarCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1257,6 +1259,7 @@ export type QuestionarioBemEstarCreateManyAndReturnArgs<ExtArgs extends runtime.
    * The data used to create many QuestionarioBemEstars.
    */
   data: Prisma.QuestionarioBemEstarCreateManyInput | Prisma.QuestionarioBemEstarCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

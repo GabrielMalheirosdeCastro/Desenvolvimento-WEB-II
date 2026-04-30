@@ -620,6 +620,7 @@ export type MatriculaAcademicaCreateOrConnectWithoutTurmaInput = {
 
 export type MatriculaAcademicaCreateManyTurmaInputEnvelope = {
   data: Prisma.MatriculaAcademicaCreateManyTurmaInput | Prisma.MatriculaAcademicaCreateManyTurmaInput[]
+  skipDuplicates?: boolean
 }
 
 export type MatriculaAcademicaUpsertWithWhereUniqueWithoutTurmaInput = {
@@ -683,6 +684,7 @@ export type MatriculaAcademicaCreateOrConnectWithoutUsuarioInput = {
 
 export type MatriculaAcademicaCreateManyUsuarioInputEnvelope = {
   data: Prisma.MatriculaAcademicaCreateManyUsuarioInput | Prisma.MatriculaAcademicaCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type MatriculaAcademicaUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -1642,6 +1644,7 @@ export type MatriculaAcademicaCreateManyArgs<ExtArgs extends runtime.Types.Exten
    * The data used to create many MatriculaAcademicas.
    */
   data: Prisma.MatriculaAcademicaCreateManyInput | Prisma.MatriculaAcademicaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1660,6 +1663,7 @@ export type MatriculaAcademicaCreateManyAndReturnArgs<ExtArgs extends runtime.Ty
    * The data used to create many MatriculaAcademicas.
    */
   data: Prisma.MatriculaAcademicaCreateManyInput | Prisma.MatriculaAcademicaCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

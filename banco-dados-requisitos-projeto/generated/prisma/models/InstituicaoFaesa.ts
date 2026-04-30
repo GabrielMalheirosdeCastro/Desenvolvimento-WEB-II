@@ -1185,6 +1185,7 @@ export type InstituicaoFaesaCreateManyArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many InstituicaoFaesas.
    */
   data: Prisma.InstituicaoFaesaCreateManyInput | Prisma.InstituicaoFaesaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1203,6 +1204,7 @@ export type InstituicaoFaesaCreateManyAndReturnArgs<ExtArgs extends runtime.Type
    * The data used to create many InstituicaoFaesas.
    */
   data: Prisma.InstituicaoFaesaCreateManyInput | Prisma.InstituicaoFaesaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

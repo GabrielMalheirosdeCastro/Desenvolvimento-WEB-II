@@ -31,6 +31,8 @@ export type GamificacaoAvgAggregateOutputType = {
   usuarioId: number | null
   pontosTotais: number | null
   rankingPosicao: number | null
+  streakAtual: number | null
+  streakRecorde: number | null
 }
 
 export type GamificacaoSumAggregateOutputType = {
@@ -38,30 +40,38 @@ export type GamificacaoSumAggregateOutputType = {
   usuarioId: number | null
   pontosTotais: number | null
   rankingPosicao: number | null
+  streakAtual: number | null
+  streakRecorde: number | null
 }
 
 export type GamificacaoMinAggregateOutputType = {
   id: number | null
   usuarioId: number | null
   pontosTotais: number | null
-  badges: string | null
   rankingPosicao: number | null
+  streakAtual: number | null
+  streakRecorde: number | null
+  dataUltimaAtividade: Date | null
 }
 
 export type GamificacaoMaxAggregateOutputType = {
   id: number | null
   usuarioId: number | null
   pontosTotais: number | null
-  badges: string | null
   rankingPosicao: number | null
+  streakAtual: number | null
+  streakRecorde: number | null
+  dataUltimaAtividade: Date | null
 }
 
 export type GamificacaoCountAggregateOutputType = {
   id: number
   usuarioId: number
   pontosTotais: number
-  badges: number
   rankingPosicao: number
+  streakAtual: number
+  streakRecorde: number
+  dataUltimaAtividade: number
   _all: number
 }
 
@@ -71,6 +81,8 @@ export type GamificacaoAvgAggregateInputType = {
   usuarioId?: true
   pontosTotais?: true
   rankingPosicao?: true
+  streakAtual?: true
+  streakRecorde?: true
 }
 
 export type GamificacaoSumAggregateInputType = {
@@ -78,30 +90,38 @@ export type GamificacaoSumAggregateInputType = {
   usuarioId?: true
   pontosTotais?: true
   rankingPosicao?: true
+  streakAtual?: true
+  streakRecorde?: true
 }
 
 export type GamificacaoMinAggregateInputType = {
   id?: true
   usuarioId?: true
   pontosTotais?: true
-  badges?: true
   rankingPosicao?: true
+  streakAtual?: true
+  streakRecorde?: true
+  dataUltimaAtividade?: true
 }
 
 export type GamificacaoMaxAggregateInputType = {
   id?: true
   usuarioId?: true
   pontosTotais?: true
-  badges?: true
   rankingPosicao?: true
+  streakAtual?: true
+  streakRecorde?: true
+  dataUltimaAtividade?: true
 }
 
 export type GamificacaoCountAggregateInputType = {
   id?: true
   usuarioId?: true
   pontosTotais?: true
-  badges?: true
   rankingPosicao?: true
+  streakAtual?: true
+  streakRecorde?: true
+  dataUltimaAtividade?: true
   _all?: true
 }
 
@@ -195,8 +215,10 @@ export type GamificacaoGroupByOutputType = {
   id: number
   usuarioId: number
   pontosTotais: number | null
-  badges: string | null
   rankingPosicao: number | null
+  streakAtual: number
+  streakRecorde: number
+  dataUltimaAtividade: Date | null
   _count: GamificacaoCountAggregateOutputType | null
   _avg: GamificacaoAvgAggregateOutputType | null
   _sum: GamificacaoSumAggregateOutputType | null
@@ -226,8 +248,10 @@ export type GamificacaoWhereInput = {
   id?: Prisma.IntFilter<"Gamificacao"> | number
   usuarioId?: Prisma.IntFilter<"Gamificacao"> | number
   pontosTotais?: Prisma.IntNullableFilter<"Gamificacao"> | number | null
-  badges?: Prisma.StringNullableFilter<"Gamificacao"> | string | null
   rankingPosicao?: Prisma.IntNullableFilter<"Gamificacao"> | number | null
+  streakAtual?: Prisma.IntFilter<"Gamificacao"> | number
+  streakRecorde?: Prisma.IntFilter<"Gamificacao"> | number
+  dataUltimaAtividade?: Prisma.DateTimeNullableFilter<"Gamificacao"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }
 
@@ -235,8 +259,10 @@ export type GamificacaoOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   pontosTotais?: Prisma.SortOrderInput | Prisma.SortOrder
-  badges?: Prisma.SortOrderInput | Prisma.SortOrder
   rankingPosicao?: Prisma.SortOrderInput | Prisma.SortOrder
+  streakAtual?: Prisma.SortOrder
+  streakRecorde?: Prisma.SortOrder
+  dataUltimaAtividade?: Prisma.SortOrderInput | Prisma.SortOrder
   usuario?: Prisma.UsuarioOrderByWithRelationInput
 }
 
@@ -247,8 +273,10 @@ export type GamificacaoWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.GamificacaoWhereInput[]
   NOT?: Prisma.GamificacaoWhereInput | Prisma.GamificacaoWhereInput[]
   pontosTotais?: Prisma.IntNullableFilter<"Gamificacao"> | number | null
-  badges?: Prisma.StringNullableFilter<"Gamificacao"> | string | null
   rankingPosicao?: Prisma.IntNullableFilter<"Gamificacao"> | number | null
+  streakAtual?: Prisma.IntFilter<"Gamificacao"> | number
+  streakRecorde?: Prisma.IntFilter<"Gamificacao"> | number
+  dataUltimaAtividade?: Prisma.DateTimeNullableFilter<"Gamificacao"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }, "id" | "usuarioId">
 
@@ -256,8 +284,10 @@ export type GamificacaoOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   pontosTotais?: Prisma.SortOrderInput | Prisma.SortOrder
-  badges?: Prisma.SortOrderInput | Prisma.SortOrder
   rankingPosicao?: Prisma.SortOrderInput | Prisma.SortOrder
+  streakAtual?: Prisma.SortOrder
+  streakRecorde?: Prisma.SortOrder
+  dataUltimaAtividade?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.GamificacaoCountOrderByAggregateInput
   _avg?: Prisma.GamificacaoAvgOrderByAggregateInput
   _max?: Prisma.GamificacaoMaxOrderByAggregateInput
@@ -272,14 +302,18 @@ export type GamificacaoScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Gamificacao"> | number
   usuarioId?: Prisma.IntWithAggregatesFilter<"Gamificacao"> | number
   pontosTotais?: Prisma.IntNullableWithAggregatesFilter<"Gamificacao"> | number | null
-  badges?: Prisma.StringNullableWithAggregatesFilter<"Gamificacao"> | string | null
   rankingPosicao?: Prisma.IntNullableWithAggregatesFilter<"Gamificacao"> | number | null
+  streakAtual?: Prisma.IntWithAggregatesFilter<"Gamificacao"> | number
+  streakRecorde?: Prisma.IntWithAggregatesFilter<"Gamificacao"> | number
+  dataUltimaAtividade?: Prisma.DateTimeNullableWithAggregatesFilter<"Gamificacao"> | Date | string | null
 }
 
 export type GamificacaoCreateInput = {
   pontosTotais?: number | null
-  badges?: string | null
   rankingPosicao?: number | null
+  streakAtual?: number
+  streakRecorde?: number
+  dataUltimaAtividade?: Date | string | null
   usuario: Prisma.UsuarioCreateNestedOneWithoutGamificacaoInput
 }
 
@@ -287,14 +321,18 @@ export type GamificacaoUncheckedCreateInput = {
   id?: number
   usuarioId: number
   pontosTotais?: number | null
-  badges?: string | null
   rankingPosicao?: number | null
+  streakAtual?: number
+  streakRecorde?: number
+  dataUltimaAtividade?: Date | string | null
 }
 
 export type GamificacaoUpdateInput = {
   pontosTotais?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  badges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankingPosicao?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streakAtual?: Prisma.IntFieldUpdateOperationsInput | number
+  streakRecorde?: Prisma.IntFieldUpdateOperationsInput | number
+  dataUltimaAtividade?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutGamificacaoNestedInput
 }
 
@@ -302,30 +340,38 @@ export type GamificacaoUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
   pontosTotais?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  badges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankingPosicao?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streakAtual?: Prisma.IntFieldUpdateOperationsInput | number
+  streakRecorde?: Prisma.IntFieldUpdateOperationsInput | number
+  dataUltimaAtividade?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GamificacaoCreateManyInput = {
   id?: number
   usuarioId: number
   pontosTotais?: number | null
-  badges?: string | null
   rankingPosicao?: number | null
+  streakAtual?: number
+  streakRecorde?: number
+  dataUltimaAtividade?: Date | string | null
 }
 
 export type GamificacaoUpdateManyMutationInput = {
   pontosTotais?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  badges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankingPosicao?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streakAtual?: Prisma.IntFieldUpdateOperationsInput | number
+  streakRecorde?: Prisma.IntFieldUpdateOperationsInput | number
+  dataUltimaAtividade?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GamificacaoUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
   pontosTotais?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  badges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankingPosicao?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streakAtual?: Prisma.IntFieldUpdateOperationsInput | number
+  streakRecorde?: Prisma.IntFieldUpdateOperationsInput | number
+  dataUltimaAtividade?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GamificacaoNullableScalarRelationFilter = {
@@ -337,8 +383,10 @@ export type GamificacaoCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   pontosTotais?: Prisma.SortOrder
-  badges?: Prisma.SortOrder
   rankingPosicao?: Prisma.SortOrder
+  streakAtual?: Prisma.SortOrder
+  streakRecorde?: Prisma.SortOrder
+  dataUltimaAtividade?: Prisma.SortOrder
 }
 
 export type GamificacaoAvgOrderByAggregateInput = {
@@ -346,22 +394,28 @@ export type GamificacaoAvgOrderByAggregateInput = {
   usuarioId?: Prisma.SortOrder
   pontosTotais?: Prisma.SortOrder
   rankingPosicao?: Prisma.SortOrder
+  streakAtual?: Prisma.SortOrder
+  streakRecorde?: Prisma.SortOrder
 }
 
 export type GamificacaoMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   pontosTotais?: Prisma.SortOrder
-  badges?: Prisma.SortOrder
   rankingPosicao?: Prisma.SortOrder
+  streakAtual?: Prisma.SortOrder
+  streakRecorde?: Prisma.SortOrder
+  dataUltimaAtividade?: Prisma.SortOrder
 }
 
 export type GamificacaoMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   pontosTotais?: Prisma.SortOrder
-  badges?: Prisma.SortOrder
   rankingPosicao?: Prisma.SortOrder
+  streakAtual?: Prisma.SortOrder
+  streakRecorde?: Prisma.SortOrder
+  dataUltimaAtividade?: Prisma.SortOrder
 }
 
 export type GamificacaoSumOrderByAggregateInput = {
@@ -369,6 +423,8 @@ export type GamificacaoSumOrderByAggregateInput = {
   usuarioId?: Prisma.SortOrder
   pontosTotais?: Prisma.SortOrder
   rankingPosicao?: Prisma.SortOrder
+  streakAtual?: Prisma.SortOrder
+  streakRecorde?: Prisma.SortOrder
 }
 
 export type GamificacaoCreateNestedOneWithoutUsuarioInput = {
@@ -405,15 +461,19 @@ export type GamificacaoUncheckedUpdateOneWithoutUsuarioNestedInput = {
 
 export type GamificacaoCreateWithoutUsuarioInput = {
   pontosTotais?: number | null
-  badges?: string | null
   rankingPosicao?: number | null
+  streakAtual?: number
+  streakRecorde?: number
+  dataUltimaAtividade?: Date | string | null
 }
 
 export type GamificacaoUncheckedCreateWithoutUsuarioInput = {
   id?: number
   pontosTotais?: number | null
-  badges?: string | null
   rankingPosicao?: number | null
+  streakAtual?: number
+  streakRecorde?: number
+  dataUltimaAtividade?: Date | string | null
 }
 
 export type GamificacaoCreateOrConnectWithoutUsuarioInput = {
@@ -434,15 +494,19 @@ export type GamificacaoUpdateToOneWithWhereWithoutUsuarioInput = {
 
 export type GamificacaoUpdateWithoutUsuarioInput = {
   pontosTotais?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  badges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankingPosicao?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streakAtual?: Prisma.IntFieldUpdateOperationsInput | number
+  streakRecorde?: Prisma.IntFieldUpdateOperationsInput | number
+  dataUltimaAtividade?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GamificacaoUncheckedUpdateWithoutUsuarioInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   pontosTotais?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  badges?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rankingPosicao?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streakAtual?: Prisma.IntFieldUpdateOperationsInput | number
+  streakRecorde?: Prisma.IntFieldUpdateOperationsInput | number
+  dataUltimaAtividade?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -451,8 +515,10 @@ export type GamificacaoSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   usuarioId?: boolean
   pontosTotais?: boolean
-  badges?: boolean
   rankingPosicao?: boolean
+  streakAtual?: boolean
+  streakRecorde?: boolean
+  dataUltimaAtividade?: boolean
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gamificacao"]>
 
@@ -460,8 +526,10 @@ export type GamificacaoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   usuarioId?: boolean
   pontosTotais?: boolean
-  badges?: boolean
   rankingPosicao?: boolean
+  streakAtual?: boolean
+  streakRecorde?: boolean
+  dataUltimaAtividade?: boolean
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gamificacao"]>
 
@@ -469,8 +537,10 @@ export type GamificacaoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   usuarioId?: boolean
   pontosTotais?: boolean
-  badges?: boolean
   rankingPosicao?: boolean
+  streakAtual?: boolean
+  streakRecorde?: boolean
+  dataUltimaAtividade?: boolean
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gamificacao"]>
 
@@ -478,11 +548,13 @@ export type GamificacaoSelectScalar = {
   id?: boolean
   usuarioId?: boolean
   pontosTotais?: boolean
-  badges?: boolean
   rankingPosicao?: boolean
+  streakAtual?: boolean
+  streakRecorde?: boolean
+  dataUltimaAtividade?: boolean
 }
 
-export type GamificacaoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "usuarioId" | "pontosTotais" | "badges" | "rankingPosicao", ExtArgs["result"]["gamificacao"]>
+export type GamificacaoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "usuarioId" | "pontosTotais" | "rankingPosicao" | "streakAtual" | "streakRecorde" | "dataUltimaAtividade", ExtArgs["result"]["gamificacao"]>
 export type GamificacaoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }
@@ -502,8 +574,10 @@ export type $GamificacaoPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: number
     usuarioId: number
     pontosTotais: number | null
-    badges: string | null
     rankingPosicao: number | null
+    streakAtual: number
+    streakRecorde: number
+    dataUltimaAtividade: Date | null
   }, ExtArgs["result"]["gamificacao"]>
   composites: {}
 }
@@ -931,8 +1005,10 @@ export interface GamificacaoFieldRefs {
   readonly id: Prisma.FieldRef<"Gamificacao", 'Int'>
   readonly usuarioId: Prisma.FieldRef<"Gamificacao", 'Int'>
   readonly pontosTotais: Prisma.FieldRef<"Gamificacao", 'Int'>
-  readonly badges: Prisma.FieldRef<"Gamificacao", 'String'>
   readonly rankingPosicao: Prisma.FieldRef<"Gamificacao", 'Int'>
+  readonly streakAtual: Prisma.FieldRef<"Gamificacao", 'Int'>
+  readonly streakRecorde: Prisma.FieldRef<"Gamificacao", 'Int'>
+  readonly dataUltimaAtividade: Prisma.FieldRef<"Gamificacao", 'DateTime'>
 }
     
 
@@ -1167,6 +1243,7 @@ export type GamificacaoCreateManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * The data used to create many Gamificacaos.
    */
   data: Prisma.GamificacaoCreateManyInput | Prisma.GamificacaoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1185,6 +1262,7 @@ export type GamificacaoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many Gamificacaos.
    */
   data: Prisma.GamificacaoCreateManyInput | Prisma.GamificacaoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

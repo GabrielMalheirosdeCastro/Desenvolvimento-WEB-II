@@ -534,6 +534,7 @@ export type ForumPostCreateOrConnectWithoutUsuarioInput = {
 
 export type ForumPostCreateManyUsuarioInputEnvelope = {
   data: Prisma.ForumPostCreateManyUsuarioInput | Prisma.ForumPostCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type ForumPostUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -588,6 +589,7 @@ export type ForumPostCreateOrConnectWithoutForumInput = {
 
 export type ForumPostCreateManyForumInputEnvelope = {
   data: Prisma.ForumPostCreateManyForumInput | Prisma.ForumPostCreateManyForumInput[]
+  skipDuplicates?: boolean
 }
 
 export type ForumPostUpsertWithWhereUniqueWithoutForumInput = {
@@ -1493,6 +1495,7 @@ export type ForumPostCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * The data used to create many ForumPosts.
    */
   data: Prisma.ForumPostCreateManyInput | Prisma.ForumPostCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1511,6 +1514,7 @@ export type ForumPostCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    * The data used to create many ForumPosts.
    */
   data: Prisma.ForumPostCreateManyInput | Prisma.ForumPostCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

@@ -537,6 +537,7 @@ export type TurmaCreateOrConnectWithoutCursoInput = {
 
 export type TurmaCreateManyCursoInputEnvelope = {
   data: Prisma.TurmaCreateManyCursoInput | Prisma.TurmaCreateManyCursoInput[]
+  skipDuplicates?: boolean
 }
 
 export type TurmaUpsertWithWhereUniqueWithoutCursoInput = {
@@ -1505,6 +1506,7 @@ export type TurmaCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Turmas.
    */
   data: Prisma.TurmaCreateManyInput | Prisma.TurmaCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1523,6 +1525,7 @@ export type TurmaCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Turmas.
    */
   data: Prisma.TurmaCreateManyInput | Prisma.TurmaCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

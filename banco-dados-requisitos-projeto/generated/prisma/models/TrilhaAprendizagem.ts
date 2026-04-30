@@ -1133,6 +1133,7 @@ export type TrilhaAprendizagemCreateManyArgs<ExtArgs extends runtime.Types.Exten
    * The data used to create many TrilhaAprendizagems.
    */
   data: Prisma.TrilhaAprendizagemCreateManyInput | Prisma.TrilhaAprendizagemCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1151,6 +1152,7 @@ export type TrilhaAprendizagemCreateManyAndReturnArgs<ExtArgs extends runtime.Ty
    * The data used to create many TrilhaAprendizagems.
    */
   data: Prisma.TrilhaAprendizagemCreateManyInput | Prisma.TrilhaAprendizagemCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

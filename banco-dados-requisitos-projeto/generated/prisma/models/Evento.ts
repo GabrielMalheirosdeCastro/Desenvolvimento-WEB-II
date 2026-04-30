@@ -1235,6 +1235,7 @@ export type EventoCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * The data used to create many Eventos.
    */
   data: Prisma.EventoCreateManyInput | Prisma.EventoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1253,6 +1254,7 @@ export type EventoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many Eventos.
    */
   data: Prisma.EventoCreateManyInput | Prisma.EventoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

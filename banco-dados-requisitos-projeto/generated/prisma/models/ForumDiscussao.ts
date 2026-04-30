@@ -478,6 +478,7 @@ export type ForumDiscussaoCreateOrConnectWithoutUsuarioInput = {
 
 export type ForumDiscussaoCreateManyUsuarioInputEnvelope = {
   data: Prisma.ForumDiscussaoCreateManyUsuarioInput | Prisma.ForumDiscussaoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type ForumDiscussaoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -1354,6 +1355,7 @@ export type ForumDiscussaoCreateManyArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many ForumDiscussaos.
    */
   data: Prisma.ForumDiscussaoCreateManyInput | Prisma.ForumDiscussaoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1372,6 +1374,7 @@ export type ForumDiscussaoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * The data used to create many ForumDiscussaos.
    */
   data: Prisma.ForumDiscussaoCreateManyInput | Prisma.ForumDiscussaoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

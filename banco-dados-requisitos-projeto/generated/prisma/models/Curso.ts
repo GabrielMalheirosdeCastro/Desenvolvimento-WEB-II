@@ -478,6 +478,7 @@ export type CursoCreateOrConnectWithoutInstituicaoInput = {
 
 export type CursoCreateManyInstituicaoInputEnvelope = {
   data: Prisma.CursoCreateManyInstituicaoInput | Prisma.CursoCreateManyInstituicaoInput[]
+  skipDuplicates?: boolean
 }
 
 export type CursoUpsertWithWhereUniqueWithoutInstituicaoInput = {
@@ -1354,6 +1355,7 @@ export type CursoCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Cursos.
    */
   data: Prisma.CursoCreateManyInput | Prisma.CursoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1372,6 +1374,7 @@ export type CursoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Cursos.
    */
   data: Prisma.CursoCreateManyInput | Prisma.CursoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

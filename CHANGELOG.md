@@ -9,8 +9,16 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+### Changed
+
+- **Sprint 1 — Banco real (2026-04-30):** subprojeto `banco-dados-requisitos-projeto/` migrado de SQLite para PostgreSQL 17.6 (Supabase self-hosted na VPS, acessado via túnel SSH). `provider` trocado para `postgresql` no `schema.prisma`; URLs (`DATABASE_URL`/`DIRECT_URL`) movidas para `prisma.config.ts` conforme exigência do Prisma 7. `lib/prisma.ts` agora usa `PrismaPg` (driver adapter) em vez de `PrismaBetterSqlite3`. Adicionadas dependências `@prisma/adapter-pg` e `pg`. Bump do subprojeto para `2.0.0` (BREAKING).
+
 ### Added
 
+- **Sprint 1 — Schema e seed das personas (2026-04-30):**
+    - Migration `20260430141247_init_postgres`: criação inicial das ~30 tabelas no Postgres.
+    - Migration `20260430141332_add_streak_and_conquistas`: novo campo `Usuario.eMentor`, novos campos `Gamificacao.streakAtual/streakRecorde/dataUltimaAtividade` (substituindo `badges`), e novos modelos `Conquista` e `UsuarioConquista` (com unique composto `(usuarioId, conquistaId)`).
+    - `prisma/seed.ts`: popula `InstituicaoFaesa` (FAESA-VIT), cursos SI (id=1) e PSI (id=2) e as 3 personas — Lucas Silva (calouro, ALUNO), Mariana Costa (mentora, ALUNO `eMentor=true`) e Prof. Ricardo Almeida (DOCENTE).
 - **Infraestrutura de produção (2026-04-26):** documentação e ferramental para deploy real em VPS Hostinger com EasyPanel.
     - `Dockerfile`, `.dockerignore`, `package.json`, `server.js`, `public/index.html`, `public/styles.css`, `public/favicon.svg`: aplicação mínima Node 20 + Express servindo página *Em Construção* (sem conexão com banco) — exclusivamente para validar o pipeline EasyPanel → Traefik → HTTPS antes do início do desenvolvimento real. Endpoints `/`, `/healthz` e `/version`.
     - `scripts/deploy.mjs` e `scripts/deploy.sh`: disparam o webhook de implantação do EasyPanel a partir de `EASYPANEL_DEPLOY_WEBHOOK` (lido de `.env`).

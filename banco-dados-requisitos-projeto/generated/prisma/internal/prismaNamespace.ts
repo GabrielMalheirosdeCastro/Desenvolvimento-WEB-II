@@ -408,6 +408,8 @@ export const ModelName = {
   Notificacao: 'Notificacao',
   QuestionarioBemEstar: 'QuestionarioBemEstar',
   Gamificacao: 'Gamificacao',
+  Conquista: 'Conquista',
+  UsuarioConquista: 'UsuarioConquista',
   Evento: 'Evento',
   UsuarioEvento: 'UsuarioEvento',
   ChatTicket: 'ChatTicket',
@@ -432,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "instituicaoFaesa" | "curso" | "turma" | "disciplina" | "turmaDisciplina" | "usuario" | "matriculaAcademica" | "disciplinaCursada" | "avaliacaoDisciplina" | "planoEstudo" | "metaSemanal" | "atividadeEstudo" | "exercicioConcentracao" | "trilhaAprendizagem" | "recurso" | "trilhaRecurso" | "usuarioRecurso" | "forumDiscussao" | "forumPost" | "forumComentario" | "mentoria" | "notificacao" | "questionarioBemEstar" | "gamificacao" | "evento" | "usuarioEvento" | "chatTicket" | "chatMensagem" | "chatbotConversa" | "chatbotMensagem" | "relatorioAnonimizado" | "consentimentoLgpd" | "auditoriaDado"
+    modelProps: "instituicaoFaesa" | "curso" | "turma" | "disciplina" | "turmaDisciplina" | "usuario" | "matriculaAcademica" | "disciplinaCursada" | "avaliacaoDisciplina" | "planoEstudo" | "metaSemanal" | "atividadeEstudo" | "exercicioConcentracao" | "trilhaAprendizagem" | "recurso" | "trilhaRecurso" | "usuarioRecurso" | "forumDiscussao" | "forumPost" | "forumComentario" | "mentoria" | "notificacao" | "questionarioBemEstar" | "gamificacao" | "conquista" | "usuarioConquista" | "evento" | "usuarioEvento" | "chatTicket" | "chatMensagem" | "chatbotConversa" | "chatbotMensagem" | "relatorioAnonimizado" | "consentimentoLgpd" | "auditoriaDado"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2212,6 +2214,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Conquista: {
+      payload: Prisma.$ConquistaPayload<ExtArgs>
+      fields: Prisma.ConquistaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ConquistaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ConquistaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>
+        }
+        findFirst: {
+          args: Prisma.ConquistaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ConquistaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>
+        }
+        findMany: {
+          args: Prisma.ConquistaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>[]
+        }
+        create: {
+          args: Prisma.ConquistaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>
+        }
+        createMany: {
+          args: Prisma.ConquistaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ConquistaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>[]
+        }
+        delete: {
+          args: Prisma.ConquistaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>
+        }
+        update: {
+          args: Prisma.ConquistaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>
+        }
+        deleteMany: {
+          args: Prisma.ConquistaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ConquistaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ConquistaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>[]
+        }
+        upsert: {
+          args: Prisma.ConquistaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConquistaPayload>
+        }
+        aggregate: {
+          args: Prisma.ConquistaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConquista>
+        }
+        groupBy: {
+          args: Prisma.ConquistaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConquistaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ConquistaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConquistaCountAggregateOutputType> | number
+        }
+      }
+    }
+    UsuarioConquista: {
+      payload: Prisma.$UsuarioConquistaPayload<ExtArgs>
+      fields: Prisma.UsuarioConquistaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UsuarioConquistaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UsuarioConquistaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>
+        }
+        findFirst: {
+          args: Prisma.UsuarioConquistaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UsuarioConquistaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>
+        }
+        findMany: {
+          args: Prisma.UsuarioConquistaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>[]
+        }
+        create: {
+          args: Prisma.UsuarioConquistaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>
+        }
+        createMany: {
+          args: Prisma.UsuarioConquistaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UsuarioConquistaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>[]
+        }
+        delete: {
+          args: Prisma.UsuarioConquistaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>
+        }
+        update: {
+          args: Prisma.UsuarioConquistaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>
+        }
+        deleteMany: {
+          args: Prisma.UsuarioConquistaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UsuarioConquistaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UsuarioConquistaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>[]
+        }
+        upsert: {
+          args: Prisma.UsuarioConquistaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioConquistaPayload>
+        }
+        aggregate: {
+          args: Prisma.UsuarioConquistaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUsuarioConquista>
+        }
+        groupBy: {
+          args: Prisma.UsuarioConquistaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UsuarioConquistaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UsuarioConquistaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UsuarioConquistaCountAggregateOutputType> | number
+        }
+      }
+    }
     Evento: {
       payload: Prisma.$EventoPayload<ExtArgs>
       fields: Prisma.EventoFieldRefs
@@ -2908,6 +3058,9 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
  */
 
 export const TransactionIsolationLevel = runtime.makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 } as const)
 
@@ -2980,6 +3133,7 @@ export const UsuarioScalarFieldEnum = {
   nome: 'nome',
   tipoUsuario: 'tipoUsuario',
   dataNascimento: 'dataNascimento',
+  eMentor: 'eMentor',
   createdAt: 'createdAt'
 } as const
 
@@ -3152,6 +3306,10 @@ export const ForumComentarioScalarFieldEnum = {
   postId: 'postId',
   usuarioId: 'usuarioId',
   conteudo: 'conteudo',
+  status: 'status',
+  editadoEm: 'editadoEm',
+  deletedAt: 'deletedAt',
+  removidoPor: 'removidoPor',
   createdAt: 'createdAt'
 } as const
 
@@ -3200,11 +3358,35 @@ export const GamificacaoScalarFieldEnum = {
   id: 'id',
   usuarioId: 'usuarioId',
   pontosTotais: 'pontosTotais',
-  badges: 'badges',
-  rankingPosicao: 'rankingPosicao'
+  rankingPosicao: 'rankingPosicao',
+  streakAtual: 'streakAtual',
+  streakRecorde: 'streakRecorde',
+  dataUltimaAtividade: 'dataUltimaAtividade'
 } as const
 
 export type GamificacaoScalarFieldEnum = (typeof GamificacaoScalarFieldEnum)[keyof typeof GamificacaoScalarFieldEnum]
+
+
+export const ConquistaScalarFieldEnum = {
+  id: 'id',
+  codigo: 'codigo',
+  titulo: 'titulo',
+  descricao: 'descricao',
+  icone: 'icone',
+  pontos: 'pontos'
+} as const
+
+export type ConquistaScalarFieldEnum = (typeof ConquistaScalarFieldEnum)[keyof typeof ConquistaScalarFieldEnum]
+
+
+export const UsuarioConquistaScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  conquistaId: 'conquistaId',
+  conquistadaEm: 'conquistadaEm'
+} as const
+
+export type UsuarioConquistaScalarFieldEnum = (typeof UsuarioConquistaScalarFieldEnum)[keyof typeof UsuarioConquistaScalarFieldEnum]
 
 
 export const EventoScalarFieldEnum = {
@@ -3335,6 +3517,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
@@ -3357,9 +3547,23 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
 
 
 /**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'String'
  */
 export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+    
+
+
+/**
+ * Reference to a field of type 'String[]'
+ */
+export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
     
 
 
@@ -3378,9 +3582,23 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
 
 
 /**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -3502,6 +3720,8 @@ export type GlobalOmitConfig = {
   notificacao?: Prisma.NotificacaoOmit
   questionarioBemEstar?: Prisma.QuestionarioBemEstarOmit
   gamificacao?: Prisma.GamificacaoOmit
+  conquista?: Prisma.ConquistaOmit
+  usuarioConquista?: Prisma.UsuarioConquistaOmit
   evento?: Prisma.EventoOmit
   usuarioEvento?: Prisma.UsuarioEventoOmit
   chatTicket?: Prisma.ChatTicketOmit

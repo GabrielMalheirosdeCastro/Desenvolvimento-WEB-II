@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model InstituicaoFaesa {
@@ -84,6 +84,7 @@ model Usuario {
   nome                   String
   tipoUsuario            String   @map("tipo_usuario")
   dataNascimento         DateTime? @map("data_nascimento")
+  eMentor                Boolean  @default(false) @map("e_mentor")
   createdAt              DateTime @default(now()) @map("created_at")
 
   matriculasAcademicas    MatriculaAcademica[]
@@ -108,6 +109,7 @@ model Usuario {
   chatbotMensagens        ChatbotMensagem[]
   consentimentosLgpd      ConsentimentoLgpd[]
   auditoriaDados          AuditoriaDado[]
+  usuarioConquistas       UsuarioConquista[]
 
   @@map("usuarios")
 }
@@ -369,15 +371,43 @@ model QuestionarioBemEstar {
 }
 
 model Gamificacao {
-  id            Int  @id @default(autoincrement())
-  usuarioId     Int  @unique @map("usuario_id")
-  pontosTotais  Int? @map("pontos_totais")
-  badges        String?
-  rankingPosicao Int? @map("ranking_posicao")
+  id                  Int       @id @default(autoincrement())
+  usuarioId           Int       @unique @map("usuario_id")
+  pontosTotais        Int?      @map("pontos_totais")
+  rankingPosicao      Int?      @map("ranking_posicao")
+  streakAtual         Int       @default(0) @map("streak_atual")
+  streakRecorde       Int       @default(0) @map("streak_recorde")
+  dataUltimaAtividade DateTime? @map("data_ultima_atividade")
 
   usuario Usuario @relation(fields: [usuarioId], references: [id])
 
   @@map("gamificacao")
+}
+
+model Conquista {
+  id          Int     @id @default(autoincrement())
+  codigo      String  @unique
+  titulo      String
+  descricao   String?
+  icone       String?
+  pontos      Int     @default(0)
+
+  usuarioConquistas UsuarioConquista[]
+
+  @@map("conquistas")
+}
+
+model UsuarioConquista {
+  id           Int      @id @default(autoincrement())
+  usuarioId    Int      @map("usuario_id")
+  conquistaId  Int      @map("conquista_id")
+  conquistadaEm DateTime @default(now()) @map("conquistada_em")
+
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  conquista Conquista @relation(fields: [conquistaId], references: [id])
+
+  @@unique([usuarioId, conquistaId])
+  @@map("usuarios_conquistas")
 }
 
 model Evento {

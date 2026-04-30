@@ -1331,6 +1331,7 @@ export type RecursoCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Recursos.
    */
   data: Prisma.RecursoCreateManyInput | Prisma.RecursoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1349,6 +1350,7 @@ export type RecursoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Recursos.
    */
   data: Prisma.RecursoCreateManyInput | Prisma.RecursoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

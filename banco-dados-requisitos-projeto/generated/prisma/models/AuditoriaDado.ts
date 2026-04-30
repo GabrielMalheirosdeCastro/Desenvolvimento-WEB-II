@@ -602,6 +602,7 @@ export type AuditoriaDadoCreateOrConnectWithoutUsuarioInput = {
 
 export type AuditoriaDadoCreateManyUsuarioInputEnvelope = {
   data: Prisma.AuditoriaDadoCreateManyUsuarioInput | Prisma.AuditoriaDadoCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type AuditoriaDadoUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -666,6 +667,7 @@ export type AuditoriaDadoCreateOrConnectWithoutRelatorioInput = {
 
 export type AuditoriaDadoCreateManyRelatorioInputEnvelope = {
   data: Prisma.AuditoriaDadoCreateManyRelatorioInput | Prisma.AuditoriaDadoCreateManyRelatorioInput[]
+  skipDuplicates?: boolean
 }
 
 export type AuditoriaDadoUpsertWithWhereUniqueWithoutRelatorioInput = {
@@ -1538,6 +1540,7 @@ export type AuditoriaDadoCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many AuditoriaDados.
    */
   data: Prisma.AuditoriaDadoCreateManyInput | Prisma.AuditoriaDadoCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1556,6 +1559,7 @@ export type AuditoriaDadoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many AuditoriaDados.
    */
   data: Prisma.AuditoriaDadoCreateManyInput | Prisma.AuditoriaDadoCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

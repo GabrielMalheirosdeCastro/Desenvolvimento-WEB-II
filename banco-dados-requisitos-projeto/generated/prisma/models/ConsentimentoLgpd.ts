@@ -498,6 +498,7 @@ export type ConsentimentoLgpdCreateOrConnectWithoutUsuarioInput = {
 
 export type ConsentimentoLgpdCreateManyUsuarioInputEnvelope = {
   data: Prisma.ConsentimentoLgpdCreateManyUsuarioInput | Prisma.ConsentimentoLgpdCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
 }
 
 export type ConsentimentoLgpdUpsertWithWhereUniqueWithoutUsuarioInput = {
@@ -1309,6 +1310,7 @@ export type ConsentimentoLgpdCreateManyArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many ConsentimentoLgpds.
    */
   data: Prisma.ConsentimentoLgpdCreateManyInput | Prisma.ConsentimentoLgpdCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1327,6 +1329,7 @@ export type ConsentimentoLgpdCreateManyAndReturnArgs<ExtArgs extends runtime.Typ
    * The data used to create many ConsentimentoLgpds.
    */
   data: Prisma.ConsentimentoLgpdCreateManyInput | Prisma.ConsentimentoLgpdCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
