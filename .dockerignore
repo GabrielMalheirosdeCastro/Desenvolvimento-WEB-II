@@ -17,8 +17,9 @@ docs/
 *.fls
 *.fdb_latexmk
 
-# Subprojeto de modelagem (Prisma SQLite — não vai para a imagem do app web)
-banco-dados-requisitos-projeto/
+# Subprojeto de modelagem (Prisma) e front Vite (nao vao para a imagem da API)
+packages/
+apps/web/
 
 # Editor / IDE
 .vscode/

@@ -65,3 +65,6 @@ banco-dados-requisitos-projeto/.env
 infra-audit-*.txt
 docs/secrets.md
 .playwright-mcp
+# Backup local de migrations sqlite (Sprint 1)
+packages/db/prisma/migrations.sqlite-bak/
+

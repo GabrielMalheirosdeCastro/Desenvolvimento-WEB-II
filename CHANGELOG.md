@@ -9,17 +9,36 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-03
+
 ### Changed
 
-- **Sprint 1 — Banco real (2026-04-30):** subprojeto `banco-dados-requisitos-projeto/` migrado de SQLite para PostgreSQL 17.6 (Supabase self-hosted na VPS, acessado via túnel SSH). `provider` trocado para `postgresql` no `schema.prisma`; URLs (`DATABASE_URL`/`DIRECT_URL`) movidas para `prisma.config.ts` conforme exigência do Prisma 7. `lib/prisma.ts` agora usa `PrismaPg` (driver adapter) em vez de `PrismaBetterSqlite3`. Adicionadas dependências `@prisma/adapter-pg` e `pg`. Bump do subprojeto para `2.0.0` (BREAKING).
+- **Sprint 2 — Reorganizacao em monorepo (decisao B3):**
+    - `server.js` e `public/` movidos para `apps/api/` (workspace `@site-acolhimento/api`).
+    - `docs/pagina-acolhimento-faesa/` (pacote Figma) movido para `apps/web/` (workspace `@site-acolhimento/web`).
+    - `banco-dados-requisitos-projeto/` movido para `packages/db/` (workspace `@site-acolhimento/db`).
+    - `package.json` raiz agora declara `workspaces: ["apps/*", "packages/*"]`; `dependencies` movidas para os respectivos workspaces.
+    - `Dockerfile` ajustado para layout monorepo: copia `apps/api/` e instala apenas o workspace da API. `CMD` atualizado para `node apps/api/server.js`.
+    - `.dockerignore` e `.github/workflows/deploy.yml` atualizados (substitui `banco-dados-requisitos-projeto/` por `packages/` e `apps/web/`).
+    - `apps/api/server.js` agora le `package.json` da raiz para responder `/version` (mantem regra 0.1).
+- **Higiene do repositorio:** removido o `node_modules/` do antigo `banco-dados-requisitos-projeto/` que havia sido versionado por engano (~8.4k arquivos).
 
 ### Added
 
-- **Sprint 1 — Schema e seed das personas (2026-04-30):**
-    - Migration `20260430141247_init_postgres`: criação inicial das ~30 tabelas no Postgres.
-    - Migration `20260430141332_add_streak_and_conquistas`: novo campo `Usuario.eMentor`, novos campos `Gamificacao.streakAtual/streakRecorde/dataUltimaAtividade` (substituindo `badges`), e novos modelos `Conquista` e `UsuarioConquista` (com unique composto `(usuarioId, conquistaId)`).
-    - `prisma/seed.ts`: popula `InstituicaoFaesa` (FAESA-VIT), cursos SI (id=1) e PSI (id=2) e as 3 personas — Lucas Silva (calouro, ALUNO), Mariana Costa (mentora, ALUNO `eMentor=true`) e Prof. Ricardo Almeida (DOCENTE).
-- **Infraestrutura de produção (2026-04-26):** documentação e ferramental para deploy real em VPS Hostinger com EasyPanel.
+- Nova versao `0.5.0` da app raiz (MINOR: reorganizacao estrutural sem quebra do contrato `/healthz` e `/version`).
+
+### Sprint 1 (incorporado a esta versao)
+
+- Subprojeto `banco-dados-requisitos-projeto/` (agora `packages/db/`) migrado de SQLite para PostgreSQL 17.6 (Supabase self-hosted na VPS, acessado via tunel SSH). `provider` trocado para `postgresql` no `schema.prisma`; URLs (`DATABASE_URL`/`DIRECT_URL`) movidas para `prisma.config.ts` conforme exigencia do Prisma 7. `lib/prisma.ts` agora usa `PrismaPg` (driver adapter) em vez de `PrismaBetterSqlite3`. Adicionadas dependencias `@prisma/adapter-pg` e `pg`. Bump do subprojeto para `2.0.0`.
+- Migration `20260430141247_init_postgres`: criacao inicial das ~30 tabelas no Postgres.
+- Migration `20260430141332_add_streak_and_conquistas`: novo campo `Usuario.eMentor`, novos campos `Gamificacao.streakAtual/streakRecorde/dataUltimaAtividade` (substituindo `badges`), e novos modelos `Conquista` e `UsuarioConquista` (com unique composto `(usuarioId, conquistaId)`).
+- `prisma/seed.ts`: popula `InstituicaoFaesa` (FAESA-VIT), cursos SI (id=1) e PSI (id=2) e as 3 personas — Lucas Silva (calouro, ALUNO), Mariana Costa (mentora, ALUNO `eMentor=true`) e Prof. Ricardo Almeida (DOCENTE).
+
+## [0.4.0] - 2026-04-26
+
+### Added
+
+- **Infraestrutura de producao (2026-04-26):** documentacao e ferramental para deploy real em VPS Hostinger com EasyPanel.
     - `Dockerfile`, `.dockerignore`, `package.json`, `server.js`, `public/index.html`, `public/styles.css`, `public/favicon.svg`: aplicação mínima Node 20 + Express servindo página *Em Construção* (sem conexão com banco) — exclusivamente para validar o pipeline EasyPanel → Traefik → HTTPS antes do início do desenvolvimento real. Endpoints `/`, `/healthz` e `/version`.
     - `scripts/deploy.mjs` e `scripts/deploy.sh`: disparam o webhook de implantação do EasyPanel a partir de `EASYPANEL_DEPLOY_WEBHOOK` (lido de `.env`).
     - `scripts/dev-tunnel.ps1`: abre túneis SSH (5432 → `supabase-db`, 6543 → `supabase-pooler`) a partir do Windows 11 para acesso ao Postgres da VPS.

@@ -1,21 +1,24 @@
 {
   "name": "site-acolhimento-faesa",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
-  "description": "Site de Acolhimento FAESA — página Em Construção (validação do pipeline de deploy EasyPanel).",
+  "description": "Site de Acolhimento FAESA — monorepo (apps/web SPA + apps/api Express + packages/db Prisma).",
   "engines": {
     "node": ">=20.0.0"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
+    "start": "npm run start -w @site-acolhimento/api",
+    "dev": "npm run dev -w @site-acolhimento/api",
+    "dev:web": "npm run dev -w @site-acolhimento/web",
+    "build": "npm run build -w @site-acolhimento/web",
     "deploy": "node scripts/deploy.mjs",
     "docker:build": "docker build -t site-acolhimento-faesa:local .",
     "docker:run": "docker run --rm -p 3010:3010 -e NODE_ENV=production site-acolhimento-faesa:local"
-  },
-  "dependencies": {
-    "express": "^4.21.2"
   },
   "repository": {
     "type": "git",
@@ -24,3 +27,4 @@
   "license": "UNLICENSED",
   "author": "Gabriel Malheiros de Castro <23110145>"
 }
+

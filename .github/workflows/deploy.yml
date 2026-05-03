@@ -13,7 +13,8 @@ on:
       - 'docs/**'
       - '*.tex'
       - '*.md'
-      - 'banco-dados-requisitos-projeto/**'
+      - 'packages/**'
+      - 'apps/web/**'
       - '.vscode/**'
   workflow_dispatch: {}
 

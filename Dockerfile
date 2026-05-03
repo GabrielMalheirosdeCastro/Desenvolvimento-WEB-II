@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1.7
 # ============================================================
-# Site de Acolhimento FAESA — imagem para EasyPanel
-# Estágio único, baseado em node:20-alpine (≈ 50 MB final).
+# Site de Acolhimento FAESA — imagem para EasyPanel (monorepo)
+# Base node:20-alpine; instala apenas o workspace apps/api
+# (a SPA web sera integrada em sprint posterior).
 # ============================================================
 FROM node:20-alpine AS base
 
@@ -14,26 +15,26 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# 1) Instala dependências (camada cacheável).
+# 1) Manifesto raiz + manifesto do workspace api (camada cacheavel).
 COPY package.json package-lock.json* ./
+COPY apps/api/package.json ./apps/api/package.json
 RUN if [ -f package-lock.json ]; then \
-            npm ci --omit=dev; \
+            npm ci --omit=dev --workspace @site-acolhimento/api --include-workspace-root; \
         else \
-            npm install --omit=dev --no-package-lock; \
+            npm install --omit=dev --workspace @site-acolhimento/api --include-workspace-root --no-package-lock; \
         fi
 
-# 2) Copia código da aplicação.
-COPY server.js ./
-COPY public ./public
+# 2) Codigo da aplicacao.
+COPY apps/api ./apps/api
 
-# 3) Reduz superfície: usuário não-root (já existe na imagem oficial).
+# 3) Usuario nao-root.
 RUN chown -R node:node /app
 USER node
 
 EXPOSE 3010
 
-# Healthcheck nativo do Docker (EasyPanel/Swarm honram).
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3010)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-CMD ["node", "server.js"]
+CMD ["node", "apps/api/server.js"]
+
