@@ -20,8 +20,10 @@ COPY apps/web/package.json ./apps/web/package.json
 COPY apps/api/package.json ./apps/api/package.json
 COPY packages/db/package.json ./packages/db/package.json
 
-# Instala dependencias completas apenas do workspace web (inclui devDeps).
-RUN npm ci --include-workspace-root --workspace @site-acolhimento/web
+# Instala todas as deps (inclui devDeps necessarias para o build do Vite).
+# Usa npm install em vez de npm ci porque o lockfile pode nao ter todos os
+# workspaces resolvidos no contexto Docker; instala apenas web + raiz.
+RUN npm install --workspace @site-acolhimento/web --include-workspace-root --no-audit --no-fund
 
 # Copia o codigo da SPA e builda.
 COPY apps/web ./apps/web

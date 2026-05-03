@@ -9,6 +9,12 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-05-03
+
+### Fixed
+
+- **Dockerfile estagio `web-build`:** trocado `npm ci --workspace ... --include-workspace-root` por `npm install --workspace ... --include-workspace-root --no-audit --no-fund`. O `npm ci` falhava no EasyPanel porque o `package-lock.json` da raiz nao tinha todas as devDeps de build do Vite resolvidas no contexto Docker (deploy ficou preso na v0.5.1 ate este patch).
+
 ## [1.0.0] - 2026-05-03
 
 ### Added
