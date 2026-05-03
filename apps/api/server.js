@@ -12,6 +12,7 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
+import { apiRouter } from './routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Versao oficial do projeto vive no package.json da raiz (regra 0.1 do plano).
@@ -39,6 +40,10 @@ app.get('/healthz', (_req, res) => {
 app.get('/version', (_req, res) => {
     res.json({ name: pkg.name, version: pkg.version });
 });
+
+// API REST do prototipo (Sprint 7). Resiliente: se DATABASE_URL nao
+// estiver setado os endpoints retornam fallback estatico.
+app.use('/api', apiRouter);
 
 // Resolve o diretorio servido como SPA (apps/web/dist).
 const webDist = path.resolve(rootDir, 'apps', 'web', 'dist');

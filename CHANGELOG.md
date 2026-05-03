@@ -9,6 +9,29 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-03
+
+### Added
+
+- **Sprint 7 — API REST minima (`apps/api/routes.js`):**
+    - `GET /api/_status` — diagnostico do pool Postgres (`connected`/`fallback`).
+    - `GET /api/me` — dados da persona principal (matricula `23110145`).
+    - `GET /api/dashboard/upcoming` — proximas atividades do plano de estudos.
+    - `GET /api/dashboard/week` — horas de estudo agregadas por dia da semana corrente.
+    - `GET /api/dashboard/badges` — conquistas recentes do usuario.
+- **Pool Postgres compartilhado (`apps/api/db.js`)** com `pg` 8.13.x, configurado para Supabase pooler na rede overlay `easypanel` (host `supabase-pooler:6543`).
+- **Resiliencia por design:** quando `DATABASE_URL` nao esta definido OU a query falha, todos os endpoints retornam payload de fallback marcado com `source: "fallback"`. Isso evita quebrar o deploy enquanto a variavel de ambiente nao e configurada no painel do EasyPanel.
+
+### Changed
+
+- **Sprint 8 (parcial) — `DashboardHome.tsx` consome a API real:** `weekData`, `recentBadges` e `upcomingActivities` deixam de ser literais hardcoded e passam a ser buscados via `fetch('/api/dashboard/...')` no `useEffect`. Mantem os literais como estado inicial (fallback otimista) para evitar flash visual.
+- `apps/api/package.json` ganha dependencia `pg ^8.13.1`.
+- Bump 1.0.2 → **1.1.0** (MINOR — nova superficie de API publica retrocompativel).
+
+### Pending
+
+- Configurar `DATABASE_URL` como variavel de ambiente do servico `acolhimento_faesa` no EasyPanel apontando para `postgresql://postgres.gmc:GmceNilza_01_Gmc@supabase-pooler:6543/postgres?pgbouncer=true` para que os endpoints saiam do modo fallback.
+
 ## [1.0.2] - 2026-05-03
 
 ### Changed

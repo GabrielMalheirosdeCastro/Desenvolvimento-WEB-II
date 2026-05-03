@@ -1,29 +1,44 @@
+import { useEffect, useState } from "react";
 import { Target, Clock, Flame, Award, TrendingUp, Calendar } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
+type WeekPoint = { day: string; hours: number };
+type Badge = { name: string; icon: string };
+type Activity = { id?: number; title: string; date: string; type: string; status: string };
+
+const FALLBACK_WEEK: WeekPoint[] = [
+  { day: "Seg", hours: 4 }, { day: "Ter", hours: 5 }, { day: "Qua", hours: 3 },
+  { day: "Qui", hours: 6 }, { day: "Sex", hours: 4 }, { day: "Sáb", hours: 2 },
+  { day: "Dom", hours: 1 },
+];
+const FALLBACK_BADGES: Badge[] = [
+  { name: "Primeira Semana", icon: "🎓" },
+  { name: "5 Horas de Estudo", icon: "📚" },
+  { name: "Meta Cumprida", icon: "🎯" },
+];
+const FALLBACK_UPCOMING: Activity[] = [
+  { title: "Revisão de Cálculo I", date: "13/03", type: "Estudo", status: "pending" },
+  { title: "Trabalho de Programação", date: "15/03", type: "Entrega", status: "pending" },
+  { title: "Sessão de Mentoria", date: "16/03", type: "Mentoria", status: "scheduled" },
+  { title: "Avaliação de Bem-estar", date: "18/03", type: "Questionário", status: "pending" },
+];
+
 export function DashboardHome() {
-  const weekData = [
-    { day: "Seg", hours: 4 },
-    { day: "Ter", hours: 5 },
-    { day: "Qua", hours: 3 },
-    { day: "Qui", hours: 6 },
-    { day: "Sex", hours: 4 },
-    { day: "Sáb", hours: 2 },
-    { day: "Dom", hours: 1 },
-  ];
+  const [weekData, setWeekData] = useState<WeekPoint[]>(FALLBACK_WEEK);
+  const [recentBadges, setRecentBadges] = useState<Badge[]>(FALLBACK_BADGES);
+  const [upcomingActivities, setUpcomingActivities] = useState<Activity[]>(FALLBACK_UPCOMING);
 
-  const recentBadges = [
-    { name: "Primeira Semana", icon: "🎓" },
-    { name: "5 Horas de Estudo", icon: "📚" },
-    { name: "Meta Cumprida", icon: "🎯" },
-  ];
-
-  const upcomingActivities = [
-    { title: "Revisão de Cálculo I", date: "13/03", type: "Estudo", status: "pending" },
-    { title: "Trabalho de Programação", date: "15/03", type: "Entrega", status: "pending" },
-    { title: "Sessão de Mentoria", date: "16/03", type: "Mentoria", status: "scheduled" },
-    { title: "Avaliação de Bem-estar", date: "18/03", type: "Questionário", status: "pending" },
-  ];
+  useEffect(() => {
+    fetch("/api/dashboard/week").then((r) => r.json()).then((j) => {
+      if (Array.isArray(j?.data)) setWeekData(j.data);
+    }).catch(() => {});
+    fetch("/api/dashboard/badges").then((r) => r.json()).then((j) => {
+      if (Array.isArray(j?.items)) setRecentBadges(j.items);
+    }).catch(() => {});
+    fetch("/api/dashboard/upcoming").then((r) => r.json()).then((j) => {
+      if (Array.isArray(j?.items)) setUpcomingActivities(j.items);
+    }).catch(() => {});
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
