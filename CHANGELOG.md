@@ -9,6 +9,18 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-05-03
+
+### Removed
+
+- **Sprint 3 — Limpeza do pacote Figma (decisao B5):** removidas dependencias nao utilizadas de `apps/web/package.json` (`@mui/material`, `@mui/icons-material`, `@emotion/react`, `@emotion/styled`, `@popperjs/core`, `react-popper`). Verificacao previa por `Select-String` confirmou que nenhum modulo da SPA importa esses pacotes — design system real e Radix + shadcn + Tailwind.
+- Removido o diretorio `apps/web/src/imports/pasted_text/` (lixo trazido do Figma Make — eram copias dos `.md` do diretorio `docs/`, decisao 0.6 do plano).
+
+### Verified
+
+- Varredura por `figma:asset/` em `apps/web/src/` retornou zero resultados (nao ha imports quebrados de assets ausentes).
+- `npm run build -w @site-acolhimento/web` concluido com sucesso (2241 modulos, 682 kB JS, 99 kB CSS, 7.24 s) — confirma que a remocao das dependencias nao quebrou a SPA.
+
 ## [0.5.0] - 2026-05-03
 
 ### Changed
