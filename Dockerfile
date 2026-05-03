@@ -1,36 +1,15 @@
 # syntax=docker/dockerfile:1.7
 # ============================================================
-# Site de Acolhimento FAESA — imagem multi-stage para EasyPanel.
-# Estagio 1: builda a SPA Vite (apps/web) com todas as devDeps.
-# Estagio 2: imagem final com node:20-alpine + apenas API + dist.
+# Site de Acolhimento FAESA — imagem single-stage para EasyPanel.
+# ------------------------------------------------------------
+# Decisao 2026-05-03: o build do Vite falhava silenciosamente no
+# EasyPanel/VPS (provavelmente OOM no estagio web-build com
+# multi-stage). Estrategia adotada: o `apps/web/dist/` e gerado
+# localmente (`npm run build -w @site-acolhimento/web`) e VERSIONADO
+# no Git. O Dockerfile agora apenas instala a API e copia o dist.
+# Trade-off academico aceitavel para um prototipo em VPS apertada.
 # ============================================================
-
-# ---------- Estagio 1: build da SPA ----------
-FROM node:20-alpine AS web-build
-
-WORKDIR /repo
-
-ENV NPM_CONFIG_LOGLEVEL=warn \
-    NPM_CONFIG_FUND=false \
-    NPM_CONFIG_AUDIT=false
-
-# Copia manifestos para aproveitar cache de instalacao.
-COPY package.json package-lock.json* ./
-COPY apps/web/package.json ./apps/web/package.json
-COPY apps/api/package.json ./apps/api/package.json
-COPY packages/db/package.json ./packages/db/package.json
-
-# Instala todas as deps (inclui devDeps necessarias para o build do Vite).
-# Usa npm install em vez de npm ci porque o lockfile pode nao ter todos os
-# workspaces resolvidos no contexto Docker; instala apenas web + raiz.
-RUN npm install --workspace @site-acolhimento/web --include-workspace-root --no-audit --no-fund
-
-# Copia o codigo da SPA e builda.
-COPY apps/web ./apps/web
-RUN npm run build -w @site-acolhimento/web
-
-# ---------- Estagio 2: runtime ----------
-FROM node:20-alpine AS runtime
+FROM node:20-alpine
 
 ENV NODE_ENV=production \
     PORT=3010 \
@@ -41,7 +20,7 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# Manifestos + lockfile para instalacao reprodutivel da API.
+# 1) Manifestos para cache de instalacao da API.
 COPY package.json package-lock.json* ./
 COPY apps/api/package.json ./apps/api/package.json
 RUN if [ -f package-lock.json ]; then \
@@ -50,13 +29,13 @@ RUN if [ -f package-lock.json ]; then \
             npm install --omit=dev --workspace @site-acolhimento/api --include-workspace-root --no-package-lock; \
         fi
 
-# Codigo da API.
+# 2) Codigo da API.
 COPY apps/api ./apps/api
 
-# Artefato buildado da SPA.
-COPY --from=web-build /repo/apps/web/dist ./apps/web/dist
+# 3) Build pre-gerado da SPA (versionado no repo).
+COPY apps/web/dist ./apps/web/dist
 
-# Usuario nao-root.
+# 4) Usuario nao-root.
 RUN chown -R node:node /app
 USER node
 
@@ -66,5 +45,6 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3010)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 CMD ["node", "apps/api/server.js"]
+
 
 

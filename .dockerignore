@@ -20,10 +20,17 @@ docs/
 # Subprojeto de modelagem (Prisma) — nao vai para a imagem
 packages/
 
-# Front Vite: source vai para o estagio de build, mas excluimos
-# node_modules/dist locais para nao poluir o cache.
+# Front Vite: o codigo fonte nao e necessario na imagem (apenas o dist),
+# mas o dist E necessario.
 apps/web/node_modules/
-apps/web/dist/
+apps/web/src/
+apps/web/public/
+apps/web/index.html
+apps/web/vite.config.*
+apps/web/tsconfig*.json
+apps/web/eslint.config.*
+apps/web/postcss.config.*
+apps/web/tailwind.config.*
 
 # Editor / IDE
 .vscode/

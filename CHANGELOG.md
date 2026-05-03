@@ -9,6 +9,20 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-05-03
+
+### Changed
+
+- **Dockerfile reescrito como single-stage (decisao operacional):** o estagio `web-build` multi-stage falhava silenciosamente no EasyPanel/VPS (provavel OOM durante `npm install` + `vite build` em VPS apertada que coabita com Supabase self-hosted). Estrategia adotada: o `apps/web/dist/` agora e gerado localmente (`npm run build -w @site-acolhimento/web` ou `npm run prepare-deploy`) e **versionado no Git**. O Dockerfile final apenas instala a API e copia o dist pronto.
+- `.gitignore` atualizado: excecao explicita para `apps/web/dist/` (continua ignorando `dist/` em qualquer outro lugar).
+- `.dockerignore` ajustado: exclui `apps/web/src/`, `apps/web/index.html`, configs do Vite/TS/ESLint/Tailwind — apenas o `dist/` entra na imagem (reduz contexto de build).
+- `package.json` raiz: novo script `prepare-deploy` (alias de `build`) para uso explicito antes de commits que afetam a SPA.
+
+### Rationale
+
+- Trade-off academico aceitavel para um prototipo: o repo cresce ~700 kB por release, mas o build no servidor passa a ser instantaneo e nao depende de RAM/CPU da VPS.
+- O processo manual de "buildar antes de commitar" e protegido pelo Dockerfile: se o `apps/web/dist/` estiver desatualizado/ausente, o `COPY apps/web/dist` falha o build do Docker — feedback imediato.
+
 ## [1.0.1] - 2026-05-03
 
 ### Fixed
