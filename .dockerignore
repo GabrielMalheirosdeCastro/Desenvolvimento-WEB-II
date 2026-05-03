@@ -17,9 +17,13 @@ docs/
 *.fls
 *.fdb_latexmk
 
-# Subprojeto de modelagem (Prisma) e front Vite (nao vao para a imagem da API)
+# Subprojeto de modelagem (Prisma) — nao vai para a imagem
 packages/
-apps/web/
+
+# Front Vite: source vai para o estagio de build, mas excluimos
+# node_modules/dist locais para nao poluir o cache.
+apps/web/node_modules/
+apps/web/dist/
 
 # Editor / IDE
 .vscode/

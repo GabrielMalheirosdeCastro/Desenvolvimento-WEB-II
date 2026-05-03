@@ -9,7 +9,34 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
-## [0.5.1] - 2026-05-03
+## [1.0.0] - 2026-05-03
+
+### Added
+
+- **Sprint 4–6 — Primeiro prototipo funcional integrado:**
+    - SPA React (`apps/web`) e backend Express (`apps/api`) agora rodam como um unico artefato unificado servido pelo container do EasyPanel.
+    - `apps/api/server.js` passa a servir `apps/web/dist/` como conteudo estatico e implementa fallback SPA (`*` → `index.html`) para que rotas profundas (`/login`, `/dashboard/*`) funcionem em refresh direto do navegador.
+    - Mantem fallback para a antiga pagina "Em Construcao" (`apps/api/public/`) quando o build da SPA esta ausente (ex.: dev local sem `npm run build`).
+- **LoginPage reescrita conforme regra 0.1 do plano:** exibe Disciplina (Desenvolvimento Web II — D001508), Docente (Otavio Lube dos Santos), Aluno (Gabriel Malheiros — 23110145), Repositorio (link do GitHub) e badge `site-acolhimento-faesa · v{version}` lido dinamicamente de `/version` via `fetch`.
+- **Decisao B4 do plano:** rota raiz (`/`) redireciona para `/dashboard` via `<Navigate replace>`. A rota `/login` continua acessivel para satisfazer a regra 0.1 (badge de versao + metadados academicos).
+
+### Changed
+
+- **Dockerfile reescrito como multi-stage:** estagio `web-build` instala devDeps do workspace `@site-acolhimento/web` e gera `apps/web/dist`; estagio `runtime` (node:20-alpine) instala apenas o workspace `@site-acolhimento/api` em modo `--omit=dev` e copia o artefato buildado da SPA do estagio anterior. Reduz superficie de ataque e tamanho final da imagem.
+- `.dockerignore` ajustado para permitir `apps/web/` no contexto de build (necessario para o estagio `web-build`), excluindo apenas `apps/web/node_modules/` e `apps/web/dist/` locais.
+- `.github/workflows/deploy.yml` removeu `apps/web/**` do `paths-ignore` — agora mudancas na SPA disparam redeploy automaticamente.
+
+### Bumped
+
+- `site-acolhimento-faesa` 0.5.1 → **1.0.0** (MAJOR): primeiro prototipo do produto em producao com SPA real (substitui a pagina "Em Construcao" na rota raiz).
+- `@site-acolhimento/web` 0.5.1 → 1.0.0; `@site-acolhimento/api` 0.5.0 → 1.0.0.
+
+### Verified
+
+- Build local da SPA: `npm run build -w @site-acolhimento/web` em 5.37 s, 684 kB JS, 99 kB CSS.
+- Smoke test do servidor unificado: `GET /version` → `{"name":"site-acolhimento-faesa","version":"1.0.0"}`; `GET /login` → HTML da SPA; `GET /dashboard/perfil` → 200 (fallback SPA OK).
+
+
 
 ### Removed
 

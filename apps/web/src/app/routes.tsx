@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { RootLayout } from "./layouts/RootLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { LoginPage } from "./pages/LoginPage";
@@ -16,7 +16,11 @@ export const router = createBrowserRouter([
     path: "/",
     Component: RootLayout,
     children: [
-      { index: true, Component: LoginPage },
+      // Decisao B4 do plano: rota raiz redireciona direto para o dashboard.
+      // /login continua acessivel para satisfazer a regra 0.1 (badge de versao
+      // + Disciplina/Docente/Aluno/Repositorio).
+      { index: true, element: <Navigate to="/dashboard" replace /> },
+      { path: "login", Component: LoginPage },
       {
         path: "dashboard",
         Component: DashboardLayout,
@@ -34,3 +38,4 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+

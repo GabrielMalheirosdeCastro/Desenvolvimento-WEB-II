@@ -1,101 +1,148 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Mail, Lock } from "lucide-react";
+import { BookOpen, GraduationCap, User, Github } from "lucide-react";
+
+interface VersionInfo {
+  name: string;
+  version: string;
+}
+
+const FALLBACK_VERSION: VersionInfo = {
+  name: "site-acolhimento-faesa",
+  version: "0.0.0",
+};
+
+const REPO_URL =
+  "https://github.com/GabrielMalheirosdeCastro/Desenvolvimento-WEB-II";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [versionInfo, setVersionInfo] = useState<VersionInfo>(FALLBACK_VERSION);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/version")
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((data: VersionInfo) => {
+        if (!cancelled) setVersionInfo(data);
+      })
+      .catch(() => {
+        // mantem fallback silenciosamente; tela ainda renderiza badge
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - em produção, integrar com SSO/OAuth
+    // Decisao B4 do plano: protótipo sem autenticacao.
     navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#003366] via-[#004080] to-[#0066CC] flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
-        <div className="text-center mb-8">
+    <div
+      className="min-h-screen bg-gradient-to-br from-[#003366] via-[#004080] to-[#0066CC] flex items-center justify-center p-4"
+      data-testid="login-page"
+    >
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-8">
+        <div className="text-center mb-6">
           <div className="w-20 h-20 bg-[#003366] rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl font-bold text-white">F</span>
           </div>
-          <h1 className="text-3xl mb-2 text-[#003366]">FAESA Acolhimento</h1>
-          <p className="text-[#6C757D]">
+          <h1 className="text-3xl mb-1 text-[#003366]">FAESA Acolhimento</h1>
+          <p className="text-sm text-[#6C757D]">
             Sistema de Acolhimento Estudantil
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm mb-2 text-[#003366]">
-              E-mail Institucional
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6C757D]" size={20} />
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
-                placeholder="seu.email@aluno.faesa.br"
-                required
-              />
+        {/* Bloco obrigatorio pela regra 0.1 do plano:
+            Disciplina, Docente, Aluno e Repositorio sempre visiveis. */}
+        <dl
+          className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-6"
+          data-testid="login-metadata"
+        >
+          <div className="flex items-start gap-2">
+            <BookOpen size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <div>
+              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+                Disciplina
+              </dt>
+              <dd className="text-[#003366]" data-testid="meta-disciplina">
+                Desenvolvimento de Aplicações Web II (D001508)
+              </dd>
             </div>
           </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm mb-2 text-[#003366]">
-              Senha
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6C757D]" size={20} />
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
-                placeholder="••••••••"
-                required
-              />
+          <div className="flex items-start gap-2">
+            <GraduationCap size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <div>
+              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+                Docente
+              </dt>
+              <dd className="text-[#003366]" data-testid="meta-docente">
+                Otávio Lube dos Santos
+              </dd>
             </div>
           </div>
+          <div className="flex items-start gap-2">
+            <User size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <div>
+              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+                Aluno
+              </dt>
+              <dd className="text-[#003366]" data-testid="meta-aluno">
+                Gabriel Malheiros de Castro · 23110145
+              </dd>
+            </div>
+          </div>
+          <div className="flex items-start gap-2">
+            <Github size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <div>
+              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+                Repositório
+              </dt>
+              <dd
+                className="text-[#003366] break-all"
+                data-testid="meta-repositorio"
+              >
+                <a
+                  href={REPO_URL}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-[#0066CC] hover:underline"
+                >
+                  GabrielMalheirosdeCastro/Desenvolvimento-WEB-II
+                </a>
+              </dd>
+            </div>
+          </div>
+        </dl>
 
+        <form onSubmit={handleSubmit} className="space-y-4">
           <button
             type="submit"
             className="w-full bg-[#003366] hover:bg-[#004080] text-white py-3 rounded-lg transition-colors"
+            data-testid="login-submit"
           >
             Entrar
           </button>
-
-          <div className="text-center">
-            <a href="#" className="text-sm text-[#0066CC] hover:underline">
-              Primeiro acesso? Cadastre-se
-            </a>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#003366]/20"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-[#6C757D]">ou</span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            className="w-full border-2 border-[#0066CC] hover:bg-[#0066CC] hover:text-white text-[#003366] py-3 rounded-lg transition-colors"
-          >
-            Login via SSO Institucional
-          </button>
+          <p className="text-center text-xs text-[#6C757D]">
+            Protótipo acadêmico sem autenticação real (decisão B4).
+          </p>
         </form>
 
-        <div className="mt-8 text-center text-xs text-[#6C757D]">
-          <p>Matrícula: 23110145</p>
-          <p className="mt-1">Disciplina: Desenvolvimento de Aplicações Web II</p>
+        {/* Badge oficial de validacao de redeploy (regra 0.1 do plano). */}
+        <div
+          className="mt-6 flex justify-center"
+          data-testid="login-version-badge"
+        >
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#003366]/5 text-[#003366] text-xs font-mono border border-[#003366]/10">
+            <span
+              className="w-2 h-2 rounded-full bg-[#28A745]"
+              aria-hidden="true"
+            />
+            {versionInfo.name} · v{versionInfo.version}
+          </span>
         </div>
       </div>
     </div>
