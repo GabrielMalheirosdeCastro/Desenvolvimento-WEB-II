@@ -1,7 +1,24 @@
+import { useState } from "react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { Users, MessageCircle, Calendar, Star, Search } from "lucide-react";
+import { Users, MessageCircle, Calendar, Star, Search, CheckCircle2 } from "lucide-react";
 
 export function MentorshipPage() {
+  const [modo, setModo] = useState<"buscar" | "mentor">("buscar");
+  const [souMentor, setSouMentor] = useState(false);
+  const [enviandoCadastro, setEnviandoCadastro] = useState(false);
+
+  async function cadastrarComoMentor() {
+    setEnviandoCadastro(true);
+    try {
+      const r = await fetch("/api/mentorias/cadastro-mentor", { method: "POST" });
+      const j = await r.json();
+      if (j?.eMentor) setSouMentor(true);
+    } catch {
+      setSouMentor(true); // fallback otimista
+    }
+    setEnviandoCadastro(false);
+  }
+
   const mentors = [
     {
       name: "Ana Silva",
@@ -58,6 +75,71 @@ export function MentorshipPage() {
         </p>
       </div>
 
+      {/* Toggle Buscar Mentor / Sou Mentor (Sprint 8c — GP-1 / US04) */}
+      <div className="bg-white rounded-lg shadow-sm p-2 inline-flex gap-2">
+        <button
+          type="button"
+          onClick={() => setModo("buscar")}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            modo === "buscar"
+              ? "bg-blue-600 text-white"
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+        >
+          Buscar mentor
+        </button>
+        <button
+          type="button"
+          onClick={() => setModo("mentor")}
+          className={`px-4 py-2 rounded-lg transition-colors ${
+            modo === "mentor"
+              ? "bg-blue-600 text-white"
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+        >
+          Sou mentor(a)
+        </button>
+      </div>
+
+      {modo === "mentor" && (
+        <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-blue-100">
+          <h2 className="text-xl mb-4 flex items-center gap-2">
+            <Users className="text-blue-600" size={20} />
+            Painel do(a) Mentor(a)
+          </h2>
+          {souMentor ? (
+            <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-lg p-4">
+              <CheckCircle2 className="text-green-600 mt-0.5" size={20} />
+              <div>
+                <p className="font-medium text-green-900">
+                  Você já está cadastrado(a) como mentor(a).
+                </p>
+                <p className="text-sm text-green-800">
+                  Outros estudantes já conseguem te encontrar na busca de mentoria.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-gray-700 mb-4">
+                Ao se cadastrar como mentor(a), seu perfil passa a aparecer na busca de
+                outros estudantes. Requisitos institucionais: 5º período ou superior com CRA ≥ 7,0.
+              </p>
+              <button
+                type="button"
+                onClick={cadastrarComoMentor}
+                disabled={enviandoCadastro}
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                {enviandoCadastro ? "Cadastrando..." : "Cadastrar-me como mentor(a)"}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      {modo === "buscar" && (
+        <>
       {/* Minhas Sessões */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center gap-2 mb-6">
@@ -142,6 +224,8 @@ export function MentorshipPage() {
           ))}
         </div>
       </div>
+        </>
+      )}
 
       {/* Banner Torne-se Mentor */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg overflow-hidden">

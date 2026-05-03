@@ -20,6 +20,7 @@ const rootDir = path.resolve(__dirname, '..', '..');
 const pkg = JSON.parse(readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
 
 const app = express();
+app.use(express.json({ limit: '64kb' }));
 const PORT = Number(process.env.PORT) || 3010;
 const HOST = process.env.HOST || '0.0.0.0';
 

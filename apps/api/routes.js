@@ -2,10 +2,14 @@
 // Roteador da API REST do Site de Acolhimento FAESA.
 // ------------------------------------------------------------
 // Endpoints minimos do prototipo:
-//   GET /api/me                 -> persona logada (sem auth real)
-//   GET /api/dashboard/upcoming -> proximas atividades de estudo
-//   GET /api/dashboard/week     -> horas de estudo da semana corrente
-//   GET /api/dashboard/badges   -> conquistas recentes
+//   GET  /api/me                          -> persona logada (sem auth real)
+//   GET  /api/dashboard/upcoming          -> proximas atividades de estudo
+//   GET  /api/dashboard/week              -> horas de estudo da semana corrente
+//   GET  /api/dashboard/badges            -> conquistas recentes
+//   GET  /api/eventos                     -> eventos institucionais (Sprint 8a / G4)
+//   POST /api/lgpd/consentimento          -> aceite LGPD (Sprint 8b / G5)
+//   GET  /api/mentorias?papel=mentor      -> lista mentores (Sprint 8c / GP-1)
+//   POST /api/mentorias/cadastro-mentor   -> marca persona como mentor
 //
 // Todos os endpoints sao resilientes: se o pool Postgres nao
 // estiver inicializado (DATABASE_URL ausente) ou a query falhar,
@@ -142,5 +146,189 @@ apiRouter.get('/dashboard/badges', async (_req, res) => {
             { name: '5 Horas de Estudo', icon: '📚' },
             { name: 'Meta Cumprida', icon: '🎯' },
         ],
+    });
+});
+
+// --------------------------------------------------------------
+// GET /api/eventos  (Sprint 8a — gap G4 / RF12)
+// Lista eventos institucionais (palestras, oficinas, etc.).
+// --------------------------------------------------------------
+apiRouter.get('/eventos', async (_req, res) => {
+    const rows = await query(
+        `SELECT id, titulo, descricao, tipo, data_evento, local, vagas
+             FROM eventos
+             ORDER BY data_evento ASC NULLS LAST
+             LIMIT 20`,
+    );
+    if (rows && rows.length > 0) {
+        return res.json({
+            source: 'db',
+            items: rows.map((r) => ({
+                id: r.id,
+                titulo: r.titulo,
+                descricao: r.descricao,
+                tipo: r.tipo,
+                data: r.data_evento,
+                local: r.local,
+                vagas: r.vagas,
+            })),
+        });
+    }
+    res.json({
+        source: 'fallback',
+        items: [
+            {
+                id: 1,
+                titulo: 'Palestra: Saúde Mental no Ambiente Acadêmico',
+                descricao: 'Roda de conversa com a equipe de psicologia da FAESA.',
+                tipo: 'Palestra',
+                data: '2026-05-20T19:00:00.000Z',
+                local: 'Auditório Central — Campus Vitória',
+                vagas: 80,
+            },
+            {
+                id: 2,
+                titulo: 'Oficina: Técnicas de Estudo para o Período Final',
+                descricao: 'Workshop prático sobre Pomodoro, Cornell e mapas mentais.',
+                tipo: 'Oficina',
+                data: '2026-05-28T14:00:00.000Z',
+                local: 'Sala B-204',
+                vagas: 30,
+            },
+            {
+                id: 3,
+                titulo: 'Encontro de Mentoria — Calouros 2026/2',
+                descricao: 'Apresentação do programa de mentoria entre alunos.',
+                tipo: 'Encontro',
+                data: '2026-06-05T18:30:00.000Z',
+                local: 'Hall do Bloco A',
+                vagas: 120,
+            },
+        ],
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/lgpd/consentimento  (Sprint 8b — gap G5 / RNF09)
+// Persiste o aceite do termo LGPD para a persona logada.
+// Body esperado: { finalidade: string, versaoTermo: string }
+// --------------------------------------------------------------
+apiRouter.post('/lgpd/consentimento', async (req, res) => {
+    const finalidade = String(req.body?.finalidade || 'uso_geral').slice(0, 80);
+    const versaoTermo = String(req.body?.versaoTermo || '1.0').slice(0, 16);
+    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().slice(0, 64);
+    const ua = String(req.headers['user-agent'] || '').slice(0, 255);
+
+    if (!isConnected()) {
+        return res.json({
+            source: 'fallback',
+            persisted: false,
+            consentiu: true,
+            finalidade,
+            versaoTermo,
+            mensagem: 'Banco indisponível — aceite registrado apenas no cliente.',
+        });
+    }
+
+    // Resolve usuario_id da persona padrão.
+    const usuarioRows = await query(
+        `SELECT id FROM usuarios WHERE matricula_institucional = $1 LIMIT 1`,
+        [MATRICULA_PADRAO],
+    );
+    if (!usuarioRows || usuarioRows.length === 0) {
+        return res.status(404).json({ source: 'db', error: 'usuario_nao_encontrado' });
+    }
+    const usuarioId = usuarioRows[0].id;
+
+    const inserted = await query(
+        `INSERT INTO consentimentos_lgpd
+                 (usuario_id, finalidade, versao_termo, consentiu, ip_origem, user_agent, data_consentimento)
+             VALUES ($1, $2, $3, TRUE, $4, $5, NOW())
+             RETURNING id, data_consentimento`,
+        [usuarioId, finalidade, versaoTermo, ip, ua],
+    );
+    if (!inserted || inserted.length === 0) {
+        return res.status(500).json({ source: 'db', error: 'falha_persistencia' });
+    }
+    res.json({
+        source: 'db',
+        persisted: true,
+        consentiu: true,
+        id: inserted[0].id,
+        finalidade,
+        versaoTermo,
+        registradoEm: inserted[0].data_consentimento,
+    });
+});
+
+// --------------------------------------------------------------
+// GET /api/mentorias?papel=mentor  (Sprint 8c — gap GP-1 / US04)
+// Lista usuarios marcados como mentores. Default papel=mentor.
+// --------------------------------------------------------------
+apiRouter.get('/mentorias', async (req, res) => {
+    const papel = String(req.query?.papel || 'mentor');
+
+    if (papel === 'mentor') {
+        const rows = await query(
+            `SELECT id, nome, email_institucional, matricula_institucional, tipo_usuario, e_mentor
+                 FROM usuarios
+                 WHERE e_mentor = TRUE
+                 ORDER BY nome ASC
+                 LIMIT 20`,
+        );
+        if (rows && rows.length > 0) {
+            return res.json({
+                source: 'db',
+                papel: 'mentor',
+                items: rows.map((r) => ({
+                    id: r.id,
+                    nome: r.nome,
+                    email: r.email_institucional,
+                    matricula: r.matricula_institucional,
+                    tipo: r.tipo_usuario,
+                })),
+            });
+        }
+    }
+
+    res.json({
+        source: 'fallback',
+        papel,
+        items: [
+            { id: 1, nome: 'Ana Silva', curso: 'ADS', periodo: '7º', cra: 8.5, especialidades: ['Programação', 'Estrutura de Dados'] },
+            { id: 2, nome: 'Carlos Santos', curso: 'Engenharia de Software', periodo: '6º', cra: 8.2, especialidades: ['Banco de Dados', 'DevOps'] },
+            { id: 3, nome: 'Mariana Costa', curso: 'Ciência da Computação', periodo: '8º', cra: 9.0, especialidades: ['Algoritmos', 'IA'] },
+        ],
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/mentorias/cadastro-mentor  (Sprint 8c — gap GP-1)
+// Marca a persona logada como mentor (Usuario.e_mentor = TRUE).
+// Body opcional: { especialidades?: string[] } (ignorado por enquanto).
+// --------------------------------------------------------------
+apiRouter.post('/mentorias/cadastro-mentor', async (_req, res) => {
+    if (!isConnected()) {
+        return res.json({
+            source: 'fallback',
+            persisted: false,
+            eMentor: true,
+            mensagem: 'Banco indisponível — cadastro registrado apenas no cliente.',
+        });
+    }
+    const updated = await query(
+        `UPDATE usuarios SET e_mentor = TRUE
+             WHERE matricula_institucional = $1
+             RETURNING id, nome, e_mentor`,
+        [MATRICULA_PADRAO],
+    );
+    if (!updated || updated.length === 0) {
+        return res.status(404).json({ source: 'db', error: 'usuario_nao_encontrado' });
+    }
+    res.json({
+        source: 'db',
+        persisted: true,
+        eMentor: updated[0].e_mentor,
+        usuario: { id: updated[0].id, nome: updated[0].nome },
     });
 });

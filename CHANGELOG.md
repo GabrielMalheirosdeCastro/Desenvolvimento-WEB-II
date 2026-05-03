@@ -9,6 +9,27 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-03
+
+### Added
+
+- **Sprint 8a — Eventos institucionais (RF12 / gap G4):**
+    - `GET /api/eventos` lista registros do modelo `Evento` (titulo, descricao, tipo, data, local, vagas).
+    - `LibraryPage` ganha abas **Recursos / Eventos**; aba Eventos consome o endpoint e renderiza cards com data formatada (pt-BR), local, vagas e botao de inscricao.
+- **Sprint 8b — Modal LGPD bloqueante (RNF09 / gap G5 / decisao P7-a):**
+    - Novo componente `apps/web/src/app/components/LgpdModal.tsx` montado no `RootLayout`.
+    - Exibido no primeiro acesso; armazena flag em `localStorage` apos aceite.
+    - `POST /api/lgpd/consentimento` persiste na tabela `consentimentos_lgpd` (usuario, finalidade, versao do termo, IP, user-agent).
+- **Sprint 8c — Toggle mentor/buscar (US04 / gap GP-1):**
+    - `MentorshipPage` ganha toggle **Buscar mentor / Sou mentor(a)**.
+    - `GET /api/mentorias?papel=mentor` lista usuarios com `e_mentor=TRUE`.
+    - `POST /api/mentorias/cadastro-mentor` marca a persona logada como mentor (`UPDATE usuarios SET e_mentor=TRUE`).
+- Middleware `express.json({ limit: '64kb' })` ativado no `apps/api/server.js` para suportar os novos endpoints POST.
+
+### Changed
+
+- Bump 1.1.0 -> **1.2.0** (MINOR — 4 novos endpoints + 2 features de UI retrocompativeis).
+
 ## [1.1.0] - 2026-05-03
 
 ### Added
