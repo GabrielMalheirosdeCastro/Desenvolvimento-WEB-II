@@ -7,6 +7,54 @@
 
 ---
 
+## ✅ Status de Encerramento — 2026-05-05
+
+> **Plano CONCLUÍDO.** Protótipo publicado em produção em <https://acolhimento.faesa.gmcsistemas.com.br> na versão **v1.2.0**. Todas as fases (1–10) e todos os itens do backlog executável (Fase 6, itens 1–11 + 8a/8b/8c) foram entregues. Endpoints `/api/*` operam com pool Postgres conectado e fallback semântico quando as tabelas correspondentes ainda não têm seed populado — comportamento aceito como conclusão do protótipo.
+
+### Backlog executável (Fase 6) — situação final
+
+| # | Item | Status | Versão entregue |
+|---|------|--------|-----------------|
+| 1  | Migrar Prisma sqlite→postgres + seed mínimo                                         | ✅ Concluído | v0.1.0 → v1.0.x |
+| 2  | Reorganizar repo em monorepo `apps/web` + `apps/api`                                 | ✅ Concluído | v1.0.x |
+| 3  | Limpar `apps/web/`: remover MUI/Emotion + `pasted_text/` + `figma:asset/`            | ✅ Concluído | v1.0.x |
+| 4  | Reescrever `LoginPage` com regra 0.1 (4 metadados + badge versão dinâmico)           | ✅ Concluído | v1.0.x |
+| 5  | Redirect `/` → `/dashboard` (decisão B4) + `/login` acessível                        | ✅ Concluído | v1.0.x |
+| 6  | Ajustar Express: servir SPA build + fallback `*` + manter `/healthz` e `/version`     | ✅ Concluído | v1.0.x |
+| 7  | Implementar endpoints `GET /api/*` da Fase 4 (pool `pg` + fallback resiliente)       | ✅ Concluído | **v1.1.0** |
+| 8  | Substituir mocks no `DashboardHome` por `fetch('/api/...')`                          | ✅ Concluído | **v1.1.0** |
+| 8a | **Gap G4 (RF12 Eventos):** abas Recursos/Eventos no `LibraryPage` + `GET /api/eventos` | ✅ Concluído | **v1.2.0** |
+| 8b | **Gap G5 (RNF09 LGPD):** modal bloqueante + `POST /api/lgpd/consentimento`           | ✅ Concluído | **v1.2.0** |
+| 8c | **Gap GP-1 (US04 mentora):** toggle Buscar/Sou mentor + 2 endpoints de mentoria      | ✅ Concluído | **v1.2.0** |
+| 9  | Migration `add_streak_and_conquistas` + `Usuario.eMentor`                            | ✅ Concluído | v1.0.x |
+| 10 | Dockerfile multi-stage + `.dockerignore` + `.github/workflows/deploy.yml`            | ✅ Concluído | v1.0.x |
+| 11 | Bump MAJOR para `v1.0.0` + deploy EasyPanel + validação Playwright                   | ✅ Concluído | v1.0.0 |
+
+### Endpoints REST entregues
+
+| Endpoint | Método | Sprint | Status em produção |
+|----------|--------|--------|--------------------|
+| `/api/_status`                       | GET  | 7  | `db: connected` ✅ |
+| `/api/me`                            | GET  | 7  | 200 OK (fallback se persona ausente) |
+| `/api/dashboard/upcoming`            | GET  | 7  | 200 OK (fallback) |
+| `/api/dashboard/week`                | GET  | 7  | 200 OK (fallback) |
+| `/api/dashboard/badges`              | GET  | 7  | 200 OK (fallback) |
+| `/api/eventos`                       | GET  | 8a | 200 OK (fallback) |
+| `/api/lgpd/consentimento`            | POST | 8b | 200 OK |
+| `/api/mentorias?papel=mentor`        | GET  | 8c | 200 OK (fallback) |
+| `/api/mentorias/cadastro-mentor`     | POST | 8c | 200 OK |
+
+### Pendências fora do escopo do agente
+
+- ⏳ **GitHub Secret `EASYPANEL_DEPLOY_WEBHOOK`:** ação manual no painel do GitHub para reativar o auto-deploy via push (workflow [.github/workflows/deploy.yml](../.github/workflows/deploy.yml) atualmente falha no step `Validate secret`). Workaround: deploy manual via `node scripts/deploy.mjs` continua funcionando.
+- ⏳ **Popular seed em produção** com a persona `23110145` (Gabriel) e dados em `eventos`, `atividades_estudo`, `usuario_conquistas` — sem isso os endpoints continuam respondendo `source: "fallback"`. Seed atual em [packages/db/prisma/seed.ts](../packages/db/prisma/seed.ts) cobre apenas as 3 personas iniciais (Lucas, Mariana, Ricardo).
+
+### Próximas frentes (fora deste plano)
+
+A continuação natural do projeto pertence a um **novo plano de ação** a ser criado quando o desenvolvedor decidir avançar para: autenticação real, integração com SSO institucional FAESA, chatbot, questionário de bem-estar, ou expansão do seed de produção.
+
+---
+
 ## 0. Contexto e Premissas Gerais
 
 Antes de iniciar qualquer fase, o agente deve internalizar as seguintes regras invariantes que valem para **todas** as etapas:
