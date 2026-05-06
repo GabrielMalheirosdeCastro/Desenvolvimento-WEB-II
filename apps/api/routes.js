@@ -127,12 +127,12 @@ apiRouter.get('/dashboard/week', async (_req, res) => {
 // --------------------------------------------------------------
 apiRouter.get('/dashboard/badges', async (_req, res) => {
     const rows = await query(
-        `SELECT c.nome AS name, COALESCE(c.icone_emoji, '🏆') AS icon
-             FROM usuario_conquistas uc
+        `SELECT c.titulo AS name, COALESCE(c.icone, '🏆') AS icon
+             FROM usuarios_conquistas uc
              JOIN conquistas c ON c.id = uc.conquista_id
              JOIN usuarios u ON u.id = uc.usuario_id
              WHERE u.matricula_institucional = $1
-             ORDER BY uc.data_conquista DESC NULLS LAST
+             ORDER BY uc.conquistada_em DESC NULLS LAST
              LIMIT 3`,
         [MATRICULA_PADRAO],
     );
