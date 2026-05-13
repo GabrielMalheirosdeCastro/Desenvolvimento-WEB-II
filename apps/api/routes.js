@@ -123,6 +123,27 @@ apiRouter.get('/dashboard/week', async (_req, res) => {
 });
 
 // --------------------------------------------------------------
+// GET /api/dashboard/streak
+// Retorna streak atual + recorde da Gamificacao do usuario logado.
+// --------------------------------------------------------------
+apiRouter.get('/dashboard/streak', async (_req, res) => {
+    const rows = await query(
+        `SELECT g.streak_atual AS atual,
+                g.streak_recorde AS recorde,
+                g.data_ultima_atividade AS ultima
+             FROM gamificacao g
+             JOIN usuarios u ON u.id = g.usuario_id
+             WHERE u.matricula_institucional = $1
+             LIMIT 1`,
+        [MATRICULA_PADRAO],
+    );
+    if (rows && rows.length > 0) {
+        return res.json({ source: 'db', ...rows[0] });
+    }
+    res.json({ source: 'fallback', atual: 12, recorde: 18, ultima: null });
+});
+
+// --------------------------------------------------------------
 // GET /api/dashboard/badges
 // --------------------------------------------------------------
 apiRouter.get('/dashboard/badges', async (_req, res) => {

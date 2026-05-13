@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 type WeekPoint = { day: string; hours: number };
 type Badge = { name: string; icon: string };
 type Activity = { id?: number; title: string; date: string; type: string; status: string };
+type Streak = { atual: number; recorde: number };
 
 const FALLBACK_WEEK: WeekPoint[] = [
   { day: "Seg", hours: 4 }, { day: "Ter", hours: 5 }, { day: "Qua", hours: 3 },
@@ -27,6 +28,7 @@ export function DashboardHome() {
   const [weekData, setWeekData] = useState<WeekPoint[]>(FALLBACK_WEEK);
   const [recentBadges, setRecentBadges] = useState<Badge[]>(FALLBACK_BADGES);
   const [upcomingActivities, setUpcomingActivities] = useState<Activity[]>(FALLBACK_UPCOMING);
+  const [streak, setStreak] = useState<Streak>({ atual: 12, recorde: 18 });
 
   useEffect(() => {
     fetch("/api/dashboard/week").then((r) => r.json()).then((j) => {
@@ -37,6 +39,11 @@ export function DashboardHome() {
     }).catch(() => {});
     fetch("/api/dashboard/upcoming").then((r) => r.json()).then((j) => {
       if (Array.isArray(j?.items)) setUpcomingActivities(j.items);
+    }).catch(() => {});
+    fetch("/api/dashboard/streak").then((r) => r.json()).then((j) => {
+      if (typeof j?.atual === "number") {
+        setStreak({ atual: j.atual, recorde: j.recorde ?? j.atual });
+      }
     }).catch(() => {});
   }, []);
 
@@ -82,10 +89,10 @@ export function DashboardHome() {
             <div className="w-12 h-12 bg-[#FF8C00]/10 rounded-lg flex items-center justify-center">
               <Flame className="text-[#FF8C00]" size={24} />
             </div>
-            <span className="text-2xl font-semibold text-[#003366]">12</span>
+            <span className="text-2xl font-semibold text-[#003366]">{streak.atual}</span>
           </div>
           <h3 className="text-lg mb-1 text-[#003366]">Sequência de Dias</h3>
-          <p className="text-sm text-[#6C757D]">Dias consecutivos</p>
+          <p className="text-sm text-[#6C757D]">Dias consecutivos (recorde: {streak.recorde})</p>
           <p className="text-sm text-[#FF8C00] mt-2">🔥 Continue assim!</p>
         </div>
       </div>

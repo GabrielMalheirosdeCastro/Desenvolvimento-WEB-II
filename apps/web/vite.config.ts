@@ -31,6 +31,18 @@ export default defineConfig({
     },
   },
 
+  // Em dev (vite :5173) encaminha chamadas /api, /version e /healthz
+  // para o Express (apps/api em :3010). Sem isso a SPA chama o proprio
+  // Vite, recebe HTML/404 e os componentes caem no fallback estatico.
+  server: {
+    port: 5173,
+    proxy: {
+      '/api':     { target: 'http://localhost:3010', changeOrigin: true },
+      '/version': { target: 'http://localhost:3010', changeOrigin: true },
+      '/healthz': { target: 'http://localhost:3010', changeOrigin: true },
+    },
+  },
+
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
 })

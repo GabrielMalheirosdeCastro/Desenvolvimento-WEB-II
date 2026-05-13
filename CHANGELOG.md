@@ -9,6 +9,18 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-05-13
+
+### Added
+
+- **Endpoint `GET /api/dashboard/streak`** em `apps/api/routes.js`: retorna `streak_atual`, `streak_recorde` e `data_ultima_atividade` do modelo `Gamificacao` para a persona logada (matricula `23110145`). Fallback estatico mantem `atual=12 / recorde=18`.
+- **Card "Sequencia de Dias"** do `DashboardHome.tsx` agora consome o endpoint via `fetch('/api/dashboard/streak')` e exibe o recorde abaixo do contador (antes era hard-coded em `12`).
+- **Proxy de desenvolvimento no Vite** (`apps/web/vite.config.ts`): rotas `/api`, `/version` e `/healthz` sao encaminhadas para `http://localhost:3010`. Sem isso, em `npm run dev:web` a SPA nao alcancava o Express e todos os componentes caiam silenciosamente no fallback estatico.
+
+### Changed
+
+- Bump 1.2.0 -> **1.3.0** (MINOR — novo endpoint + nova feature de UI retrocompativel + integracao dev). `apps/web` e `apps/api` alinhados em 1.3.0.
+
 ## [1.2.0] - 2026-05-03
 
 ### Added
