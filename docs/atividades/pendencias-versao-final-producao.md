@@ -52,15 +52,20 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 
 | # | Pendência | RF/RNF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
-| A1 | Implementar autenticação real (login com matrícula + e-mail institucional FAESA) | RF01 | 🔴 | G | ⬜ |
-| A2 | Integração SSO / OAuth 2.0 com o provedor institucional FAESA | RF01, RNF03 | 🔴 | G | ⬜ |
-| A3 | Sessão/JWT, hash de senha (`passwordHash`) e middleware de proteção de rotas | RF01, RNF03 | 🔴 | M | ⬜ |
+| A1 | Implementar autenticação real local: **cadastro e login com e-mail + senha** (sem SSO institucional) | RF01 | 🔴 | G | ⬜ |
+| A2 | ~~Integração SSO / OAuth 2.0 com o provedor institucional FAESA~~ — **DESCARTADO**: sem autorização institucional para usar o provedor de identidade da FAESA. Substituído por autenticação local própria (A1/A3) | RF01, RNF03 | — | — | ❌ |
+| A3 | Sessão/JWT, hash de senha com **`bcrypt`** (`passwordHash`) e middleware de proteção de rotas | RF01, RNF03 | 🔴 | M | ⬜ |
 | A4 | Controle de acesso por papel (aluno / mentor / coordenador) | RF14 | 🔴 | M | ⬜ |
 | A5 | Reverter o redirect `/` → `/dashboard`; tornar `/login` a porta de entrada real | RF01 | 🔴 | P | ⬜ |
 | A6 | **Logout real** — o botão "Sair" hoje apenas recarrega o Dashboard; precisa encerrar sessão e voltar a `/login` (achado do vídeo, 00:28) | RF01 | 🔴 | P | ⬜ |
 
-**Critério de pronto:** usuário só acessa o dashboard após autenticar; "Sair" encerra a sessão de
-verdade; rotas de coordenação exigem papel `coordenador`.
+> **Decisão de escopo (2026-06-13):** a autenticação **não** usará SSO/OAuth 2.0 com o provedor
+> institucional FAESA (sem autorização). O login será **local**: cadastro por e-mail + senha,
+> com hash `bcrypt` e sessão JWT. O e-mail institucional pode continuar sendo **validado por
+> formato** (domínio FAESA) no cadastro, mas sem federação de identidade externa.
+
+**Critério de pronto:** usuário só acessa o dashboard após autenticar com e-mail + senha; "Sair"
+encerra a sessão de verdade; rotas de coordenação exigem papel `coordenador`.
 
 ---
 
@@ -195,7 +200,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 ```
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
-3. Bloco A (autenticação real + SSO + logout)   → bloqueador de todas as features com papel
+3. Bloco A (autenticação local e-mail+senha + logout)   → bloqueador de todas as features com papel
 4. Bloco H (tornar as telas mock funcionais)    → fecha o gap exposto na auditoria do vídeo
 5. Bloco B (RF11, RF16 prioritários)   → completar requisitos de alta prioridade
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
