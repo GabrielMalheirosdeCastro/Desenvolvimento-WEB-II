@@ -97,6 +97,19 @@ JOIN conquistas c ON c.codigo = n.codigo
 WHERE u.matricula_institucional = '23110145'
 ON CONFLICT (usuario_id, conquista_id) DO NOTHING;
 
+-- 5.c Gamificacao (alimenta /api/dashboard/streak; sem esta linha o
+-- endpoint cai no fallback estatico mesmo com o banco populado)
+INSERT INTO gamificacao (usuario_id, pontos_totais, ranking_posicao, streak_atual, streak_recorde, data_ultima_atividade)
+SELECT u.id, 225, 1, 12, 18, DATE_TRUNC('day', NOW()) + INTERVAL '9 hours'
+FROM usuarios u
+WHERE u.matricula_institucional = '23110145'
+ON CONFLICT (usuario_id) DO UPDATE
+SET pontos_totais = EXCLUDED.pontos_totais,
+    ranking_posicao = EXCLUDED.ranking_posicao,
+    streak_atual = EXCLUDED.streak_atual,
+    streak_recorde = EXCLUDED.streak_recorde,
+    data_ultima_atividade = EXCLUDED.data_ultima_atividade;
+
 -- 6. Eventos institucionais (idempotente por titulo via DELETE+INSERT)
 DELETE FROM eventos WHERE titulo IN (
   'Palestra: Saude Mental no Ambiente Academico',
@@ -126,5 +139,6 @@ SELECT 'usuarios'              AS t, COUNT(*) FROM usuarios WHERE matricula_inst
 UNION ALL SELECT 'planos_estudo (Gabriel)', COUNT(*) FROM planos_estudo p JOIN usuarios u ON u.id=p.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'atividades_estudo (Gabriel)', COUNT(*) FROM atividades_estudo a JOIN usuarios u ON u.id=a.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'usuarios_conquistas (Gabriel)', COUNT(*) FROM usuarios_conquistas uc JOIN usuarios u ON u.id=uc.usuario_id WHERE u.matricula_institucional='23110145'
+UNION ALL SELECT 'gamificacao (Gabriel)', COUNT(*) FROM gamificacao g JOIN usuarios u ON u.id=g.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'eventos (futuros)', COUNT(*) FROM eventos WHERE data_evento > NOW()
 UNION ALL SELECT 'mentores (e_mentor=true)', COUNT(*) FROM usuarios WHERE e_mentor=TRUE;

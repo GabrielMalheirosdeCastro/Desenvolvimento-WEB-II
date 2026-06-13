@@ -76,18 +76,18 @@ async function main() {
     },
   });
 
-  // 3. Plano de estudo (1 por usuario, idempotente por nome+usuario)
+  // 3. Plano de estudo (1 por usuario, idempotente por titulo+usuario)
   let plano = await prisma.planoEstudo.findFirst({
-    where: { usuarioId: gabriel.id, nome: "Plano 2026/1 — Gabriel" },
+    where: { usuarioId: gabriel.id, titulo: "Plano 2026/1 — Gabriel" },
   });
   if (!plano) {
     plano = await prisma.planoEstudo.create({
       data: {
         usuarioId: gabriel.id,
-        nome: "Plano 2026/1 — Gabriel",
+        titulo: "Plano 2026/1 — Gabriel",
         descricao: "Rotina semanal de estudos do prototipo do Site de Acolhimento.",
-        objetivo: "Manter media >= 8.0 em todas as disciplinas.",
-        ativo: true,
+        metaHorasSemanal: 20,
+        status: "ativo",
       },
     });
   }
@@ -168,6 +168,28 @@ async function main() {
     });
   }
 
+  // 5.c Gamificacao — alimenta /api/dashboard/streak (sem esta linha o
+  // endpoint cai no fallback estatico mesmo com o banco populado).
+  const pontosTotais = conquistasCatalogo.reduce((soma, c) => soma + c.pontos, 0);
+  await prisma.gamificacao.upsert({
+    where: { usuarioId: gabriel.id },
+    update: {
+      pontosTotais,
+      rankingPosicao: 1,
+      streakAtual: 12,
+      streakRecorde: 18,
+      dataUltimaAtividade: diasAtras(0, 9, 0),
+    },
+    create: {
+      usuarioId: gabriel.id,
+      pontosTotais,
+      rankingPosicao: 1,
+      streakAtual: 12,
+      streakRecorde: 18,
+      dataUltimaAtividade: diasAtras(0, 9, 0),
+    },
+  });
+
   // 6. Eventos institucionais — idempotente por titulo.
   const eventos = [
     {
@@ -223,10 +245,11 @@ async function main() {
 
   console.log("[seed-prod] OK");
   console.log("  persona principal:", gabriel.matriculaInstitucional, gabriel.nome);
-  console.log("  plano:", plano.nome, "(id=", plano.id, ")");
+  console.log("  plano:", plano.titulo, "(id=", plano.id, ")");
   console.log("  atividades_futuras:", atividadesFuturas.length);
   console.log("  atividades_semana:", atividadesSemana.length);
   console.log("  conquistas vinculadas:", conquistas.length);
+  console.log("  gamificacao:", "streakAtual=12 streakRecorde=18 pontos=" + pontosTotais);
   console.log("  eventos:", eventos.length);
 }
 
