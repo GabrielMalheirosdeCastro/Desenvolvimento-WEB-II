@@ -9,6 +9,10 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+### Changed
+
+- **Estrategia de autenticacao alterada de SSO/OAuth para login local** (`site_acolhimento_faesa.tex` no Overleaf + `docs/atividades/pendencias-versao-final-producao.md`): sem autorizacao institucional para usar o provedor de identidade da FAESA, a integracao SSO / OAuth 2.0 foi **descartada**. O sistema passa a usar autenticacao local propria — cadastro e login com **e-mail + senha**, hash `bcrypt` e sessao `JWT`. Ajustes no documento: RF01 (login local em vez de SSO), RNF03 (autenticacao local em vez de OAuth 2.0 / SSO), tabela de stack (`bcrypt + JWT` em vez de `NextAuth.js / OAuth 2.0`) e diagrama de arquitetura (remocao do componente `FAESA SSO`). No relatorio de pendencias, o Bloco A foi reformulado e o item A2 (SSO) marcado como descartado.
+
 ## [1.3.2] - 2026-06-13
 
 ### Fixed
