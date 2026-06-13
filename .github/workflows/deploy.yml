@@ -38,12 +38,27 @@ jobs:
         env:
           WEBHOOK: ${{ secrets.EASYPANEL_DEPLOY_WEBHOOK }}
         run: |
-          set -euo pipefail
+          # NOTA: o host administrativo do EasyPanel (vps.gmcsistemas.com.br / 187.77.47.53)
+          # costuma filtrar a porta 443 por IP de origem. Os runners do GitHub Actions usam
+          # faixas Azure que podem estar bloqueadas, resultando em SYN descartado (timeout
+          # ~127s = tcp_syn_retries). Por isso este passo e BEST-EFFORT: falha rapido e emite
+          # aviso em vez de reprovar a pipeline. O redeploy oficial e disparado da estacao
+          # via `node scripts/deploy.mjs` (Secao 12.1 das instrucoes do repositorio).
+          set -uo pipefail
           echo "[deploy] disparando webhook EasyPanel..."
+          RC=0
           HTTP_CODE=$(curl -fsS -o /tmp/resp.txt -w '%{http_code}' \
+            --connect-timeout 15 --max-time 60 \
+            --retry 3 --retry-delay 5 --retry-connrefused \
             -X POST \
             -H 'User-Agent: gha-site-acolhimento-faesa/1.0' \
-            "$WEBHOOK")
+            "$WEBHOOK") || RC=$?
+          if [ "$RC" -ne 0 ]; then
+            echo "::warning title=Webhook inacessivel::curl exit ${RC}. O runner do GitHub nao alcancou o host do webhook."
+            echo "::warning title=Causa provavel::Firewall da VPS descartando SYN dos IPs do GitHub Actions (timeout ~127s)."
+            echo "::warning title=Acao::Dispare o redeploy da estacao com 'node scripts/deploy.mjs' e valide 'curl /version' (Secao 12.1)."
+            exit 0
+          fi
           echo "[deploy] HTTP $HTTP_CODE"
           if [ -s /tmp/resp.txt ]; then
             echo "[deploy] resposta:"
