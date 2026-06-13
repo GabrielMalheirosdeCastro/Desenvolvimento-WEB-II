@@ -1,7 +1,9 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { RootLayout } from "./layouts/RootLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
+import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
+import { AtivarPage } from "./pages/AtivarPage";
 import { DashboardHome } from "./pages/DashboardHome";
 import { StudyPlanPage } from "./pages/StudyPlanPage";
 import { ConcentrationPage } from "./pages/ConcentrationPage";
@@ -16,14 +18,18 @@ export const router = createBrowserRouter([
     path: "/",
     Component: RootLayout,
     children: [
-      // Decisao B4 do plano: rota raiz redireciona direto para o dashboard.
-      // /login continua acessivel para satisfazer a regra 0.1 (badge de versao
-      // + Disciplina/Docente/Aluno/Repositorio).
-      { index: true, element: <Navigate to="/dashboard" replace /> },
+      // Fase 4 (Bloco A / A5): a rota raiz passa a exigir login. Sem sessao
+      // valida o ProtectedRoute redireciona /dashboard -> /login.
+      { index: true, element: <Navigate to="/login" replace /> },
       { path: "login", Component: LoginPage },
+      { path: "ativar", Component: AtivarPage },
       {
         path: "dashboard",
-        Component: DashboardLayout,
+        element: (
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        ),
         children: [
           { index: true, Component: DashboardHome },
           { path: "plano-estudos", Component: StudyPlanPage },

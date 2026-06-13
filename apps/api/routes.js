@@ -470,6 +470,7 @@ apiRouter.post('/auth/login', async (req, res) => {
 
     const token = signToken({
         id: usuario.id,
+        nome: usuario.nome,
         matricula: usuario.matricula_institucional,
         email: usuario.email_institucional,
         tipo: usuario.tipo_usuario,
@@ -509,6 +510,7 @@ apiRouter.get('/auth/me', requireAuth, (req, res) => {
     res.json({
         usuario: {
             id: req.usuario.sub,
+            nome: req.usuario.nome,
             matricula: req.usuario.matricula,
             email: req.usuario.email,
             tipo: req.usuario.tipo,

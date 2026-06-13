@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Target, Clock, Flame, Award, TrendingUp, Calendar } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useAuth } from "../auth/AuthContext";
 
 type WeekPoint = { day: string; hours: number };
 type Badge = { name: string; icon: string };
@@ -25,6 +26,8 @@ const FALLBACK_UPCOMING: Activity[] = [
 ];
 
 export function DashboardHome() {
+  const { usuario } = useAuth();
+  const primeiroNome = usuario?.nome?.trim().split(/\s+/)[0] || "estudante";
   const [weekData, setWeekData] = useState<WeekPoint[]>(FALLBACK_WEEK);
   const [recentBadges, setRecentBadges] = useState<Badge[]>(FALLBACK_BADGES);
   const [upcomingActivities, setUpcomingActivities] = useState<Activity[]>(FALLBACK_UPCOMING);
@@ -50,7 +53,7 @@ export function DashboardHome() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2 text-[#003366]">Bem-vindo de volta, Gabriel! 👋</h1>
+        <h1 className="text-3xl mb-2 text-[#003366]">Bem-vindo de volta, {primeiroNome}! 👋</h1>
         <p className="text-[#6C757D]">
           Aqui está um resumo do seu progresso acadêmico
         </p>

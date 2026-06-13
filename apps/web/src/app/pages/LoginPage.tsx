@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { BookOpen, GraduationCap, User, Github } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router";
+import { BookOpen, GraduationCap, User, Github, Mail, Lock, Loader2 } from "lucide-react";
+import { AuthError, useAuth } from "../auth/AuthContext";
 
 interface VersionInfo {
   name: string;
@@ -15,9 +16,30 @@ const FALLBACK_VERSION: VersionInfo = {
 const REPO_URL =
   "https://github.com/GabrielMalheirosdeCastro/Desenvolvimento-WEB-II";
 
+// Mensagens amigaveis por codigo de erro da API de auth.
+const MENSAGENS_ERRO: Record<string, string> = {
+  campos_obrigatorios: "Informe e-mail e senha.",
+  email_invalido: "Use um e-mail institucional @faesa.br.",
+  senha_invalida: "A senha deve ter entre 8 e 72 caracteres.",
+  credenciais_invalidas: "E-mail ou senha incorretos.",
+  auth_indisponivel: "Autenticação temporariamente indisponível. Tente mais tarde.",
+  db_indisponivel: "Serviço temporariamente indisponível. Tente mais tarde.",
+  erro_desconhecido: "Não foi possível entrar. Tente novamente.",
+};
+
 export function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
   const [versionInfo, setVersionInfo] = useState<VersionInfo>(FALLBACK_VERSION);
+
+  const destino =
+    (location.state as { from?: string } | null)?.from || "/dashboard";
 
   useEffect(() => {
     let cancelled = false;
@@ -34,11 +56,20 @@ export function LoginPage() {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Decisao B4 do plano: protótipo sem autenticacao.
-    navigate("/dashboard");
-  };
+    setErro(null);
+    setEnviando(true);
+    try {
+      await login(email.trim(), senha);
+      navigate(destino, { replace: true });
+    } catch (err) {
+      const codigo = err instanceof AuthError ? err.codigo : "erro_desconhecido";
+      setErro(MENSAGENS_ERRO[codigo] ?? MENSAGENS_ERRO.erro_desconhecido);
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   return (
     <div
@@ -118,16 +149,93 @@ export function LoginPage() {
           </div>
         </dl>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" data-testid="login-form">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm text-[#003366] mb-1"
+            >
+              E-mail institucional
+            </label>
+            <div className="relative">
+              <Mail
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6C757D]"
+                aria-hidden="true"
+              />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="username"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu.nome@faesa.br"
+                className="w-full pl-10 pr-3 py-3 rounded-lg border border-[#003366]/20 focus:outline-none focus:ring-2 focus:ring-[#0066CC] text-[#003366]"
+                data-testid="login-email"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="senha"
+              className="block text-sm text-[#003366] mb-1"
+            >
+              Senha
+            </label>
+            <div className="relative">
+              <Lock
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6C757D]"
+                aria-hidden="true"
+              />
+              <input
+                id="senha"
+                name="senha"
+                type="password"
+                autoComplete="current-password"
+                required
+                minLength={8}
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                placeholder="••••••••"
+                className="w-full pl-10 pr-3 py-3 rounded-lg border border-[#003366]/20 focus:outline-none focus:ring-2 focus:ring-[#0066CC] text-[#003366]"
+                data-testid="login-senha"
+              />
+            </div>
+          </div>
+
+          {erro && (
+            <p
+              className="text-sm text-[#DC3545] bg-[#DC3545]/5 border border-[#DC3545]/20 rounded-lg px-3 py-2"
+              role="alert"
+              data-testid="login-erro"
+            >
+              {erro}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-[#003366] hover:bg-[#004080] text-white py-3 rounded-lg transition-colors"
+            disabled={enviando}
+            className="w-full bg-[#003366] hover:bg-[#004080] disabled:opacity-60 disabled:cursor-not-allowed text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             data-testid="login-submit"
           >
-            Entrar
+            {enviando && <Loader2 size={18} className="animate-spin" />}
+            {enviando ? "Entrando…" : "Entrar"}
           </button>
-          <p className="text-center text-xs text-[#6C757D]">
-            Protótipo acadêmico sem autenticação real (decisão B4).
+
+          <p className="text-center text-sm text-[#6C757D]">
+            Primeiro acesso?{" "}
+            <Link
+              to="/ativar"
+              className="text-[#0066CC] hover:underline"
+              data-testid="login-link-ativar"
+            >
+              Ative sua conta
+            </Link>
           </p>
         </form>
 

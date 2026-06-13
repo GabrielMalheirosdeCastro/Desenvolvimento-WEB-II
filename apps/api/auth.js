@@ -71,7 +71,7 @@ export async function verifyPassword(senha, hash) {
 
 /**
  * Assina um JWT a partir de um payload de usuario.
- * @param {{ id:number, matricula:string, email:string, tipo:string, eMentor:boolean }} usuario
+ * @param {{ id:number, nome:string, matricula:string, email:string, tipo:string, eMentor:boolean }} usuario
  * @returns {string|null} token assinado ou null se auth indisponivel.
  */
 export function signToken(usuario) {
@@ -80,6 +80,7 @@ export function signToken(usuario) {
     return jwt.sign(
         {
             sub: usuario.id,
+            nome: usuario.nome,
             matricula: usuario.matricula,
             email: usuario.email,
             tipo: usuario.tipo,

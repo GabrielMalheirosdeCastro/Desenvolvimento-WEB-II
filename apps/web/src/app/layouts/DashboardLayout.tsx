@@ -13,13 +13,28 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { NotificationBell } from "../components/NotificationBell";
+import { useAuth } from "../auth/AuthContext";
 
 export function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { usuario, logout } = useAuth();
 
-  const handleLogout = () => {
-    navigate("/");
+  // Rotulo e iniciais derivam do nome cadastrado; caem para o e-mail se ausente.
+  const rotuloUsuario = usuario?.nome?.trim() || usuario?.email || "Sessão";
+  const iniciais = (() => {
+    const partes = usuario?.nome?.trim().split(/\s+/).filter(Boolean);
+    if (partes && partes.length > 0) {
+      const primeira = partes[0][0] ?? "";
+      const ultima = partes.length > 1 ? partes[partes.length - 1][0] : "";
+      return (primeira + ultima).toUpperCase();
+    }
+    return (usuario?.email ?? "?").slice(0, 2).toUpperCase();
+  })();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
   };
 
   const menuItems = [
@@ -133,9 +148,11 @@ export function DashboardLayout() {
           </button>
           <div className="flex items-center gap-4">
             <NotificationBell />
-            <span className="text-sm text-[#6C757D] hidden sm:inline">Gabriel Malheiros de Castro</span>
+            <span className="text-sm text-[#6C757D] hidden sm:inline">
+              {rotuloUsuario}
+            </span>
             <div className="w-10 h-10 bg-[#003366] rounded-full flex items-center justify-center text-white font-medium">
-              GM
+              {iniciais}
             </div>
           </div>
         </header>
