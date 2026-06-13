@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import { NotificationBell } from "../components/NotificationBell";
 import { useAuth } from "../auth/AuthContext";
+import { iniciaisNome } from "../auth/nome";
 
 export function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,15 +23,7 @@ export function DashboardLayout() {
 
   // Rotulo e iniciais derivam do nome cadastrado; caem para o e-mail se ausente.
   const rotuloUsuario = usuario?.nome?.trim() || usuario?.email || "Sessão";
-  const iniciais = (() => {
-    const partes = usuario?.nome?.trim().split(/\s+/).filter(Boolean);
-    if (partes && partes.length > 0) {
-      const primeira = partes[0][0] ?? "";
-      const ultima = partes.length > 1 ? partes[partes.length - 1][0] : "";
-      return (primeira + ultima).toUpperCase();
-    }
-    return (usuario?.email ?? "?").slice(0, 2).toUpperCase();
-  })();
+  const iniciais = iniciaisNome(usuario?.nome, usuario?.email);
 
   const handleLogout = async () => {
     await logout();

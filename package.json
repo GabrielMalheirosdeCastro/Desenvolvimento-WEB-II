@@ -1,6 +1,6 @@
 {
   "name": "site-acolhimento-faesa",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "private": true,
   "type": "module",
   "description": "Site de Acolhimento FAESA — monorepo (apps/web SPA + apps/api Express + packages/db Prisma).",
@@ -28,4 +28,3 @@
   "license": "UNLICENSED",
   "author": "Gabriel Malheiros de Castro <23110145>"
 }
-

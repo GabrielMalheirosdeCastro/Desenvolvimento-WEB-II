@@ -9,6 +9,12 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-06-13
+
+### Fixed
+
+- **Saudacao e iniciais corretas para nomes com titulo** (`apps/web/src/app/auth/nome.ts`, `DashboardHome.tsx`, `DashboardLayout.tsx`): a extracao do primeiro nome e das iniciais passa a ignorar prefixos de tratamento academico (`Prof.`, `Profa.`, `Dr.`, `Dra.`, etc.). Antes, um usuario cadastrado como `Prof. Ricardo Almeida` era saudado como "Prof." e exibia o avatar "PA"; agora a saudacao e "Ricardo" e o avatar "RA". Logica centralizada nos helpers `primeiroNome` e `iniciaisNome`. O nome ja era dinamico por usuario; esta correcao trata apenas o caso de nomes com titulo.
+
 ## [1.4.0] - 2026-06-13
 
 ### Added
