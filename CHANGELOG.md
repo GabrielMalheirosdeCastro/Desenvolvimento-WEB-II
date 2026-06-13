@@ -9,8 +9,17 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-13
+
+### Added
+
+- **Backend de autenticacao local** (`apps/api/auth.js`, `apps/api/routes.js`, `apps/api/server.js`): implementacao do Bloco A conforme `docs/plano-2026-06-13-bloco-a-autenticacao-local.md`. Novo modulo `auth.js` com hash de senha via `bcryptjs` (cost 12), sessao por `JWT` HS256 (`jsonwebtoken`) e cookie `httpOnly` + `SameSite=Strict` + `Secure` (`cookie-parser`), alem dos middlewares `requireAuth` e `requireRole` (RBAC pela coluna `usuarios.tipo_usuario`). Quatro rotas **aditivas**: `POST /api/auth/ativar` (define senha de usuario pre-cadastrado com `password_hash` nulo), `POST /api/auth/login` (valida credenciais e emite o cookie de sessao), `POST /api/auth/logout` (limpa o cookie) e `GET /api/auth/me` (retorna o usuario da sessao). As rotas antigas baseadas em `MATRICULA_PADRAO` permanecem intactas.
+- **Dependencias de autenticacao** em `apps/api`: `bcryptjs`, `jsonwebtoken` e `cookie-parser`.
+- **Scripts de validacao** (`scripts/test-auth-core.mjs` e `scripts/smoke-auth.ps1`): teste unitario do nucleo de auth (hash/verify/JWT/guard de segredo) e smoke test HTTP das rotas. Fluxo `ativar -> login -> /auth/me -> logout` validado end-to-end contra o banco de producao (via tunel SSH), de forma nao-destrutiva.
+
 ### Changed
 
+- Bump 1.3.2 -> **1.4.0** (MINOR — nova funcionalidade de backend: autenticacao local). `apps/web` e `apps/api` alinhados em 1.4.0.
 - **Estrategia de autenticacao alterada de SSO/OAuth para login local** (`site_acolhimento_faesa.tex` no Overleaf + `docs/atividades/pendencias-versao-final-producao.md`): sem autorizacao institucional para usar o provedor de identidade da FAESA, a integracao SSO / OAuth 2.0 foi **descartada**. O sistema passa a usar autenticacao local propria — cadastro e login com **e-mail + senha**, hash `bcrypt` e sessao `JWT`. Ajustes no documento: RF01 (login local em vez de SSO), RNF03 (autenticacao local em vez de OAuth 2.0 / SSO), tabela de stack (`bcrypt + JWT` em vez de `NextAuth.js / OAuth 2.0`) e diagrama de arquitetura (remocao do componente `FAESA SSO`). No relatorio de pendencias, o Bloco A foi reformulado e o item A2 (SSO) marcado como descartado.
 
 ## [1.3.2] - 2026-06-13
