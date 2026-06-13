@@ -169,6 +169,7 @@ export const UsuarioScalarFieldEnum = {
   emailInstitucional: 'emailInstitucional',
   nome: 'nome',
   tipoUsuario: 'tipoUsuario',
+  passwordHash: 'passwordHash',
   dataNascimento: 'dataNascimento',
   eMentor: 'eMentor',
   createdAt: 'createdAt'

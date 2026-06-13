@@ -40,6 +40,7 @@ export type UsuarioMinAggregateOutputType = {
   emailInstitucional: string | null
   nome: string | null
   tipoUsuario: string | null
+  passwordHash: string | null
   dataNascimento: Date | null
   eMentor: boolean | null
   createdAt: Date | null
@@ -51,6 +52,7 @@ export type UsuarioMaxAggregateOutputType = {
   emailInstitucional: string | null
   nome: string | null
   tipoUsuario: string | null
+  passwordHash: string | null
   dataNascimento: Date | null
   eMentor: boolean | null
   createdAt: Date | null
@@ -62,6 +64,7 @@ export type UsuarioCountAggregateOutputType = {
   emailInstitucional: number
   nome: number
   tipoUsuario: number
+  passwordHash: number
   dataNascimento: number
   eMentor: number
   createdAt: number
@@ -83,6 +86,7 @@ export type UsuarioMinAggregateInputType = {
   emailInstitucional?: true
   nome?: true
   tipoUsuario?: true
+  passwordHash?: true
   dataNascimento?: true
   eMentor?: true
   createdAt?: true
@@ -94,6 +98,7 @@ export type UsuarioMaxAggregateInputType = {
   emailInstitucional?: true
   nome?: true
   tipoUsuario?: true
+  passwordHash?: true
   dataNascimento?: true
   eMentor?: true
   createdAt?: true
@@ -105,6 +110,7 @@ export type UsuarioCountAggregateInputType = {
   emailInstitucional?: true
   nome?: true
   tipoUsuario?: true
+  passwordHash?: true
   dataNascimento?: true
   eMentor?: true
   createdAt?: true
@@ -203,6 +209,7 @@ export type UsuarioGroupByOutputType = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash: string | null
   dataNascimento: Date | null
   eMentor: boolean
   createdAt: Date
@@ -237,6 +244,7 @@ export type UsuarioWhereInput = {
   emailInstitucional?: Prisma.StringFilter<"Usuario"> | string
   nome?: Prisma.StringFilter<"Usuario"> | string
   tipoUsuario?: Prisma.StringFilter<"Usuario"> | string
+  passwordHash?: Prisma.StringNullableFilter<"Usuario"> | string | null
   dataNascimento?: Prisma.DateTimeNullableFilter<"Usuario"> | Date | string | null
   eMentor?: Prisma.BoolFilter<"Usuario"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string
@@ -271,6 +279,7 @@ export type UsuarioOrderByWithRelationInput = {
   emailInstitucional?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   dataNascimento?: Prisma.SortOrderInput | Prisma.SortOrder
   eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -308,6 +317,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UsuarioWhereInput | Prisma.UsuarioWhereInput[]
   nome?: Prisma.StringFilter<"Usuario"> | string
   tipoUsuario?: Prisma.StringFilter<"Usuario"> | string
+  passwordHash?: Prisma.StringNullableFilter<"Usuario"> | string | null
   dataNascimento?: Prisma.DateTimeNullableFilter<"Usuario"> | Date | string | null
   eMentor?: Prisma.BoolFilter<"Usuario"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Usuario"> | Date | string
@@ -342,6 +352,7 @@ export type UsuarioOrderByWithAggregationInput = {
   emailInstitucional?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   dataNascimento?: Prisma.SortOrderInput | Prisma.SortOrder
   eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -361,6 +372,7 @@ export type UsuarioScalarWhereWithAggregatesInput = {
   emailInstitucional?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
   nome?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
   tipoUsuario?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
+  passwordHash?: Prisma.StringNullableWithAggregatesFilter<"Usuario"> | string | null
   dataNascimento?: Prisma.DateTimeNullableWithAggregatesFilter<"Usuario"> | Date | string | null
   eMentor?: Prisma.BoolWithAggregatesFilter<"Usuario"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Usuario"> | Date | string
@@ -371,6 +383,7 @@ export type UsuarioCreateInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -405,6 +418,7 @@ export type UsuarioUncheckedCreateInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -438,6 +452,7 @@ export type UsuarioUpdateInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -472,6 +487,7 @@ export type UsuarioUncheckedUpdateInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -506,6 +522,7 @@ export type UsuarioCreateManyInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -516,6 +533,7 @@ export type UsuarioUpdateManyMutationInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -527,6 +545,7 @@ export type UsuarioUncheckedUpdateManyInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -538,6 +557,7 @@ export type UsuarioCountOrderByAggregateInput = {
   emailInstitucional?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrder
   eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -553,6 +573,7 @@ export type UsuarioMaxOrderByAggregateInput = {
   emailInstitucional?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrder
   eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -564,6 +585,7 @@ export type UsuarioMinOrderByAggregateInput = {
   emailInstitucional?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   tipoUsuario?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
   dataNascimento?: Prisma.SortOrder
   eMentor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -924,6 +946,7 @@ export type UsuarioCreateWithoutMatriculasAcademicasInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -957,6 +980,7 @@ export type UsuarioUncheckedCreateWithoutMatriculasAcademicasInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1005,6 +1029,7 @@ export type UsuarioUpdateWithoutMatriculasAcademicasInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1038,6 +1063,7 @@ export type UsuarioUncheckedUpdateWithoutMatriculasAcademicasInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1070,6 +1096,7 @@ export type UsuarioCreateWithoutPlanosEstudoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1103,6 +1130,7 @@ export type UsuarioUncheckedCreateWithoutPlanosEstudoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1151,6 +1179,7 @@ export type UsuarioUpdateWithoutPlanosEstudoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1184,6 +1213,7 @@ export type UsuarioUncheckedUpdateWithoutPlanosEstudoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1216,6 +1246,7 @@ export type UsuarioCreateWithoutAtividadesEstudoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1249,6 +1280,7 @@ export type UsuarioUncheckedCreateWithoutAtividadesEstudoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1297,6 +1329,7 @@ export type UsuarioUpdateWithoutAtividadesEstudoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1330,6 +1363,7 @@ export type UsuarioUncheckedUpdateWithoutAtividadesEstudoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1362,6 +1396,7 @@ export type UsuarioCreateWithoutExerciciosConcentracaoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1395,6 +1430,7 @@ export type UsuarioUncheckedCreateWithoutExerciciosConcentracaoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1443,6 +1479,7 @@ export type UsuarioUpdateWithoutExerciciosConcentracaoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1476,6 +1513,7 @@ export type UsuarioUncheckedUpdateWithoutExerciciosConcentracaoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1508,6 +1546,7 @@ export type UsuarioCreateWithoutUsuarioRecursosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1541,6 +1580,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioRecursosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1589,6 +1629,7 @@ export type UsuarioUpdateWithoutUsuarioRecursosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1622,6 +1663,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioRecursosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1654,6 +1696,7 @@ export type UsuarioCreateWithoutForunsCriadosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1687,6 +1730,7 @@ export type UsuarioUncheckedCreateWithoutForunsCriadosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1735,6 +1779,7 @@ export type UsuarioUpdateWithoutForunsCriadosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1768,6 +1813,7 @@ export type UsuarioUncheckedUpdateWithoutForunsCriadosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1800,6 +1846,7 @@ export type UsuarioCreateWithoutForumPostsInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1833,6 +1880,7 @@ export type UsuarioUncheckedCreateWithoutForumPostsInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1881,6 +1929,7 @@ export type UsuarioUpdateWithoutForumPostsInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1914,6 +1963,7 @@ export type UsuarioUncheckedUpdateWithoutForumPostsInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1946,6 +1996,7 @@ export type UsuarioCreateWithoutForumComentariosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -1979,6 +2030,7 @@ export type UsuarioUncheckedCreateWithoutForumComentariosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2016,6 +2068,7 @@ export type UsuarioCreateWithoutForumComentariosRemovidosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2049,6 +2102,7 @@ export type UsuarioUncheckedCreateWithoutForumComentariosRemovidosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2097,6 +2151,7 @@ export type UsuarioUpdateWithoutForumComentariosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2130,6 +2185,7 @@ export type UsuarioUncheckedUpdateWithoutForumComentariosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2173,6 +2229,7 @@ export type UsuarioUpdateWithoutForumComentariosRemovidosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2206,6 +2263,7 @@ export type UsuarioUncheckedUpdateWithoutForumComentariosRemovidosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2238,6 +2296,7 @@ export type UsuarioCreateWithoutMentoriasComoMentorInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2271,6 +2330,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentorInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2308,6 +2368,7 @@ export type UsuarioCreateWithoutMentoriasComoMentoradoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2341,6 +2402,7 @@ export type UsuarioUncheckedCreateWithoutMentoriasComoMentoradoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2389,6 +2451,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentorInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2422,6 +2485,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentorInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2465,6 +2529,7 @@ export type UsuarioUpdateWithoutMentoriasComoMentoradoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2498,6 +2563,7 @@ export type UsuarioUncheckedUpdateWithoutMentoriasComoMentoradoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2530,6 +2596,7 @@ export type UsuarioCreateWithoutNotificacoesInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2563,6 +2630,7 @@ export type UsuarioUncheckedCreateWithoutNotificacoesInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2611,6 +2679,7 @@ export type UsuarioUpdateWithoutNotificacoesInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2644,6 +2713,7 @@ export type UsuarioUncheckedUpdateWithoutNotificacoesInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2676,6 +2746,7 @@ export type UsuarioCreateWithoutQuestionariosBemEstarInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2709,6 +2780,7 @@ export type UsuarioUncheckedCreateWithoutQuestionariosBemEstarInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2757,6 +2829,7 @@ export type UsuarioUpdateWithoutQuestionariosBemEstarInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2790,6 +2863,7 @@ export type UsuarioUncheckedUpdateWithoutQuestionariosBemEstarInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2822,6 +2896,7 @@ export type UsuarioCreateWithoutGamificacaoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2855,6 +2930,7 @@ export type UsuarioUncheckedCreateWithoutGamificacaoInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -2903,6 +2979,7 @@ export type UsuarioUpdateWithoutGamificacaoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2936,6 +3013,7 @@ export type UsuarioUncheckedUpdateWithoutGamificacaoInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2968,6 +3046,7 @@ export type UsuarioCreateWithoutUsuarioConquistasInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3001,6 +3080,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioConquistasInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3049,6 +3129,7 @@ export type UsuarioUpdateWithoutUsuarioConquistasInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3082,6 +3163,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioConquistasInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3114,6 +3196,7 @@ export type UsuarioCreateWithoutUsuarioEventosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3147,6 +3230,7 @@ export type UsuarioUncheckedCreateWithoutUsuarioEventosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3195,6 +3279,7 @@ export type UsuarioUpdateWithoutUsuarioEventosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3228,6 +3313,7 @@ export type UsuarioUncheckedUpdateWithoutUsuarioEventosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3260,6 +3346,7 @@ export type UsuarioCreateWithoutChatTicketsCriadosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3293,6 +3380,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsCriadosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3330,6 +3418,7 @@ export type UsuarioCreateWithoutChatTicketsAtendidosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3363,6 +3452,7 @@ export type UsuarioUncheckedCreateWithoutChatTicketsAtendidosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3411,6 +3501,7 @@ export type UsuarioUpdateWithoutChatTicketsCriadosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3444,6 +3535,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsCriadosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3487,6 +3579,7 @@ export type UsuarioUpdateWithoutChatTicketsAtendidosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3520,6 +3613,7 @@ export type UsuarioUncheckedUpdateWithoutChatTicketsAtendidosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3552,6 +3646,7 @@ export type UsuarioCreateWithoutChatMensagensInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3585,6 +3680,7 @@ export type UsuarioUncheckedCreateWithoutChatMensagensInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3633,6 +3729,7 @@ export type UsuarioUpdateWithoutChatMensagensInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3666,6 +3763,7 @@ export type UsuarioUncheckedUpdateWithoutChatMensagensInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3698,6 +3796,7 @@ export type UsuarioCreateWithoutChatbotConversasInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3731,6 +3830,7 @@ export type UsuarioUncheckedCreateWithoutChatbotConversasInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3779,6 +3879,7 @@ export type UsuarioUpdateWithoutChatbotConversasInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3812,6 +3913,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotConversasInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3844,6 +3946,7 @@ export type UsuarioCreateWithoutChatbotMensagensInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3877,6 +3980,7 @@ export type UsuarioUncheckedCreateWithoutChatbotMensagensInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -3925,6 +4029,7 @@ export type UsuarioUpdateWithoutChatbotMensagensInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3958,6 +4063,7 @@ export type UsuarioUncheckedUpdateWithoutChatbotMensagensInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3990,6 +4096,7 @@ export type UsuarioCreateWithoutConsentimentosLgpdInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -4023,6 +4130,7 @@ export type UsuarioUncheckedCreateWithoutConsentimentosLgpdInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -4071,6 +4179,7 @@ export type UsuarioUpdateWithoutConsentimentosLgpdInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4104,6 +4213,7 @@ export type UsuarioUncheckedUpdateWithoutConsentimentosLgpdInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4136,6 +4246,7 @@ export type UsuarioCreateWithoutAuditoriaDadosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -4169,6 +4280,7 @@ export type UsuarioUncheckedCreateWithoutAuditoriaDadosInput = {
   emailInstitucional: string
   nome: string
   tipoUsuario: string
+  passwordHash?: string | null
   dataNascimento?: Date | string | null
   eMentor?: boolean
   createdAt?: Date | string
@@ -4217,6 +4329,7 @@ export type UsuarioUpdateWithoutAuditoriaDadosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4250,6 +4363,7 @@ export type UsuarioUncheckedUpdateWithoutAuditoriaDadosInput = {
   emailInstitucional?: Prisma.StringFieldUpdateOperationsInput | string
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   tipoUsuario?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataNascimento?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   eMentor?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4503,6 +4617,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   emailInstitucional?: boolean
   nome?: boolean
   tipoUsuario?: boolean
+  passwordHash?: boolean
   dataNascimento?: boolean
   eMentor?: boolean
   createdAt?: boolean
@@ -4538,6 +4653,7 @@ export type UsuarioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   emailInstitucional?: boolean
   nome?: boolean
   tipoUsuario?: boolean
+  passwordHash?: boolean
   dataNascimento?: boolean
   eMentor?: boolean
   createdAt?: boolean
@@ -4549,6 +4665,7 @@ export type UsuarioSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   emailInstitucional?: boolean
   nome?: boolean
   tipoUsuario?: boolean
+  passwordHash?: boolean
   dataNascimento?: boolean
   eMentor?: boolean
   createdAt?: boolean
@@ -4560,12 +4677,13 @@ export type UsuarioSelectScalar = {
   emailInstitucional?: boolean
   nome?: boolean
   tipoUsuario?: boolean
+  passwordHash?: boolean
   dataNascimento?: boolean
   eMentor?: boolean
   createdAt?: boolean
 }
 
-export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "matriculaInstitucional" | "emailInstitucional" | "nome" | "tipoUsuario" | "dataNascimento" | "eMentor" | "createdAt", ExtArgs["result"]["usuario"]>
+export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "matriculaInstitucional" | "emailInstitucional" | "nome" | "tipoUsuario" | "passwordHash" | "dataNascimento" | "eMentor" | "createdAt", ExtArgs["result"]["usuario"]>
 export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   matriculasAcademicas?: boolean | Prisma.Usuario$matriculasAcademicasArgs<ExtArgs>
   planosEstudo?: boolean | Prisma.Usuario$planosEstudoArgs<ExtArgs>
@@ -4628,6 +4746,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     emailInstitucional: string
     nome: string
     tipoUsuario: string
+    passwordHash: string | null
     dataNascimento: Date | null
     eMentor: boolean
     createdAt: Date
@@ -5082,6 +5201,7 @@ export interface UsuarioFieldRefs {
   readonly emailInstitucional: Prisma.FieldRef<"Usuario", 'String'>
   readonly nome: Prisma.FieldRef<"Usuario", 'String'>
   readonly tipoUsuario: Prisma.FieldRef<"Usuario", 'String'>
+  readonly passwordHash: Prisma.FieldRef<"Usuario", 'String'>
   readonly dataNascimento: Prisma.FieldRef<"Usuario", 'DateTime'>
   readonly eMentor: Prisma.FieldRef<"Usuario", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Usuario", 'DateTime'>

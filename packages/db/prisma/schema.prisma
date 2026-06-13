@@ -83,6 +83,7 @@ model Usuario {
   emailInstitucional     String   @unique @map("email_institucional")
   nome                   String
   tipoUsuario            String   @map("tipo_usuario")
+  passwordHash           String?  @map("password_hash")
   dataNascimento         DateTime? @map("data_nascimento")
   eMentor                Boolean  @default(false) @map("e_mentor")
   createdAt              DateTime @default(now()) @map("created_at")

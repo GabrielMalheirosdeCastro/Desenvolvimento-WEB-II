@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email_institucional TEXT NOT NULL UNIQUE,
     nome TEXT NOT NULL,
     tipo_usuario TEXT NOT NULL,
+    password_hash TEXT,
     data_nascimento TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
