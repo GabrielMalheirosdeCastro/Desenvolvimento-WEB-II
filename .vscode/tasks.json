@@ -2,6 +2,54 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Dev: serve + wait",
+            "detail": "Sobe o Express (watch) e so conclui quando /healthz responde 200. Use como preLaunchTask.",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Dev: Express server (watch)",
+                "Dev: wait for server ready"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Dev: wait for server ready",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/scripts/wait-dev.ps1"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared",
+                "close": true
+            },
+            "detail": "Aguarda o servidor responder em /healthz (porta 3010) antes de abrir o navegador."
+        },
+        {
+            "label": "Dev: stop Express server",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/scripts/stop-dev.ps1"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared",
+                "close": true
+            },
+            "detail": "Encerra o servidor Express que escuta na porta 3010 (usado como postDebugTask)."
+        },
+        {
             "label": "Deploy: trigger EasyPanel webhook",
             "type": "shell",
             "command": "npm run deploy",
@@ -18,12 +66,50 @@
             "type": "shell",
             "command": "npm run dev",
             "isBackground": true,
-            "problemMatcher": [],
+            "problemMatcher": {
+                "owner": "express-dev",
+                "pattern": {
+                    "regexp": "^([^\\s].*)\\((\\d+,\\d+)\\):\\s*(.*)$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Restarting '.*'|estatico:",
+                    "endsPattern": "ouvindo em http://"
+                }
+            },
             "presentation": {
                 "reveal": "always",
                 "panel": "dedicated"
             },
             "detail": "Sobe o servidor Express local em http://localhost:3010 com hot-reload."
+        },
+        {
+            "label": "Dev: Vite web (watch)",
+            "type": "shell",
+            "command": "npm run dev:web",
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "vite-dev",
+                "pattern": {
+                    "regexp": "^([^\\s].*)\\((\\d+,\\d+)\\):\\s*(.*)$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "VITE v|starting",
+                    "endsPattern": "Local:\\s+http://"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "detail": "Sobe o Vite dev server (apps/web) em http://localhost:5173 com HMR."
         },
         {
             "label": "Docker: build local image",
