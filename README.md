@@ -178,10 +178,77 @@ EasyPanel. Existem **cinco formas** de disparar o redeploy (todas levam ao mesmo
 
 ### Estado atual do deploy
 
-> Esta primeira versão (`v0.4.0`) é uma **página "Em Construção"** servida por
-> Node.js + Express, **sem conexão com o banco de dados**. Existe apenas para validar o
-> pipeline GitHub → EasyPanel → Traefik → HTTPS antes do início do desenvolvimento real.
-> Endpoints disponíveis: `/` (página), `/healthz` (JSON status), `/version` (JSON versão).
+> A versão atual (`v1.3.0`) é um **monorepo** composto por uma **SPA React** (`apps/web`)
+> servida por um **backend Express** (`apps/api`) que expõe uma **API REST** documentada na
+> seção [🔌 API REST](#-api-rest). O backend é **resiliente**: quando a variável `DATABASE_URL`
+> está ausente (ex.: estação de desenvolvimento Windows sem Postgres local), os endpoints
+> respondem com dados estáticos de fallback, permitindo demonstrar a aplicação sem o banco.
+> O pipeline GitHub → EasyPanel → Traefik → HTTPS permanece validado por `/healthz` e `/version`.
+
+---
+
+## 🔌 API REST
+
+O backend Express (`apps/api`) expõe uma API REST organizada em três módulos com
+responsabilidades separadas:
+
+| Arquivo | Responsabilidade |
+|---|---|
+| [`apps/api/server.js`](apps/api/server.js) | Inicialização do servidor, healthcheck, versão, serviço da SPA e *graceful shutdown* (`SIGTERM`/`SIGINT`). |
+| [`apps/api/routes.js`](apps/api/routes.js) | Roteador REST com todos os endpoints de negócio (`/api/*`). |
+| [`apps/api/db.js`](apps/api/db.js) | Pool de conexão PostgreSQL compartilhado e função de query parametrizada. |
+
+### Princípio de resiliência (*graceful degradation*)
+
+Cada endpoint tenta executar a query no PostgreSQL. Se o pool estiver conectado **e** houver
+resultado, responde com `"source": "db"`. Se `DATABASE_URL` estiver ausente **ou** a query
+falhar, responde com dados estáticos coerentes marcados com `"source": "fallback"`. Isso permite
+demonstrar a aplicação completa sem depender do banco de produção.
+
+### Endpoints de infraestrutura
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/healthz` | Healthcheck completo (status, versão, Node, *uptime*, timestamp). |
+| `GET` | `/version` | Nome e versão do projeto (validação de redeploy). |
+
+### Endpoints de negócio (`/api`)
+
+| Método | Rota | Finalidade | Requisito |
+|---|---|---|---|
+| `GET` | `/api/_status` | Indica se o banco está `connected` ou em `fallback`. | — |
+| `GET` | `/api/me` | Retorna a persona logada (protótipo, sem autenticação real). | — |
+| `GET` | `/api/dashboard/upcoming` | Próximas atividades de estudo do usuário. | RF05 |
+| `GET` | `/api/dashboard/week` | Horas de estudo da semana corrente (Seg–Dom). | RF05 |
+| `GET` | `/api/dashboard/streak` | Sequência atual e recorde de estudo (gamificação). | RF13 |
+| `GET` | `/api/dashboard/badges` | Conquistas recentes do usuário. | RF13 |
+| `GET` | `/api/eventos` | Eventos institucionais (palestras, oficinas). | RF12 |
+| `POST` | `/api/lgpd/consentimento` | Registra o aceite do termo LGPD. | RNF09 |
+| `GET` | `/api/mentorias?papel=mentor` | Lista mentores cadastrados. | RF09 |
+| `POST` | `/api/mentorias/cadastro-mentor` | Marca a persona logada como mentor. | RF09 |
+
+> Qualquer rota não atendida acima devolve o `index.html` da SPA React buildada
+> (`apps/web/dist`), delegando o roteamento ao **React Router** no lado do cliente.
+
+### Segurança
+
+- **Queries parametrizadas** (`$1`, `$2`, …) via driver `pg` — proteção contra injeção de SQL (OWASP A03).
+- **Sanitização de entrada** no `POST /api/lgpd/consentimento`: todos os campos recebidos do
+  cliente são convertidos para string e truncados antes da persistência.
+
+### Como executar e testar localmente
+
+```powershell
+# 1. Subir o servidor da API (porta 3010)
+node apps/api/server.js
+
+# 2. Em outro terminal, testar um endpoint
+Invoke-WebRequest -Uri "http://localhost:3010/healthz" -UseBasicParsing | Select-Object -ExpandProperty Content
+Invoke-WebRequest -Uri "http://localhost:3010/api/dashboard/streak" -UseBasicParsing | Select-Object -ExpandProperty Content
+```
+
+> Relatório técnico completo da API, com resultados de testes:
+> [docs/relatórios entrega/relatorio-funcionamento-api.md](docs/relat%C3%B3rios%20entrega/relatorio-funcionamento-api.md).
 
 ---
 
