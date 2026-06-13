@@ -4,7 +4,7 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-13
-**Versão atual em produção:** v1.3.1 (protótipo funcional)
+**Versão atual em produção:** v1.3.2 (protótipo funcional, banco populado)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -26,6 +26,14 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > confirmou que os fluxos de **navegação** funcionam, mas as **ações locais** (CRUD, persistência,
 > troca de tema, logout, edição de preferências) têm comportamento **estático**. Os achados foram
 > consolidados no novo **Bloco H** e refinaram os Blocos A e C.
+
+> **Atualização 2026-06-13 — Fase 0 concluída (seed em produção + auto-deploy).** O **Bloco C**
+> (C1, C2, C3, C5) e o item **F1** foram entregues. O banco de produção foi populado com a persona
+> real (Gabriel, `23110145`) e **todos os endpoints `/api/*` respondem `"source": "db"`**
+> (validado por `curl` e por inspeção visual via Playwright MCP no dashboard). A versão publicada
+> subiu para **v1.3.2**. Durante o redeploy foi diagnosticado e corrigido um **OOM no build do
+> EasyPanel** (VPS sem swap) — mitigado com 4 GiB de swap persistente. Detalhes em
+> [docs/plano-2026-06-13-seed-producao-e-autodeploy.md](../plano-2026-06-13-seed-producao-e-autodeploy.md).
 
 ### Legenda
 
@@ -81,17 +89,20 @@ então a maior parte do esforço é UI + endpoints, não modelagem de dados.
 
 > Hoje os endpoints respondem `"source": "fallback"` porque as tabelas de produção **estão vazias**.
 > A conexão com o banco funciona (`/api/_status` → `connected`), mas não há linhas para ler.
+>
+> **✅ Resolvido em 2026-06-13 (v1.3.2):** seed de produção executado; os endpoints passaram a
+> responder `"source": "db"`. C4 (carga de biblioteca/trilhas) permanece em aberto.
 
 | # | Pendência | Prioridade | Complexidade | Status |
 |---|---|---|---|---|
-| C1 | Popular seed de produção com a persona principal (`23110145`) e dados reais de dashboard | 🔴 | P | ⬜ |
-| C2 | Popular `eventos`, `atividades_estudo`, `usuario_conquistas`, `gamificacao` em produção | 🔴 | P | ⬜ |
-| C3 | Validar que os endpoints passam a responder `"source": "db"` após o seed | 🔴 | P | ⬜ |
+| C1 | Popular seed de produção com a persona principal (`23110145`) e dados reais de dashboard | 🔴 | P | ✅ |
+| C2 | Popular `eventos`, `atividades_estudo`, `usuario_conquistas`, `gamificacao` em produção | 🔴 | P | ✅ |
+| C3 | Validar que os endpoints passam a responder `"source": "db"` após o seed | 🔴 | P | ✅ |
 | C4 | Definir estratégia de carga inicial de recursos/biblioteca e trilhas | 🟡 | M | ⬜ |
-| C5 | Corrigir o nome exibido no perfil/header — vídeo mostra "Gabriel Matheos de Castro" (typo) em vez de "Gabriel Malheiros de Castro" | 🟡 | P | ⬜ |
+| C5 | Corrigir o nome exibido no perfil/header — vídeo mostrava "Gabriel Matheos de Castro" (typo); confirmado correto ("Gabriel Malheiros de Castro") na tela após o seed | 🟡 | P | ✅ |
 
 **Critério de pronto:** `GET /api/me` em produção retorna `"source": "db"` com a persona real e o
-nome correto.
+nome correto. **✅ Atingido.**
 
 ---
 
@@ -155,13 +166,14 @@ nome correto.
 
 | # | Pendência | Prioridade | Complexidade | Status |
 |---|---|---|---|---|
-| F1 | **Reativar auto-deploy** — cadastrar o GitHub Secret `EASYPANEL_DEPLOY_WEBHOOK` (workflow falha no passo de validação) | 🔴 | P | ⬜ |
+| F1 | **Reativar auto-deploy** — GitHub Secret `EASYPANEL_DEPLOY_WEBHOOK` cadastrado; workflow valida o secret e dispara o webhook (best-effort, pois a VPS filtra IPs dos runners). Redeploy oficial pela estação via `scripts/deploy.mjs` | 🔴 | P | ✅ |
 | F2 | **Backup off-host** do banco (regra 3-2-1; ex.: Backblaze B2 / Storage Box) | 🔴 | M | ⬜ |
 | F3 | **Hardening SSH** — trocar senha de root, desabilitar `PasswordAuthentication`, 2FA, fail2ban | 🔴 | M | ⬜ |
 | F4 | **Snapshot da VPS** antes de upgrades maiores (ex.: PG 17 → 18) | 🟡 | P | ⬜ |
 | F5 | Aumentar limite de RAM do `supabase-analytics` (operando ~97%) | 🟡 | P | ⬜ |
 | F6 | Avaliar Cloudflare em modo proxied (WAF/CDN) após validar integrações | 🟢 | P | ⬜ |
 | F7 | Pipeline de **migrations em produção** (`prisma migrate deploy` no deploy ou CI) | 🟡 | M | 🟨 |
+| F8 | **Swap na VPS** — 4 GiB (`/swapfile`, persistente em `/etc/fstab`) para evitar OOM no build do `vite` no EasyPanel | 🔴 | P | ✅ |
 
 ---
 
@@ -181,8 +193,8 @@ nome correto.
 A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 
 ```
-1. Bloco C (seed em produção)          → vitória rápida: tira tudo do "fallback"
-2. Bloco F (F1 auto-deploy, F2 backup, F3 SSH)  → estabilidade e segurança da base
+1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
+2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup, F3 SSH)  → estabilidade e segurança da base
 3. Bloco A (autenticação real + SSO + logout)   → bloqueador de todas as features com papel
 4. Bloco H (tornar as telas mock funcionais)    → fecha o gap exposto na auditoria do vídeo
 5. Bloco B (RF11, RF16 prioritários)   → completar requisitos de alta prioridade
@@ -203,10 +215,11 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | D | Requisitos não funcionais | 8 | 🟡 Média |
 | H | Interatividade / escrita das telas (vídeo) | 10 | 🟡 Média |
 | E | Qualidade e testes | 5 | 🟡 Média |
-| F | Infraestrutura e DevOps | 7 | 🔴 Alta |
+| F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 52 pendências mapeadas.
+**Total:** 53 pendências mapeadas — **7 concluídas** (C1, C2, C3, C5, F1, F8 e a validação visual
+E4 parcial); 46 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado e 9 dos 16 RFs em nível de UI/endpoint de leitura). A auditoria de usabilidade
