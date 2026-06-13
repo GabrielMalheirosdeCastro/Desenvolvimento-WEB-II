@@ -167,8 +167,8 @@ nome correto. **✅ Atingido.**
 | # | Pendência | Prioridade | Complexidade | Status |
 |---|---|---|---|---|
 | F1 | **Reativar auto-deploy** — GitHub Secret `EASYPANEL_DEPLOY_WEBHOOK` cadastrado; workflow valida o secret e dispara o webhook (best-effort, pois a VPS filtra IPs dos runners). Redeploy oficial pela estação via `scripts/deploy.mjs` | 🔴 | P | ✅ |
-| F2 | **Backup off-host** do banco (regra 3-2-1; ex.: Backblaze B2 / Storage Box) | 🔴 | M | ⬜ |
-| F3 | **Hardening SSH** — trocar senha de root, desabilitar `PasswordAuthentication`, 2FA, fail2ban | 🔴 | M | ⬜ |
+| F2 | **Backup off-host** do banco (regra 3-2-1; ex.: Backblaze B2 / Storage Box) | 🔴 | M | ✅ |
+| F3 | **Hardening SSH** — trocar senha de root, desabilitar `PasswordAuthentication`, 2FA, fail2ban | 🔴 | M | ✅ |
 | F4 | **Snapshot da VPS** antes de upgrades maiores (ex.: PG 17 → 18) | 🟡 | P | ⬜ |
 | F5 | Aumentar limite de RAM do `supabase-analytics` (operando ~97%) | 🟡 | P | ⬜ |
 | F6 | Avaliar Cloudflare em modo proxied (WAF/CDN) após validar integrações | 🟢 | P | ⬜ |
@@ -194,7 +194,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 
 ```
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
-2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup, F3 SSH)  → estabilidade e segurança da base
+2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação real + SSO + logout)   → bloqueador de todas as features com papel
 4. Bloco H (tornar as telas mock funcionais)    → fecha o gap exposto na auditoria do vídeo
 5. Bloco B (RF11, RF16 prioritários)   → completar requisitos de alta prioridade
@@ -218,8 +218,8 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **7 concluídas** (C1, C2, C3, C5, F1, F8 e a validação visual
-E4 parcial); 46 em aberto.
+**Total:** 53 pendências mapeadas — **9 concluídas** (C1, C2, C3, C5, F1, F2, F3, F8 e a
+validação visual E4 parcial); 44 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado e 9 dos 16 RFs em nível de UI/endpoint de leitura). A auditoria de usabilidade
