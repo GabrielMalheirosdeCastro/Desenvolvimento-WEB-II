@@ -17,8 +17,20 @@
 // ============================================================
 import { Router } from 'express';
 import { query, isConnected } from './db.js';
+import {
+    COOKIE_NAME,
+    authDisponivel,
+    cookieOptions,
+    hashPassword,
+    verifyPassword,
+    signToken,
+    requireAuth,
+} from './auth.js';
 
 export const apiRouter = Router();
+
+// Regex de e-mail institucional FAESA (D2 do plano de autenticacao).
+const EMAIL_FAESA_REGEX = /^[a-z0-9._%+-]+@(?:[a-z0-9-]+\.)*faesa\.br$/i;
 
 // Matricula da persona principal (Aluno) usada como "logado" no prototipo.
 const MATRICULA_PADRAO = '23110145';
@@ -351,5 +363,156 @@ apiRouter.post('/mentorias/cadastro-mentor', async (_req, res) => {
         persisted: true,
         eMentor: updated[0].e_mentor,
         usuario: { id: updated[0].id, nome: updated[0].nome },
+    });
+});
+
+// ==============================================================
+// AUTENTICACAO LOCAL (Bloco A — plano 2026-06-13)
+// --------------------------------------------------------------
+// Rotas ADITIVAS. Nao alteram o comportamento das rotas acima
+// (que continuam usando MATRICULA_PADRAO). A virada para sessao
+// real ocorrera em fase posterior, junto ao frontend.
+//
+// Pre-condicao: usuario ja pre-cadastrado em `usuarios` (matricula
+// + email institucional). A ativacao define a senha (password_hash).
+// ==============================================================
+
+const SENHA_MIN = 8;
+const SENHA_MAX = 72; // limite efetivo do bcrypt (72 bytes)
+
+/** Normaliza e valida o corpo de email/senha. Retorna { erro } ou { email, senha }. */
+function validarCredenciais(body) {
+    const email = String(body?.email || '').trim().toLowerCase();
+    const senha = String(body?.senha || '');
+    if (!email || !senha) return { erro: 'campos_obrigatorios' };
+    if (!EMAIL_FAESA_REGEX.test(email)) return { erro: 'email_invalido' };
+    if (senha.length < SENHA_MIN || senha.length > SENHA_MAX) return { erro: 'senha_invalida' };
+    return { email, senha };
+}
+
+// --------------------------------------------------------------
+// POST /api/auth/ativar
+// Define a senha de um usuario pre-cadastrado cujo password_hash e NULL.
+// Body: { matricula: string, email: string, senha: string }
+// --------------------------------------------------------------
+apiRouter.post('/auth/ativar', async (req, res) => {
+    if (!authDisponivel()) {
+        return res.status(503).json({ error: 'auth_indisponivel' });
+    }
+    const matricula = String(req.body?.matricula || '').trim();
+    const cred = validarCredenciais(req.body);
+    if (cred.erro) {
+        return res.status(400).json({ error: cred.erro });
+    }
+    if (!matricula) {
+        return res.status(400).json({ error: 'campos_obrigatorios' });
+    }
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+
+    const rows = await query(
+        `SELECT id, matricula_institucional, email_institucional, password_hash
+             FROM usuarios
+             WHERE matricula_institucional = $1 AND LOWER(email_institucional) = $2
+             LIMIT 1`,
+        [matricula, cred.email],
+    );
+    if (!rows || rows.length === 0) {
+        return res.status(404).json({ error: 'cadastro_nao_encontrado' });
+    }
+    if (rows[0].password_hash) {
+        return res.status(409).json({ error: 'conta_ja_ativada' });
+    }
+
+    const hash = await hashPassword(cred.senha);
+    const updated = await query(
+        `UPDATE usuarios SET password_hash = $1 WHERE id = $2 RETURNING id`,
+        [hash, rows[0].id],
+    );
+    if (!updated || updated.length === 0) {
+        return res.status(500).json({ error: 'falha_ativacao' });
+    }
+    res.status(201).json({ ativado: true });
+});
+
+// --------------------------------------------------------------
+// POST /api/auth/login
+// Body: { email: string, senha: string }
+// Em sucesso emite cookie httpOnly com o JWT de sessao.
+// --------------------------------------------------------------
+apiRouter.post('/auth/login', async (req, res) => {
+    if (!authDisponivel()) {
+        return res.status(503).json({ error: 'auth_indisponivel' });
+    }
+    const cred = validarCredenciais(req.body);
+    if (cred.erro) {
+        return res.status(400).json({ error: cred.erro });
+    }
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+
+    const rows = await query(
+        `SELECT id, matricula_institucional, email_institucional, nome,
+                tipo_usuario, e_mentor, password_hash
+             FROM usuarios
+             WHERE LOWER(email_institucional) = $1
+             LIMIT 1`,
+        [cred.email],
+    );
+    // Resposta uniforme para nao revelar se o e-mail existe.
+    const usuario = rows && rows.length > 0 ? rows[0] : null;
+    const ok = usuario && (await verifyPassword(cred.senha, usuario.password_hash));
+    if (!ok) {
+        return res.status(401).json({ error: 'credenciais_invalidas' });
+    }
+
+    const token = signToken({
+        id: usuario.id,
+        matricula: usuario.matricula_institucional,
+        email: usuario.email_institucional,
+        tipo: usuario.tipo_usuario,
+        eMentor: usuario.e_mentor,
+    });
+    if (!token) {
+        return res.status(503).json({ error: 'auth_indisponivel' });
+    }
+    res.cookie(COOKIE_NAME, token, cookieOptions());
+    res.json({
+        autenticado: true,
+        usuario: {
+            id: usuario.id,
+            nome: usuario.nome,
+            email: usuario.email_institucional,
+            matricula: usuario.matricula_institucional,
+            tipo: usuario.tipo_usuario,
+            eMentor: usuario.e_mentor,
+        },
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/auth/logout — limpa o cookie de sessao.
+// --------------------------------------------------------------
+apiRouter.post('/auth/logout', (_req, res) => {
+    const opts = cookieOptions();
+    delete opts.maxAge;
+    res.clearCookie(COOKIE_NAME, opts);
+    res.json({ ok: true });
+});
+
+// --------------------------------------------------------------
+// GET /api/auth/me — retorna o usuario da sessao atual (requer cookie).
+// --------------------------------------------------------------
+apiRouter.get('/auth/me', requireAuth, (req, res) => {
+    res.json({
+        usuario: {
+            id: req.usuario.sub,
+            matricula: req.usuario.matricula,
+            email: req.usuario.email,
+            tipo: req.usuario.tipo,
+            eMentor: req.usuario.eMentor,
+        },
     });
 });
