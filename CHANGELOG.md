@@ -15,10 +15,12 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 - **Seed de producao popula a tabela `gamificacao`** (`packages/db/prisma/seed-prod.ts` e `seed-prod.sql`): a persona Gabriel (`23110145`) passa a ter linha de gamificacao (`streak_atual=12`, `streak_recorde=18`, `pontos_totais=225`, `ranking_posicao=1`). Sem esse registro, o endpoint `GET /api/dashboard/streak` continuava respondendo `source: "fallback"` mesmo com o banco populado, pois consulta a tabela `gamificacao`.
 - **Seed de producao alinhado ao schema atual de `PlanoEstudo`** (`packages/db/prisma/seed-prod.ts`): os campos obsoletos `nome`/`objetivo`/`ativo` foram substituidos por `titulo`/`descricao`/`metaHorasSemanal`/`status`, que sao os definidos no `schema.prisma`. Sem esse ajuste o seed abortava com `PrismaClientValidationError` (`Unknown argument 'nome'`).
+- **Build do EasyPanel falhava com `Killed` (OOM)** antes do `npm install`: a VPS rodava sem swap e o build do `vite` (`apps/web`) estourava a RAM (Supabase self-hosted ja consome ~3.1 GiB de 7.8 GiB), acionando o `oom-killer`. Mitigado com a criacao de **4 GiB de swap** (`/swapfile`, persistente em `/etc/fstab`). Apos isso o deploy da v1.3.2 concluiu normalmente.
 
 ### Changed
 
 - Bump 1.3.1 -> **1.3.2** (PATCH — correcao no seed de producao para cobertura completa de `source: "db"` nos endpoints de dashboard). `apps/web` e `apps/api` alinhados em 1.3.2.
+- **Banco de producao populado e validado**: os endpoints `/api/me`, `/api/dashboard/streak`, `/api/dashboard/week`, `/api/dashboard/badges`, `/api/dashboard/upcoming` e `/api/eventos` passaram a responder `source: "db"` em <https://acolhimento.faesa.gmcsistemas.com.br>. Versao publicada confirmada via `GET /version` == `1.3.2`.
 
 ## [1.3.1] - 2026-06-13
 

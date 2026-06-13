@@ -113,6 +113,7 @@ A plataforma segue uma arquitetura em 4 camadas:
 |---|---|
 | **URL pública** | <https://acolhimento.faesa.gmcsistemas.com.br> |
 | **Servidor** | VPS Hostinger — Ubuntu 24.04.4 LTS, 2 vCPU AMD EPYC 9354P, 7.8 GiB RAM, 96 GB SSD |
+| **Swap** | 4 GiB (`/swapfile`, persistente via `/etc/fstab`) — evita OOM no build do `vite` |
 | **IP** | `187.77.47.53` (DNS Cloudflare *DNS-only*) |
 | **Orquestrador** | Docker 29.4.1 + Swarm + EasyPanel |
 | **Reverse proxy** | Traefik 3.6.7 (gerenciado pelo EasyPanel) com Let's Encrypt automático |
@@ -124,6 +125,10 @@ A plataforma segue uma arquitetura em 4 camadas:
 > O **mesmo banco de dados** é utilizado para desenvolvimento e produção (não há Postgres na
 > estação de trabalho Windows 11). O acesso de desenvolvimento ocorre via **túnel SSH** —
 > ver [docs/setup-desenvolvimento-windows.md](docs/setup-desenvolvimento-windows.md).
+>
+> **Status (2026-06-13):** banco de produção populado com a persona real (Gabriel,
+> matrícula `23110145`). Todos os endpoints `/api/*` respondem `"source": "db"` — o fallback
+> estático deixou de ser exercido em produção. Versão publicada: **v1.3.2**.
 
 ---
 

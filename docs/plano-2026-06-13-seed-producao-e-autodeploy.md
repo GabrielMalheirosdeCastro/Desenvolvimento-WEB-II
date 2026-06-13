@@ -24,13 +24,13 @@ Ao final, `GET /api/me` e `GET /api/dashboard/streak` em produção devem respon
   `CHANGELOG.md`.
 - [ ] 3. **F1 — Cadastrar o GitHub Secret `EASYPANEL_DEPLOY_WEBHOOK`** em
   *Settings → Secrets and variables → Actions* do repositório, com a URL do webhook do EasyPanel.
-- [ ] 4. **Abrir o túnel SSH** para o banco de produção: `pwsh ./scripts/dev-tunnel.ps1`
+- [x] 4. **Abrir o túnel SSH** para o banco de produção: `pwsh ./scripts/dev-tunnel.ps1`
   (mapeia `localhost:6543` → pooler e `localhost:5432` → direct). Manter aberto.
-- [ ] 5. **Executar o seed** em outro terminal:
+- [x] 5. **Executar o seed** em outro terminal:
   - `$env:DATABASE_URL = "postgresql://postgres.gmc:SENHA@localhost:6543/postgres?pgbouncer=true&connection_limit=1"`
   - `npm --workspace packages/db run seed:prod`
-- [ ] 6. **Validar (C3)** que os endpoints respondem `"source": "db"` em produção.
-- [ ] 7. **Encerramento (Seção 12.1)** — commit atômico, push, redeploy via `node scripts/deploy.mjs`
+- [x] 6. **Validar (C3)** que os endpoints respondem `"source": "db"` em produção.
+- [x] 7. **Encerramento (Seção 12.1)** — commit atômico, push, redeploy via `node scripts/deploy.mjs`
   e conferência de `/version` == `1.3.2`.
 
 ## Impacto Esperado
@@ -57,3 +57,32 @@ Ao final, `GET /api/me` e `GET /api/dashboard/streak` em produção devem respon
 - `workflow_dispatch` no GitHub Actions conclui sem falha de validação de secret.
 - `GET .../version` → `{"name":"site-acolhimento-faesa","version":"1.3.2"}`.
 - Validação visual do nome via Playwright MCP na estação Windows (VPS é headless).
+
+## Desfecho da Execução (2026-06-13)
+
+**Status:** concluído, exceto F1 (GitHub Secret) e a validação visual via Playwright MCP.
+
+### O que foi entregue
+
+- Seed corrigido (gamificação + `PlanoEstudo`) e executado com sucesso via túnel SSH.
+- Banco de produção populado: `usuarios=4` (Gabriel `id=5`), `gamificacao=1`, `eventos=3`,
+  `atividades=9`. Todos os endpoints `/api/*` passaram a `"source": "db"`.
+- Commit `f4b705e` (bump 1.3.1 → 1.3.2) feito e enviado para `master`.
+- Deploy validado: `GET /version` → `1.3.2`; `/healthz` → `status:ok`.
+
+### Bloqueio encontrado e causa-raiz
+
+- **Sintoma:** o primeiro redeploy do EasyPanel falhou com `Killed` logo no
+  *"Download Github Archive"*, antes do `npm install`.
+- **Causa-raiz:** a VPS rodava **sem swap** (`Swap: 0B`). Com o Supabase self-hosted ocupando
+  ~3.1 GiB de 7.8 GiB, o build do `vite` (`apps/web`) estourava a RAM e o kernel acionava o
+  `oom-killer` (confirmado em `dmesg -T | grep -i oom`).
+- **Correção:** criação de **4 GiB de swap** (`/swapfile`, persistente em `/etc/fstab`). No
+  redeploy seguinte o build concluiu e a v1.3.2 foi publicada normalmente.
+
+### Pendências remanescentes
+
+- **F1** — cadastrar o GitHub Secret `EASYPANEL_DEPLOY_WEBHOOK` e validar o auto-deploy via
+  `workflow_dispatch`.
+- **C5 (visual)** — confirmar o nome "Gabriel Malheiros de Castro" na interface via Playwright
+  MCP na estação Windows (a VPS é headless).
