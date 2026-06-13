@@ -9,6 +9,17 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-06-13
+
+### Added
+
+- **Fluxo de debug F5 no VS Code** (`.vscode/`): tarefas `Dev: serve + wait`, `Dev: wait for server ready` e `Dev: stop Express server` sobem o Express (porta 3010), aguardam `/healthz` responder 200 e encerram o servidor ao fim da sessao de debug.
+- **Documentacao do funcionamento da API REST** no `README.md` e em `docs/relatórios entrega/relatorio-funcionamento-api.md`, descrevendo os endpoints `/api/*`, o mecanismo de fallback resiliente e os endpoints de validacao `/healthz` e `/version`.
+
+### Changed
+
+- Bump 1.3.0 -> **1.3.1** (PATCH — tooling de debug + documentacao, sem alteracao de contrato de API). `apps/web` e `apps/api` alinhados em 1.3.1.
+
 ## [1.3.0] - 2026-05-13
 
 ### Added
