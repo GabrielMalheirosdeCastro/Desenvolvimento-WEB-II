@@ -22,8 +22,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test:
+    name: Testes core (gate de deploy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install (npm ci)
+        run: npm ci
+
+      # Roda APENAS os testes core headless (auth + chatbot). Os specs E2E
+      # do Playwright exigem GUI e rodam so na estacao Windows (Secao 2.5).
+      - name: npm test (core)
+        run: npm test
+
   deploy:
     name: Trigger EasyPanel webhook
+    needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
