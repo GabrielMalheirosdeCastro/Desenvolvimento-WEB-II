@@ -257,6 +257,40 @@ Invoke-WebRequest -Uri "http://localhost:3010/api/dashboard/streak" -UseBasicPar
 
 ---
 
+## 🧪 Testes e Qualidade
+
+A partir da v1.13.0 o projeto tem uma base de testes padronizada e endurecimento de
+segurança na API (`helmet` + `express-rate-limit`).
+
+| Comando | O que roda | Onde |
+|---------|-----------|------|
+| `npm test` | Testes core headless (auth + chatbot), sem banco | Estação **e** CI |
+| `npm run test:e2e` | Specs Playwright (login + smoke v1.12.0) | **Só na estação Windows** |
+
+```powershell
+# Testes core (lógica de auth e chatbot — não exigem banco nem GUI)
+npm test
+
+# E2E na estação (a VPS é headless — não rode Playwright lá)
+npx playwright install   # primeira vez: baixa o Chromium
+npm run test:e2e
+
+# Validar contra produção (padrão) ou local:
+$env:PLAYWRIGHT_BASE_URL = "http://localhost:3010"; npm run test:e2e
+
+# Smoke autenticado (opcional) — sem segredos no repositório:
+$env:TEST_USER_EMAIL = "seu.email@faesa.br"
+$env:TEST_USER_PASSWORD = "<sua-senha>"
+npm run test:e2e
+```
+
+> O `smoke-v1.12.0.spec` é **pulado** automaticamente se `TEST_USER_EMAIL`/`TEST_USER_PASSWORD`
+> não estiverem no ambiente. No CI ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)),
+> o job `test` roda `npm test` **antes** do deploy (`needs: test`); os specs Playwright **não**
+> entram no CI por exigirem interface gráfica.
+
+---
+
 ## 👥 Personas
 
 - **Lucas (Calouro, 18 anos)** — quer se organizar e ter excelência acadêmica desde o início

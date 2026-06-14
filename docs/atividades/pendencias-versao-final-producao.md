@@ -4,8 +4,8 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-14
-**Versão atual em produção:** v1.12.0 (Notificações RF10 · Eventos RF12 · Gamificação/Ranking RF13 — Bloco B fechado, exceto B3/RF15)
-**Próximas versões planejadas:** Bloco D/E (qualidade, testes, RNFs) · B3/RF15 (chat com NAP) · Bloco G (documentação/entrega)
+**Versão atual em produção:** v1.13.0 (Qualidade/Segurança — helmet + rate limit RNF03 · suíte de testes + E2E Playwright + gate de CI)
+**Próximas versões planejadas:** Bloco D restante (D2 acessibilidade · D5 performance · D7 LGPD) · B3/RF15 (chat com NAP) · Bloco G (documentação/entrega)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -217,7 +217,7 @@ nome correto. **✅ Atingido.**
 
 | # | Pendência | RNF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
-| D1 | **Segurança** — proteção XSS/CSRF, headers de segurança, TLS 1.3, rate limiting | RNF03 | 🔴 | M | 🟨 |
+| D1 | **Segurança** — proteção XSS/CSRF, headers de segurança, TLS 1.3, rate limiting. **Entregue na v1.13.0:** `helmet` (headers + CSP compatível com a SPA) + `express-rate-limit` (auth 20/min, geral 200/min, `429` JSON) + `trust proxy` para IP real atrás do Traefik | RNF03 | 🔴 | M | ✅ |
 | D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado) | RNF04 | 🟡 | M | ⬜ |
 | D3 | **Cobertura de testes ≥ 80%** — hoje não há suíte automatizada | RNF08 | 🟡 | G | ⬜ |
 | D4 | **Disponibilidade / monitoria 24/7** — uptime ≥ 99,5% com alertas | RNF05 | 🟡 | M | ⬜ |
@@ -261,11 +261,11 @@ nome correto. **✅ Atingido.**
 
 | # | Pendência | Prioridade | Complexidade | Status |
 |---|---|---|---|---|
-| E1 | Configurar suíte de testes unitários (Vitest) para lógica da API | 🟡 | M | ⬜ |
+| E1 | Configurar suíte de testes unitários (Vitest) para lógica da API. **Parcial na v1.13.0:** `npm test` agrega os testes core headless (`test-auth-core` + `test-chatbot-core`); migração formal para Vitest segue pendente | 🟡 | M | 🟨 |
 | E2 | Testes de integração API/DB (supertest) | 🟡 | M | ⬜ |
-| E3 | Testes E2E da SPA via Playwright MCP (rodam **só na estação Windows** — VPS é headless) | 🟡 | M | ⬜ |
-| E4 | Validação visual da tela de login (4 metadados + badge de versão) automatizada | 🟢 | P | 🟨 |
-| E5 | Integrar testes ao pipeline de CI (rodar antes do deploy) | 🟡 | M | ⬜ |
+| E3 | Testes E2E da SPA via Playwright MCP (rodam **só na estação Windows** — VPS é headless). **Entregue na v1.13.0:** `playwright.config.ts` + specs `login.spec` e `smoke-v1.12.0.spec` (este pulado sem credenciais via env) | 🟡 | M | ✅ |
+| E4 | Validação visual da tela de login (4 metadados + badge de versão) automatizada. **Entregue na v1.13.0:** coberta por `login.spec` (testids dos 4 metadados + badge) | 🟢 | P | ✅ |
+| E5 | Integrar testes ao pipeline de CI (rodar antes do deploy). **Entregue na v1.13.0:** job `test` (npm ci + npm test) com o deploy dependente via `needs: test` | 🟡 | M | ✅ |
 
 ---
 

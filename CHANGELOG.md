@@ -9,6 +9,19 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-06-14
+
+### Added
+
+- **Endurecimento de segurança da API (item D1 / RNF03)**: adicionados [`helmet`](apps/api/server.js) (cabeçalhos de segurança + Content-Security-Policy compatível com a SPA — assets *same-origin* e `<style>` inline do `index.html`) e [`express-rate-limit`](apps/api/server.js) com dois limitadores: estrito em `/api/auth/*` (20 req/min por IP, mitiga *brute force* no login/ativação) e geral em `/api/*` (200 req/min), ambos retornando `429 rate_limit` em JSON. `/healthz` e `/version` ficam livres para monitoria. Configurado `trust proxy` para o IP real chegar via `X-Forwarded-For` atrás do Traefik.
+- **Suíte de testes padronizada (item E1)**: novo script `npm test` na raiz que agrega os testes core headless ([scripts/test-auth-core.mjs](scripts/test-auth-core.mjs) + [scripts/test-chatbot-core.mjs](scripts/test-chatbot-core.mjs)), com saída não-zero em falha.
+- **Testes E2E com Playwright (itens E3/E4)**: nova configuração [playwright.config.ts](playwright.config.ts) e specs em [tests/e2e](tests/e2e) — `login.spec.ts` valida os 4 metadados obrigatórios (Disciplina, Docente, Aluno, Repositório) e o badge de versão `site-acolhimento-faesa · vX.Y.Z`; `smoke-v1.12.0.spec.ts` cobre, após login autenticado, a página de Eventos, a seção de Ranking do Perfil e o sino de notificações. `baseURL` configurável via `PLAYWRIGHT_BASE_URL`; o smoke é pulado se `TEST_USER_EMAIL`/`TEST_USER_PASSWORD` não estiverem no ambiente (sem segredos no repositório). **Executados apenas na estação Windows** — a VPS é headless.
+- **Gate de testes no CI (item E5)**: o workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml) ganhou um job `test` (checkout + `npm ci` + `npm test`) do qual o job de deploy passa a depender (`needs: test`), bloqueando a publicação se os testes core falharem. Os specs Playwright **não** entram no CI (exigem GUI).
+
+### Changed
+
+- Bump 1.12.0 -> **1.13.0** (MINOR — versão de qualidade/infra: endurecimento de segurança e suíte de testes, sem alteração de comportamento funcional) nos três `package.json`.
+
 ## [1.12.0] - 2026-06-14
 
 ### Added
