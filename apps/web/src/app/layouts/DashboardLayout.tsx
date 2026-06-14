@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate } from "react-router";
+import { Outlet, NavLink, Link, useNavigate } from "react-router";
 import {
   Home,
   BookOpen,
@@ -143,12 +143,18 @@ export function DashboardLayout() {
           </button>
           <div className="flex items-center gap-4">
             <NotificationBell />
-            <span className="text-sm text-[#6C757D] hidden sm:inline">
-              {rotuloUsuario}
-            </span>
-            <div className="w-10 h-10 bg-[#003366] rounded-full flex items-center justify-center text-white font-medium">
-              {iniciais}
-            </div>
+            <Link
+              to="/dashboard/perfil"
+              aria-label="Abrir meu perfil"
+              className="flex items-center gap-3 rounded-full px-1 py-1 transition-colors hover:bg-[#003366]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+            >
+              <span className="text-sm text-[#6C757D] hidden sm:inline">
+                {rotuloUsuario}
+              </span>
+              <div className="w-10 h-10 bg-[#003366] rounded-full flex items-center justify-center text-white font-medium">
+                {iniciais}
+              </div>
+            </Link>
           </div>
         </header>
 

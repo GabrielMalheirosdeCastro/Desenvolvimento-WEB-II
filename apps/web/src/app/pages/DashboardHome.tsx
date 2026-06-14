@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { Target, Clock, Flame, Award, TrendingUp, Calendar } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useAuth } from "../auth/AuthContext";
@@ -26,8 +27,25 @@ const FALLBACK_UPCOMING: Activity[] = [
   { title: "Avaliação de Bem-estar", date: "18/03", type: "Questionário", status: "pending" },
 ];
 
+// Mapeia o tipo de atividade para a tela correspondente (H2 — navegação do dashboard).
+function destinoPorTipo(tipo?: string): string {
+  switch ((tipo ?? "").trim().toLowerCase()) {
+    case "mentoria":
+      return "/dashboard/mentoria";
+    case "questionário":
+    case "questionario":
+      return "/dashboard/bem-estar";
+    case "estudo":
+    case "entrega":
+      return "/dashboard/plano-estudos";
+    default:
+      return "/dashboard";
+  }
+}
+
 export function DashboardHome() {
   const { usuario } = useAuth();
+  const navigate = useNavigate();
   const saudacaoNome = primeiroNome(usuario?.nome);
   const [weekData, setWeekData] = useState<WeekPoint[]>(FALLBACK_WEEK);
   const [recentBadges, setRecentBadges] = useState<Badge[]>(FALLBACK_BADGES);
@@ -62,7 +80,11 @@ export function DashboardHome() {
 
       {/* Cards de Progresso */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <button
+          type="button"
+          onClick={() => navigate("/dashboard/plano-estudos")}
+          className="text-left bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-[#0066CC]/10 rounded-lg flex items-center justify-center">
               <Target className="text-[#0066CC]" size={24} />
@@ -74,9 +96,13 @@ export function DashboardHome() {
           <div className="mt-3 w-full bg-[#F5F7FA] rounded-full h-2">
             <div className="bg-[#0066CC] h-2 rounded-full" style={{ width: "85%" }}></div>
           </div>
-        </div>
+        </button>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <button
+          type="button"
+          onClick={() => navigate("/dashboard/plano-estudos")}
+          className="text-left bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-[#28A745]/10 rounded-lg flex items-center justify-center">
               <Clock className="text-[#28A745]" size={24} />
@@ -86,9 +112,13 @@ export function DashboardHome() {
           <h3 className="text-lg mb-1 text-[#003366]">Horas de Estudo</h3>
           <p className="text-sm text-[#6C757D]">Esta semana</p>
           <p className="text-sm text-[#28A745] mt-2">↑ 15% vs. semana anterior</p>
-        </div>
+        </button>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <button
+          type="button"
+          onClick={() => navigate("/dashboard/bem-estar")}
+          className="text-left bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-[#FF8C00]/10 rounded-lg flex items-center justify-center">
               <Flame className="text-[#FF8C00]" size={24} />
@@ -98,7 +128,7 @@ export function DashboardHome() {
           <h3 className="text-lg mb-1 text-[#003366]">Sequência de Dias</h3>
           <p className="text-sm text-[#6C757D]">Dias consecutivos (recorde: {streak.recorde})</p>
           <p className="text-sm text-[#FF8C00] mt-2">🔥 Continue assim!</p>
-        </div>
+        </button>
       </div>
 
       {/* Gráfico de Horas de Estudo */}
@@ -127,7 +157,12 @@ export function DashboardHome() {
           </div>
           <div className="space-y-4">
             {upcomingActivities.map((activity, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 bg-[#F5F7FA] rounded-lg border border-[#003366]/5">
+              <button
+                key={index}
+                type="button"
+                onClick={() => navigate(destinoPorTipo(activity.type))}
+                className="w-full text-left flex items-center gap-4 p-3 bg-[#F5F7FA] rounded-lg border border-[#003366]/5 transition-colors hover:bg-[#0066CC]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+              >
                 <div className="flex-1">
                   <h4 className="font-medium text-[#003366]">{activity.title}</h4>
                   <p className="text-sm text-[#6C757D]">
@@ -143,7 +178,7 @@ export function DashboardHome() {
                 >
                   {activity.status === "scheduled" ? "Agendado" : "Pendente"}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -165,7 +200,11 @@ export function DashboardHome() {
               </div>
             ))}
           </div>
-          <button className="mt-4 w-full text-center text-[#0066CC] hover:text-[#003366] py-2 border border-[#0066CC] rounded-lg hover:bg-[#0066CC]/5 transition-colors font-medium">
+          <button
+            type="button"
+            onClick={() => navigate("/dashboard/perfil")}
+            className="mt-4 w-full text-center text-[#0066CC] hover:text-[#003366] py-2 border border-[#0066CC] rounded-lg hover:bg-[#0066CC]/5 transition-colors font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+          >
             Ver Todas as Conquistas
           </button>
         </div>

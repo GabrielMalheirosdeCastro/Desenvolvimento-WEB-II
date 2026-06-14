@@ -9,6 +9,17 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-06-14
+
+### Added
+
+- **Dashboard interativo (item H2 / RF05, RF13)** (`apps/web/src/app/pages/DashboardHome.tsx`): os elementos do painel inicial que antes eram inertes passam a navegar para as telas existentes. Os tres cards de progresso viraram `button` acessiveis ("Metas da Semana" e "Horas de Estudo" -> `/dashboard/plano-estudos`; "Sequencia de Dias" -> `/dashboard/bem-estar`); cada item de "Proximas Atividades" navega conforme o `type` (Estudo/Entrega -> plano de estudos, Mentoria -> mentoria, Questionario -> bem-estar) via helper `destinoPorTipo`; e o botao "Ver Todas as Conquistas" passa a levar ao Perfil. _Nota:_ os numeros estaticos dos cards (85%, 25h) permanecem fora de escopo deste MINOR (H2 trata de clicabilidade/navegacao, nao de agregacao de metricas reais); nao foi criada rota dedicada de conquistas.
+
+### Changed
+
+- **Header navega para o Perfil (item H1 / RF05)** (`apps/web/src/app/layouts/DashboardLayout.tsx`): o bloco nome + avatar do cabecalho passa a ser um `Link` para `/dashboard/perfil` (com `aria-label`, realce de foco por teclado e `hover`), sem englobar a area de clique do sino de notificacoes.
+- Bump 1.8.0 -> **1.9.0** (MINOR — dashboard e header interativos, fechamento dos itens H1/H2 do Bloco H). `apps/web` e `apps/api` alinhados em 1.9.0.
+
 ## [1.8.0] - 2026-06-14
 
 ### Added

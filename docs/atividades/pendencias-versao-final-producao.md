@@ -4,7 +4,7 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-14
-**Versão atual em produção:** v1.8.0 (Fórum funcional e Biblioteca funcional — H6/H7)
+**Versão atual em produção:** v1.9.0 (Dashboard e header interativos — H1/H2)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -191,8 +191,8 @@ nome correto. **✅ Atingido.**
 
 | # | Pendência | RF | Origem (vídeo) | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|---|
-| H1 | **Header → Perfil** — avatar/nome no canto superior direito não navega; deve abrir menu ou levar a `/dashboard/perfil` | RF05 | 00:08 | 🟡 | P | ⬜ |
-| H2 | **Dashboard interativo** — "Ver todas as Conquistas" e demais painéis não são clicáveis | RF05, RF13 | 00:36 | 🟡 | M | ⬜ |
+| H1 | **Header → Perfil** — avatar/nome no canto superior direito não navegava. **Entregue na v1.9.0:** bloco nome+avatar virou `Link` para `/dashboard/perfil` (acessível por teclado, sem englobar o sino de notificações) | RF05 | 00:08 | 🟢 | P | ✅ |
+| H2 | **Dashboard interativo** — "Ver todas as Conquistas" e demais painéis não eram clicáveis. **Entregue na v1.9.0:** cards de progresso, itens de "Próximas Atividades" (destino por `type`) e "Ver Todas as Conquistas" passam a navegar para as telas existentes. _Números estáticos dos cards e rota dedicada de conquistas seguem fora de escopo._ | RF05, RF13 | 00:36 | 🟢 | M | ✅ |
 | H3 | **Plano de Estudos — persistir metas** — checkbox "Concluída" não gravava; "+ Nova Meta" inerte. **Entregue na v1.5.0:** CRUD real de metas (`GET/POST/PATCH/DELETE /api/metas`) persistido em `atividades_estudo`. _Drag-and-drop ("Organizar horários") adiado para entrega futura._ | RF02, RF03 | 00:49 | 🟢 | G | ✅ |
 | H4 | **Concentração — "Iniciar Exercício Guiado"** não aciona o timer/assistente de respiração. **Entregue na v1.7.0:** exercício de respiração guiada 4-7-8 client-side (inspirar/segurar/expirar) | RF04 | 01:06 | 🟡 | M | ✅ |
 | H5 | **Mentoria — "Entrar"** (sala/sessão ao vivo) não carrega; **"Cadastrar-me como Mentor(a)"** não dá feedback. **Entregue na v1.7.0:** fix `credentials:include`, `souMentor` via `eMentor`, lista real `GET /api/mentorias?papel=mentor`, cadastro escopado a `req.usuario.sub`. _Sala ao vivo segue fora de escopo._ | RF09 | 01:15 | 🟡 | M | ✅ |
@@ -257,7 +257,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
-4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0); restantes: H1, H2, H10
+4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0), H1/H2 ✅ (v1.9.0); restante: H10 (idioma, depende de i18n/D8)
 5. Bloco B (RF11 ✅ v1.6.0; RF16 prioritário)   → completar requisitos de alta prioridade
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
 7. Bloco B restante (RF14, RF15)        → features de menor prioridade
@@ -279,8 +279,8 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **21 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
-F8, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9** e a validação visual E4 parcial) + **A4 parcial**; ~31 em aberto.
+**Total:** 53 pendências mapeadas — **23 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
+F8, **H1**, **H2**, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9** e a validação visual E4 parcial) + **A4 parcial**; ~29 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
@@ -288,9 +288,9 @@ F8, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9** e a validação visua
 > (tornar as telas funcionais) já está **majoritariamente concluído**: o **H3** (Plano de Estudos com
 > CRUD real de metas) foi entregue na **v1.5.0**, a **Avaliação de Bem-estar (B1/RF11)** na **v1.6.0**
 > (com seed da persona em produção), a **varredura de mocks H4/H5/H8/H9** (Perfil real, Tema
-> persistido, Mentoria e Concentração funcionais) na **v1.7.0** e as telas de **Fórum (H6/RF08)** e
-> **Biblioteca (H7/RF06–RF07)** na **v1.8.0**. Restam do Bloco H apenas os itens de navegação/UX
-> **H1** (header→perfil), **H2** (dashboard interativo) e **H10** (idioma, dependente de i18n/D8). A
+> persistido, Mentoria e Concentração funcionais) na **v1.7.0**, as telas de **Fórum (H6/RF08)** e
+> **Biblioteca (H7/RF06–RF07)** na **v1.8.0** e o **dashboard/header interativos (H1/H2)** na
+> **v1.9.0**. Resta do Bloco H apenas o item **H10** (idioma, dependente de i18n/D8). A
 > versão final depende, em ordem de criticidade, de **completar o RBAC por papel (A4)**, **a feature
 > de RF de alta prioridade restante (RF16)**, **endurecimento de segurança/infra** e a **cobertura de
 > testes exigida pelo RNF08**, seguidos das features de menor prioridade e do fechamento acadêmico.
