@@ -132,6 +132,22 @@ INSERT INTO usuarios (matricula_institucional, email_institucional, nome, tipo_u
 VALUES ('20210042', 'mariana.costa@faesa.br', 'Mariana Costa', 'ALUNO', TRUE, '2004-07-22')
 ON CONFLICT (matricula_institucional) DO UPDATE SET e_mentor = TRUE;
 
+-- 7.5 Avaliacoes de bem-estar (RF11) — alimenta GET /api/bem-estar com
+-- historico real da persona. Idempotente por usuario via DELETE+INSERT.
+-- respostas guarda JSON {humor,estresse,sono} (escala 1..5); resultado e a
+-- classificacao calculada (positivo|atencao|critico).
+DELETE FROM questionarios_bem_estar
+WHERE usuario_id IN (SELECT id FROM usuarios WHERE matricula_institucional = '23110145');
+INSERT INTO questionarios_bem_estar (usuario_id, data_aplicacao, respostas, resultado, observacoes)
+SELECT u.id, v.data_aplicacao, v.respostas, v.resultado, v.observacoes
+FROM usuarios u
+CROSS JOIN (VALUES
+  (NOW() - INTERVAL '14 days', '{"humor":4,"estresse":2,"sono":4}', 'positivo', 'Semana tranquila, consegui manter a rotina de estudos.'),
+  (NOW() - INTERVAL '7 days',  '{"humor":3,"estresse":4,"sono":3}', 'atencao',  'Proximidade das provas aumentou o estresse.'),
+  (NOW() - INTERVAL '1 days',  '{"humor":4,"estresse":3,"sono":4}', 'positivo', 'Melhorei o sono e me sinto mais equilibrado.')
+) AS v(data_aplicacao, respostas, resultado, observacoes)
+WHERE u.matricula_institucional = '23110145';
+
 COMMIT;
 
 -- 8. Relatorio rapido
@@ -140,5 +156,6 @@ UNION ALL SELECT 'planos_estudo (Gabriel)', COUNT(*) FROM planos_estudo p JOIN u
 UNION ALL SELECT 'atividades_estudo (Gabriel)', COUNT(*) FROM atividades_estudo a JOIN usuarios u ON u.id=a.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'usuarios_conquistas (Gabriel)', COUNT(*) FROM usuarios_conquistas uc JOIN usuarios u ON u.id=uc.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'gamificacao (Gabriel)', COUNT(*) FROM gamificacao g JOIN usuarios u ON u.id=g.usuario_id WHERE u.matricula_institucional='23110145'
+UNION ALL SELECT 'bem_estar (Gabriel)', COUNT(*) FROM questionarios_bem_estar q JOIN usuarios u ON u.id=q.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'eventos (futuros)', COUNT(*) FROM eventos WHERE data_evento > NOW()
 UNION ALL SELECT 'mentores (e_mentor=true)', COUNT(*) FROM usuarios WHERE e_mentor=TRUE;

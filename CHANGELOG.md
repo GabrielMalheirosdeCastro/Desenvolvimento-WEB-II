@@ -9,6 +9,18 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-06-14
+
+### Added
+
+- **Avaliacao de Bem-estar (item B1 / RF11)** (`apps/api/routes.js`, `apps/web/src/app/pages/WellbeingPage.tsx`): nova funcionalidade de autoavaliacao periodica de bem-estar, persistida no banco via duas rotas **aditivas** e autenticadas (`requireAuth`), escopadas ao usuario da sessao (`usuario_id = req.usuario.sub`, prevenindo IDOR): `GET /api/bem-estar` (historico) e `POST /api/bem-estar` (registra avaliacao). Os dados sao gravados na tabela `questionarios_bem_estar` (ja existente — sem migracao): as escalas `humor`, `estresse` e `sono` (1 a 5) sao serializadas em JSON na coluna `respostas`, e o `resultado` (`positivo`/`atencao`/`critico`) e calculado no servidor como fonte unica de verdade (estresse e invertido no escore). Queries 100% parametrizadas, validacao de entrada (escalas inteiras 1-5, observacoes ate 500 chars) e respostas resilientes quando o banco esta indisponivel (`503`).
+- **Tela de Bem-estar na SPA** (`WellbeingPage.tsx`, rota `/dashboard/bem-estar` em `routes.tsx`, item de menu em `DashboardLayout.tsx`): formulario com tres escalas (humor, estresse, sono) e observacoes opcionais, cartoes de resumo (total de avaliacoes + classificacao da ultima) e historico cronologico. Estados de carregamento, vazio e erro tratados; `fetch` com `credentials: "include"` para enviar o cookie `httpOnly`.
+- **Seed de bem-estar da persona** (`packages/db/prisma/seed-prod.ts` e `seed-prod.sql`): a persona Gabriel (`23110145`) passa a ter 3 avaliacoes de bem-estar de exemplo (idempotente por `DELETE`+`INSERT`), para que a tela nasca com historico real em producao.
+
+### Changed
+
+- Bump 1.5.0 -> **1.6.0** (MINOR — nova funcionalidade: Avaliacao de Bem-estar / RF11). `apps/web` e `apps/api` alinhados em 1.6.0.
+
 ## [1.5.0] - 2026-06-13
 
 ### Added

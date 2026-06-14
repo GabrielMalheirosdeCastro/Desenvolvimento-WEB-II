@@ -2,6 +2,7 @@ import { Outlet, NavLink, useNavigate } from "react-router";
 import {
   Home,
   BookOpen,
+  HeartPulse,
   Brain,
   Users,
   MessageSquare,
@@ -33,6 +34,7 @@ export function DashboardLayout() {
   const menuItems = [
     { to: "/dashboard", icon: Home, label: "Início", end: true },
     { to: "/dashboard/plano-estudos", icon: BookOpen, label: "Plano de Estudos" },
+    { to: "/dashboard/bem-estar", icon: HeartPulse, label: "Bem-estar" },
     { to: "/dashboard/concentracao", icon: Brain, label: "Concentração" },
     { to: "/dashboard/mentoria", icon: Users, label: "Mentoria" },
     { to: "/dashboard/forum", icon: MessageSquare, label: "Fórum" },

@@ -243,6 +243,36 @@ async function main() {
     },
   });
 
+  // 7.5 Avaliacoes de bem-estar (RF11) — alimenta GET /api/bem-estar com
+  // historico real da persona. Limpa as do usuario + recria deterministicas.
+  // respostas guarda JSON {humor,estresse,sono} (escala 1..5).
+  await prisma.questionarioBemEstar.deleteMany({ where: { usuarioId: gabriel.id } });
+  const avaliacoesBemEstar = [
+    {
+      dataAplicacao: diasAtras(14, 9, 0),
+      respostas: JSON.stringify({ humor: 4, estresse: 2, sono: 4 }),
+      resultado: "positivo",
+      observacoes: "Semana tranquila, consegui manter a rotina de estudos.",
+    },
+    {
+      dataAplicacao: diasAtras(7, 9, 0),
+      respostas: JSON.stringify({ humor: 3, estresse: 4, sono: 3 }),
+      resultado: "atencao",
+      observacoes: "Proximidade das provas aumentou o estresse.",
+    },
+    {
+      dataAplicacao: diasAtras(1, 9, 0),
+      respostas: JSON.stringify({ humor: 4, estresse: 3, sono: 4 }),
+      resultado: "positivo",
+      observacoes: "Melhorei o sono e me sinto mais equilibrado.",
+    },
+  ];
+  for (const av of avaliacoesBemEstar) {
+    await prisma.questionarioBemEstar.create({
+      data: { usuarioId: gabriel.id, ...av },
+    });
+  }
+
   console.log("[seed-prod] OK");
   console.log("  persona principal:", gabriel.matriculaInstitucional, gabriel.nome);
   console.log("  plano:", plano.titulo, "(id=", plano.id, ")");
@@ -251,6 +281,7 @@ async function main() {
   console.log("  conquistas vinculadas:", conquistas.length);
   console.log("  gamificacao:", "streakAtual=12 streakRecorde=18 pontos=" + pontosTotais);
   console.log("  eventos:", eventos.length);
+  console.log("  bem_estar:", avaliacoesBemEstar.length);
 }
 
 main()

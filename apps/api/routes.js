@@ -697,3 +697,132 @@ apiRouter.delete('/metas/:id', requireAuth, async (req, res) => {
     }
     res.json({ source: 'db', removido: deleted[0].id });
 });
+
+// ==============================================================
+// AVALIACAO DE BEM-ESTAR (Bloco B — item B1 / RF11)
+// --------------------------------------------------------------
+// Questionario periodico de autoavaliacao, persistido na tabela
+// `questionarios_bem_estar` (ja existente em producao). As rotas
+// exigem sessao valida (requireAuth) e sao escopadas ao dono via
+// usuario_id = req.usuario.sub, evitando IDOR. Queries 100%
+// parametrizadas. O campo `respostas` guarda um JSON com as escalas
+// (humor, estresse, sono — de 1 a 5) e o `resultado` (classificacao
+// do bem-estar) e calculado no servidor, como fonte unica de verdade.
+//
+// Mapeamento UI <-> banco (questionarios_bem_estar):
+//   { humor, estresse, sono } <-> respostas (JSON em TEXT)
+//   resultado                  <-> resultado ('positivo'|'atencao'|'critico')
+//   observacoes                <-> observacoes
+//   dataAplicacao              <-> data_aplicacao
+// ==============================================================
+
+const BEM_ESTAR_OBS_MAX = 500;
+const BEM_ESTAR_ESCALAS = ['humor', 'estresse', 'sono'];
+
+/** Le com seguranca o JSON da coluna `respostas`, devolvendo objeto vazio em falha. */
+function parseRespostasBemEstar(bruto) {
+    if (!bruto) return {};
+    try {
+        const obj = JSON.parse(bruto);
+        return obj && typeof obj === 'object' ? obj : {};
+    } catch {
+        return {};
+    }
+}
+
+/** Converte uma linha de questionarios_bem_estar no formato consumido pela UI. */
+function mapBemEstarRow(row) {
+    const respostas = parseRespostasBemEstar(row.respostas);
+    return {
+        id: row.id,
+        humor: Number(respostas.humor) || null,
+        estresse: Number(respostas.estresse) || null,
+        sono: Number(respostas.sono) || null,
+        resultado: row.resultado || null,
+        observacoes: row.observacoes || '',
+        dataAplicacao: row.data_aplicacao
+            ? new Date(row.data_aplicacao).toISOString()
+            : null,
+    };
+}
+
+/**
+ * Valida que um valor de escala e inteiro entre 1 e 5. Retorna o numero
+ * normalizado ou null se invalido.
+ */
+function escalaValida(valor) {
+    const n = Number(valor);
+    if (!Number.isInteger(n) || n < 1 || n > 5) return null;
+    return n;
+}
+
+/**
+ * Classifica o bem-estar a partir das escalas. Humor e sono sao positivos
+ * (quanto maior, melhor); estresse e invertido (quanto maior, pior).
+ * Retorna 'positivo' | 'atencao' | 'critico'.
+ */
+function classificarBemEstar({ humor, estresse, sono }) {
+    // Escore 1..5 onde 5 = melhor. Estresse e invertido (6 - valor).
+    const escore = (humor + (6 - estresse) + sono) / 3;
+    if (escore >= 4) return 'positivo';
+    if (escore >= 2.5) return 'atencao';
+    return 'critico';
+}
+
+// --------------------------------------------------------------
+// GET /api/bem-estar — historico de avaliacoes do usuario logado.
+// --------------------------------------------------------------
+apiRouter.get('/bem-estar', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const rows = await query(
+        `SELECT id, usuario_id, data_aplicacao, respostas, resultado, observacoes
+             FROM questionarios_bem_estar
+             WHERE usuario_id = $1
+             ORDER BY data_aplicacao DESC NULLS LAST, id DESC`,
+        [req.usuario.sub],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({ source: 'db', items: rows.map(mapBemEstarRow) });
+});
+
+// --------------------------------------------------------------
+// POST /api/bem-estar — registra uma nova avaliacao.
+// Body: { humor: 1..5, estresse: 1..5, sono: 1..5, observacoes?: string }
+// --------------------------------------------------------------
+apiRouter.post('/bem-estar', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const escalas = {};
+    for (const chave of BEM_ESTAR_ESCALAS) {
+        const valor = escalaValida(req.body?.[chave]);
+        if (valor === null) {
+            return res.status(400).json({ error: 'escala_invalida', campo: chave });
+        }
+        escalas[chave] = valor;
+    }
+
+    const observacoes = String(req.body?.observacoes || '').trim();
+    if (observacoes.length > BEM_ESTAR_OBS_MAX) {
+        return res.status(400).json({ error: 'observacoes_invalidas' });
+    }
+
+    const resultado = classificarBemEstar(escalas);
+    const respostasJson = JSON.stringify(escalas);
+
+    const inserted = await query(
+        `INSERT INTO questionarios_bem_estar
+                (usuario_id, data_aplicacao, respostas, resultado, observacoes)
+             VALUES ($1, NOW(), $2, $3, $4)
+             RETURNING id, usuario_id, data_aplicacao, respostas, resultado, observacoes`,
+        [req.usuario.sub, respostasJson, resultado, observacoes || null],
+    );
+    if (!inserted || inserted.length === 0) {
+        return res.status(500).json({ error: 'falha_persistencia' });
+    }
+    res.status(201).json({ source: 'db', registro: mapBemEstarRow(inserted[0]) });
+});

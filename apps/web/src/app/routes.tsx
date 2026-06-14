@@ -6,6 +6,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { AtivarPage } from "./pages/AtivarPage";
 import { DashboardHome } from "./pages/DashboardHome";
 import { StudyPlanPage } from "./pages/StudyPlanPage";
+import { WellbeingPage } from "./pages/WellbeingPage";
 import { ConcentrationPage } from "./pages/ConcentrationPage";
 import { MentorshipPage } from "./pages/MentorshipPage";
 import { ForumPage } from "./pages/ForumPage";
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: DashboardHome },
           { path: "plano-estudos", Component: StudyPlanPage },
+          { path: "bem-estar", Component: WellbeingPage },
           { path: "concentracao", Component: ConcentrationPage },
           { path: "mentoria", Component: MentorshipPage },
           { path: "forum", Component: ForumPage },
