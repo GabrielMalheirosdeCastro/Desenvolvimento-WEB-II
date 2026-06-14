@@ -9,6 +9,19 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-06-14
+
+### Added
+
+- **Perfil real e editavel (itens H8/H9)** (`apps/api/routes.js`, `apps/web/src/app/pages/ProfilePage.tsx`): a pagina de Perfil deixa de exibir dados mockados e passa a carregar a identidade real do usuario autenticado via rota **aditiva** `GET /api/usuario/perfil` (`requireAuth`, escopada a `req.usuario.sub`), com `LEFT JOIN` em `matriculas_academicas -> turmas -> cursos` para trazer curso, periodo e CRA quando disponiveis. A edicao de `nome` e `email` e persistida via `PATCH /api/usuario/perfil`: validacao de entrada, **pre-checagem de e-mail duplicado** (`409 email_em_uso`) — necessaria porque `query()` engole erros e retorna `null` em vez de lancar — e, como o e-mail e a chave de login presente no JWT, o token e **reassinado** e o cookie `httpOnly` (`sa_token`) e atualizado no mesmo response para nao deslogar o usuario.
+- **Tema persistido (item H9)** (`apps/web/src/app/theme/ThemeContext.tsx`, `RootLayout.tsx`, `ProfilePage.tsx`): novo `ThemeProvider` que persiste a preferencia de tema (`claro`/`escuro`/`auto`) em `localStorage` (`sa_tema`), aplica a classe `.dark` no `documentElement` e respeita `prefers-color-scheme` no modo automatico (com listener `matchMedia`). O seletor de tema do Perfil passa a alterar o tema de fato. _Observacao:_ a aplicacao visual e parcial — apenas superficies baseadas em tokens reagem, pois varias telas usam cores fixas (hex) em vez de `var(--*)`; o refactor visual completo fica fora do escopo desta versao.
+- **Exercicio de respiracao guiada 4-7-8 (item H4)** (`apps/web/src/app/pages/ConcentrationPage.tsx`): o card de respiracao deixa de ser estatico e passa a executar um ciclo guiado client-side (Inspire 4s / Segure 7s / Expire 8s) com circulo animado, contagem regressiva por fase e contador de ciclos. O timer Pomodoro existente foi mantido.
+
+### Changed
+
+- **Mentoria funcional (item H5)** (`apps/api/routes.js`, `apps/web/src/app/pages/MentorshipPage.tsx`): a rota `POST /api/mentorias/cadastro-mentor` agora exige `requireAuth` e usa `WHERE id = $1` com `req.usuario.sub` (antes usava uma matricula fixa de placeholder — **correcao do bug de credenciais**), retornando `503` quando o banco esta indisponivel. A tela passa a hidratar o estado "sou mentor" a partir de `usuario.eMentor`, lista mentores reais via `GET /api/mentorias?papel=mentor` (com `credentials: "include"`), filtra por busca e remove o `fallback` otimista; o cadastro chama `recarregar()` para refletir o novo papel.
+- Bump 1.6.0 -> **1.7.0** (MINOR — varredura de mocks: Perfil real/editavel, tema persistido, mentoria funcional e exercicio de respiracao). `apps/web` e `apps/api` alinhados em 1.7.0.
+
 ## [1.6.0] - 2026-06-14
 
 ### Added

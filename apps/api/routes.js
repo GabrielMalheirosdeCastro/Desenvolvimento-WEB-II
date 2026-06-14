@@ -337,23 +337,19 @@ apiRouter.get('/mentorias', async (req, res) => {
 
 // --------------------------------------------------------------
 // POST /api/mentorias/cadastro-mentor  (Sprint 8c — gap GP-1)
-// Marca a persona logada como mentor (Usuario.e_mentor = TRUE).
-// Body opcional: { especialidades?: string[] } (ignorado por enquanto).
+// Marca o usuario logado como mentor (Usuario.e_mentor = TRUE).
+// Exige sessao valida (requireAuth) e escopa a operacao ao dono via
+// req.usuario.sub, evitando IDOR. Body opcional ignorado por enquanto.
 // --------------------------------------------------------------
-apiRouter.post('/mentorias/cadastro-mentor', async (_req, res) => {
+apiRouter.post('/mentorias/cadastro-mentor', requireAuth, async (req, res) => {
     if (!isConnected()) {
-        return res.json({
-            source: 'fallback',
-            persisted: false,
-            eMentor: true,
-            mensagem: 'Banco indisponível — cadastro registrado apenas no cliente.',
-        });
+        return res.status(503).json({ error: 'db_indisponivel' });
     }
     const updated = await query(
         `UPDATE usuarios SET e_mentor = TRUE
-             WHERE matricula_institucional = $1
+             WHERE id = $1
              RETURNING id, nome, e_mentor`,
-        [MATRICULA_PADRAO],
+        [req.usuario.sub],
     );
     if (!updated || updated.length === 0) {
         return res.status(404).json({ source: 'db', error: 'usuario_nao_encontrado' });
@@ -825,4 +821,161 @@ apiRouter.post('/bem-estar', requireAuth, async (req, res) => {
         return res.status(500).json({ error: 'falha_persistencia' });
     }
     res.status(201).json({ source: 'db', registro: mapBemEstarRow(inserted[0]) });
+});
+
+// ==============================================================
+// PERFIL DO USUARIO (Bloco H — item H8 / RF05)
+// --------------------------------------------------------------
+// Leitura e edicao dos dados de identidade do usuario logado,
+// persistidos na tabela `usuarios`. Exige sessao valida (requireAuth)
+// e escopa tudo ao dono via id = req.usuario.sub (anti-IDOR). Campos
+// academicos (periodo/CRA/curso) sao lidos por LEFT JOIN tolerante a
+// nulos em `matriculas_academicas` -> `turmas` -> `cursos`.
+//
+// Campos editaveis: `nome` e `email_institucional`. Como o e-mail e a
+// chave de login (presente no JWT), uma alteracao reemite o cookie de
+// sessao na mesma requisicao para nao deslogar o usuario.
+// ==============================================================
+
+const PERFIL_NOME_MAX = 150;
+const PERFIL_EMAIL_MAX = 150;
+
+/** Converte uma linha de perfil (usuarios + joins) no formato da UI. */
+function mapPerfilRow(row) {
+    return {
+        id: row.id,
+        nome: row.nome,
+        matricula: row.matricula_institucional,
+        email: row.email_institucional,
+        tipo: row.tipo_usuario,
+        eMentor: row.e_mentor === true,
+        dataNascimento: row.data_nascimento || null,
+        curso: row.curso_nome || null,
+        periodo: row.periodo_atual ?? null,
+        cra: row.cra ?? null,
+    };
+}
+
+/** Busca o perfil completo (identidade + dados academicos) do usuario. */
+async function buscarPerfil(usuarioId) {
+    const rows = await query(
+        `SELECT u.id, u.matricula_institucional, u.email_institucional, u.nome,
+                u.tipo_usuario, u.e_mentor, u.data_nascimento,
+                m.periodo_atual, m.cra, c.nome AS curso_nome
+             FROM usuarios u
+             LEFT JOIN matriculas_academicas m ON m.usuario_id = u.id
+             LEFT JOIN turmas t ON t.id = m.turma_id
+             LEFT JOIN cursos c ON c.id = t.curso_id
+             WHERE u.id = $1
+             ORDER BY m.id DESC NULLS LAST
+             LIMIT 1`,
+        [usuarioId],
+    );
+    if (rows === null) return null;
+    if (rows.length === 0) return undefined;
+    return mapPerfilRow(rows[0]);
+}
+
+// --------------------------------------------------------------
+// GET /api/usuario/perfil — perfil real do usuario logado.
+// --------------------------------------------------------------
+apiRouter.get('/usuario/perfil', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const perfil = await buscarPerfil(req.usuario.sub);
+    if (perfil === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (perfil === undefined) {
+        return res.status(404).json({ error: 'usuario_nao_encontrado' });
+    }
+    res.json({ source: 'db', perfil });
+});
+
+// --------------------------------------------------------------
+// PATCH /api/usuario/perfil — atualiza nome e/ou e-mail do logado.
+// Body: { nome?: string, email?: string }
+// --------------------------------------------------------------
+apiRouter.patch('/usuario/perfil', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+
+    const temNome = req.body?.nome !== undefined;
+    const temEmail = req.body?.email !== undefined;
+    if (!temNome && !temEmail) {
+        return res.status(400).json({ error: 'nada_para_atualizar' });
+    }
+
+    const nome = temNome ? String(req.body.nome).trim() : null;
+    const email = temEmail ? String(req.body.email).trim().toLowerCase() : null;
+
+    if (temNome && (nome.length < 2 || nome.length > PERFIL_NOME_MAX)) {
+        return res.status(400).json({ error: 'nome_invalido' });
+    }
+    if (temEmail) {
+        if (email.length > PERFIL_EMAIL_MAX || !EMAIL_FAESA_REGEX.test(email)) {
+            return res.status(400).json({ error: 'email_invalido' });
+        }
+        // Pre-checa duplicidade: query() engole erros e retorna null, entao a
+        // violacao de UNIQUE nao seria distinguivel de uma falha generica.
+        const emUso = await query(
+            `SELECT id FROM usuarios
+                 WHERE LOWER(email_institucional) = $1 AND id <> $2
+                 LIMIT 1`,
+            [email, req.usuario.sub],
+        );
+        if (emUso === null) {
+            return res.status(500).json({ error: 'falha_verificacao' });
+        }
+        if (emUso.length > 0) {
+            return res.status(409).json({ error: 'email_em_uso' });
+        }
+    }
+
+    // Monta o UPDATE dinamicamente apenas com os campos enviados.
+    const sets = [];
+    const params = [];
+    if (temNome) {
+        params.push(nome);
+        sets.push(`nome = $${params.length}`);
+    }
+    if (temEmail) {
+        params.push(email);
+        sets.push(`email_institucional = $${params.length}`);
+    }
+    params.push(req.usuario.sub);
+
+    const updated = await query(
+        `UPDATE usuarios SET ${sets.join(', ')}
+             WHERE id = $${params.length}
+             RETURNING id, matricula_institucional, email_institucional, nome,
+                       tipo_usuario, e_mentor`,
+        params,
+    );
+
+    if (updated === null) {
+        return res.status(500).json({ error: 'falha_atualizacao' });
+    }
+    if (updated.length === 0) {
+        return res.status(404).json({ error: 'usuario_nao_encontrado' });
+    }
+
+    const u = updated[0];
+    // Reemite o cookie de sessao para refletir nome/e-mail novos no JWT.
+    const token = signToken({
+        id: u.id,
+        nome: u.nome,
+        matricula: u.matricula_institucional,
+        email: u.email_institucional,
+        tipo: u.tipo_usuario,
+        eMentor: u.e_mentor,
+    });
+    if (token) {
+        res.cookie(COOKIE_NAME, token, cookieOptions());
+    }
+
+    const perfil = await buscarPerfil(u.id);
+    res.json({ source: 'db', perfil: perfil || mapPerfilRow(u) });
 });

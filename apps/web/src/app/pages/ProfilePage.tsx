@@ -1,11 +1,137 @@
-import { User, Mail, Book, Calendar, Award, Settings, Bell, Trophy, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  User,
+  Book,
+  Calendar,
+  Award,
+  Settings,
+  Bell,
+  Trophy,
+  TrendingUp,
+} from "lucide-react";
+import { useAuth } from "../auth/AuthContext";
+import { useTheme, type Tema } from "../theme/ThemeContext";
+import { iniciaisNome } from "../auth/nome";
+
+interface Perfil {
+  id: number;
+  nome: string;
+  matricula: string;
+  email: string;
+  tipo: string;
+  eMentor: boolean;
+  dataNascimento: string | null;
+  curso: string | null;
+  periodo: number | null;
+  cra: number | null;
+}
 
 export function ProfilePage() {
+  const { usuario, recarregar } = useAuth();
+  const { tema, definirTema } = useTheme();
+
+  const [perfil, setPerfil] = useState<Perfil | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+
+  // Campos editaveis (controlados).
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [salvando, setSalvando] = useState(false);
+  const [feedback, setFeedback] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
+
+  useEffect(() => {
+    let ativo = true;
+    (async () => {
+      setCarregando(true);
+      setErro(null);
+      try {
+        const res = await fetch("/api/usuario/perfil", {
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error("falha");
+        const data = await res.json();
+        if (!ativo) return;
+        const p: Perfil = data.perfil;
+        setPerfil(p);
+        setNome(p.nome ?? "");
+        setEmail(p.email ?? "");
+      } catch {
+        if (!ativo) return;
+        // Degrada para os dados ja presentes na sessao (useAuth).
+        if (usuario) {
+          setNome(usuario.nome ?? "");
+          setEmail(usuario.email ?? "");
+        }
+        setErro("Não foi possível carregar todos os dados do perfil.");
+      } finally {
+        if (ativo) setCarregando(false);
+      }
+    })();
+    return () => {
+      ativo = false;
+    };
+  }, [usuario]);
+
+  const nomeAtual = perfil?.nome ?? usuario?.nome ?? "";
+  const emailAtual = perfil?.email ?? usuario?.email ?? "";
+  const alterado = nome.trim() !== nomeAtual || email.trim() !== emailAtual;
+
+  async function salvarPerfil(e: React.FormEvent) {
+    e.preventDefault();
+    if (!alterado || salvando) return;
+    setSalvando(true);
+    setFeedback(null);
+
+    const payload: { nome?: string; email?: string } = {};
+    if (nome.trim() !== nomeAtual) payload.nome = nome.trim();
+    if (email.trim() !== emailAtual) payload.email = email.trim();
+
+    try {
+      const res = await fetch("/api/usuario/perfil", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        const cod = data?.error;
+        const msg =
+          cod === "email_em_uso"
+            ? "Este e-mail já está em uso por outra conta."
+            : cod === "email_invalido"
+              ? "Informe um e-mail institucional FAESA válido."
+              : cod === "nome_invalido"
+                ? "O nome informado é inválido."
+                : "Não foi possível salvar as alterações.";
+        setFeedback({ tipo: "erro", texto: msg });
+        return;
+      }
+      if (data?.perfil) {
+        setPerfil(data.perfil);
+        setNome(data.perfil.nome ?? "");
+        setEmail(data.perfil.email ?? "");
+      }
+      await recarregar();
+      setFeedback({ tipo: "ok", texto: "Perfil atualizado com sucesso." });
+    } catch {
+      setFeedback({ tipo: "erro", texto: "Falha de conexão ao salvar." });
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  const iniciais = iniciaisNome(nomeAtual, emailAtual);
+  const periodoLabel = perfil?.periodo != null ? `${perfil.periodo}º Período` : "—";
+  const craLabel = perfil?.cra != null ? String(perfil.cra) : "—";
+
   const badges = [
     { name: "Primeira Semana", icon: "🎓", earned: true },
     { name: "5 Horas de Estudo", icon: "📚", earned: true },
     { name: "Meta Cumprida", icon: "🎯", earned: true },
-    { name: "Mentor Ativo", icon: "👨‍🏫", earned: false },
+    { name: "Mentor Ativo", icon: "👨‍🏫", earned: perfil?.eMentor ?? false },
     { name: "10 Posts no Fórum", icon: "💬", earned: false },
     { name: "Sequência 30 Dias", icon: "🔥", earned: false },
   ];
@@ -68,15 +194,15 @@ export function ProfilePage() {
       </div>
 
       {/* Informações do Perfil */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+      <form
+        onSubmit={salvarPerfil}
+        className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10"
+      >
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-shrink-0">
             <div className="w-32 h-32 bg-[#003366] rounded-full flex items-center justify-center text-white text-4xl">
-              GM
+              {iniciais}
             </div>
-            <button className="mt-4 w-32 text-sm text-[#0066CC] hover:text-[#003366]">
-              Alterar Foto
-            </button>
           </div>
           <div className="flex-1 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -84,16 +210,17 @@ export function ProfilePage() {
                 <label className="block text-sm text-[#6C757D] mb-1">Nome Completo</label>
                 <input
                   type="text"
-                  value="Gabriel Malheiros de Castro"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  disabled={carregando || salvando}
                   className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
-                  readOnly
                 />
               </div>
               <div>
                 <label className="block text-sm text-[#6C757D] mb-1">Matrícula</label>
                 <input
                   type="text"
-                  value="23110145"
+                  value={perfil?.matricula ?? usuario?.matricula ?? "—"}
                   className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
                   readOnly
                 />
@@ -102,7 +229,9 @@ export function ProfilePage() {
                 <label className="block text-sm text-[#6C757D] mb-1">E-mail Institucional</label>
                 <input
                   type="email"
-                  value="gabriel.castro@aluno.faesa.br"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={carregando || salvando}
                   className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
                 />
               </div>
@@ -110,7 +239,7 @@ export function ProfilePage() {
                 <label className="block text-sm text-[#6C757D] mb-1">Curso</label>
                 <input
                   type="text"
-                  value="Análise e Desenvolvimento de Sistemas"
+                  value={perfil?.curso ?? "—"}
                   className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
                   readOnly
                 />
@@ -119,7 +248,7 @@ export function ProfilePage() {
                 <label className="block text-sm text-[#6C757D] mb-1">Período</label>
                 <input
                   type="text"
-                  value="1º Período"
+                  value={periodoLabel}
                   className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
                   readOnly
                 />
@@ -128,18 +257,34 @@ export function ProfilePage() {
                 <label className="block text-sm text-[#6C757D] mb-1">CRA</label>
                 <input
                   type="text"
-                  value="8.5"
+                  value={craLabel}
                   className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
                   readOnly
                 />
               </div>
             </div>
-            <button className="bg-[#003366] hover:bg-[#004080] text-white px-6 py-2 rounded-lg transition-colors">
-              Salvar Alterações
+
+            {erro && <p className="text-sm text-[#FF8C00]">{erro}</p>}
+            {feedback && (
+              <p
+                className={`text-sm ${
+                  feedback.tipo === "ok" ? "text-[#28A745]" : "text-[#dc2626]"
+                }`}
+              >
+                {feedback.texto}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={!alterado || salvando || carregando}
+              className="bg-[#003366] hover:bg-[#004080] disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+            >
+              {salvando ? "Salvando..." : "Salvar Alterações"}
             </button>
           </div>
         </div>
-      </div>
+      </form>
 
       {/* Estatísticas e Histórico de Pontos */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -234,18 +379,18 @@ export function ProfilePage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm text-[#6C757D] mb-2">Tema</label>
-              <select className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none">
-                <option>Claro</option>
-                <option>Escuro</option>
-                <option>Automático</option>
+              <select
+                value={tema}
+                onChange={(e) => definirTema(e.target.value as Tema)}
+                className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
+              >
+                <option value="claro">Claro</option>
+                <option value="escuro">Escuro</option>
+                <option value="auto">Automático</option>
               </select>
-            </div>
-            <div>
-              <label className="block text-sm text-[#6C757D] mb-2">Idioma</label>
-              <select className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none">
-                <option>Português (BR)</option>
-                <option>English (US)</option>
-              </select>
+              <p className="mt-1 text-xs text-[#6C757D]">
+                A preferência é salva neste dispositivo.
+              </p>
             </div>
             <label className="flex items-center justify-between cursor-pointer">
               <span className="text-[#003366]">Perfil público</span>

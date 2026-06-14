@@ -1,53 +1,100 @@
-import { useState } from "react";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { useEffect, useState } from "react";
 import { Users, MessageCircle, Calendar, Star, Search, CheckCircle2 } from "lucide-react";
+import { useAuth } from "../auth/AuthContext";
+
+interface Mentor {
+  id: number | string;
+  nome: string;
+  curso?: string;
+  periodo?: string;
+  cra?: number;
+  especialidades?: string[];
+  email?: string;
+  rating?: number;
+  sessoes?: number;
+}
 
 export function MentorshipPage() {
+  const { usuario, recarregar } = useAuth();
   const [modo, setModo] = useState<"buscar" | "mentor">("buscar");
   const [souMentor, setSouMentor] = useState(false);
   const [enviandoCadastro, setEnviandoCadastro] = useState(false);
 
+  const [mentores, setMentores] = useState<Mentor[]>([]);
+  const [carregandoMentores, setCarregandoMentores] = useState(true);
+  const [busca, setBusca] = useState("");
+
+  // Hidrata o estado inicial a partir da sessao (e_mentor do JWT).
+  useEffect(() => {
+    if (usuario?.eMentor) setSouMentor(true);
+  }, [usuario]);
+
+  // Carrega a lista real de mentores cadastrados.
+  useEffect(() => {
+    let ativo = true;
+    (async () => {
+      setCarregandoMentores(true);
+      try {
+        const r = await fetch("/api/mentorias?papel=mentor", {
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        });
+        const j = await r.json();
+        if (!ativo) return;
+        const items: Mentor[] = Array.isArray(j?.items)
+          ? j.items.map((m: Record<string, unknown>) => ({
+              id: (m.id as number | string) ?? (m.matricula as string) ?? (m.nome as string),
+              nome: String(m.nome ?? ""),
+              curso: (m.curso as string) ?? (m.tipo as string) ?? undefined,
+              periodo: m.periodo != null ? String(m.periodo) : undefined,
+              cra: typeof m.cra === "number" ? m.cra : undefined,
+              especialidades: Array.isArray(m.especialidades)
+                ? (m.especialidades as string[])
+                : undefined,
+              email: (m.email as string) ?? undefined,
+            }))
+          : [];
+        setMentores(items);
+      } catch {
+        if (ativo) setMentores([]);
+      } finally {
+        if (ativo) setCarregandoMentores(false);
+      }
+    })();
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
   async function cadastrarComoMentor() {
     setEnviandoCadastro(true);
     try {
-      const r = await fetch("/api/mentorias/cadastro-mentor", { method: "POST" });
+      const r = await fetch("/api/mentorias/cadastro-mentor", {
+        method: "POST",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      });
       const j = await r.json();
-      if (j?.eMentor) setSouMentor(true);
+      if (j?.eMentor) {
+        setSouMentor(true);
+        await recarregar();
+      }
     } catch {
-      setSouMentor(true); // fallback otimista
+      // Sem persistencia confirmada: nao marca otimisticamente.
+    } finally {
+      setEnviandoCadastro(false);
     }
-    setEnviandoCadastro(false);
   }
 
-  const mentors = [
-    {
-      name: "Ana Silva",
-      course: "Análise e Desenvolvimento de Sistemas",
-      period: "7º Período",
-      cra: 8.5,
-      specialties: ["Programação", "Estrutura de Dados"],
-      rating: 4.9,
-      sessions: 23,
-    },
-    {
-      name: "Carlos Santos",
-      course: "Engenharia de Software",
-      period: "6º Período",
-      cra: 8.2,
-      specialties: ["Banco de Dados", "DevOps"],
-      rating: 4.8,
-      sessions: 18,
-    },
-    {
-      name: "Mariana Costa",
-      course: "Ciência da Computação",
-      period: "8º Período",
-      cra: 9.0,
-      specialties: ["Algoritmos", "IA"],
-      rating: 5.0,
-      sessions: 31,
-    },
-  ];
+  const mentoresFiltrados = mentores.filter((m) => {
+    const termo = busca.trim().toLowerCase();
+    if (!termo) return true;
+    return (
+      m.nome.toLowerCase().includes(termo) ||
+      (m.curso ?? "").toLowerCase().includes(termo) ||
+      (m.especialidades ?? []).some((e) => e.toLowerCase().includes(termo))
+    );
+  });
 
   const myMentoringSessions = [
     {
@@ -181,41 +228,55 @@ export function MentorshipPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar por especialidade, curso ou nome..."
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
             />
           </div>
         </div>
 
+        {carregandoMentores ? (
+          <p className="text-gray-600">Carregando mentores...</p>
+        ) : mentoresFiltrados.length === 0 ? (
+          <p className="text-gray-600">
+            Nenhum mentor cadastrado ainda. Seja o primeiro: use a aba “Sou mentor(a)”.
+          </p>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mentors.map((mentor, index) => (
-            <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+          {mentoresFiltrados.map((mentor) => (
+            <div key={mentor.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl">
-                  {mentor.name.split(" ").map(n => n[0]).join("")}
+                  {mentor.nome.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                 </div>
-                <div className="flex items-center gap-1 text-yellow-500">
-                  <Star size={16} fill="currentColor" />
-                  <span className="text-sm text-gray-900">{mentor.rating}</span>
+                {mentor.rating != null && (
+                  <div className="flex items-center gap-1 text-yellow-500">
+                    <Star size={16} fill="currentColor" />
+                    <span className="text-sm text-gray-900">{mentor.rating}</span>
+                  </div>
+                )}
+              </div>
+
+              <h3 className="font-medium mb-1">{mentor.nome}</h3>
+              {mentor.curso && <p className="text-sm text-gray-600 mb-1">{mentor.curso}</p>}
+              {(mentor.periodo || mentor.cra != null) && (
+                <p className="text-sm text-gray-600 mb-3">
+                  {mentor.periodo ? `${mentor.periodo}º Período` : ""}
+                  {mentor.periodo && mentor.cra != null ? " • " : ""}
+                  {mentor.cra != null ? `CRA: ${mentor.cra}` : ""}
+                </p>
+              )}
+
+              {mentor.especialidades && mentor.especialidades.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {mentor.especialidades.map((especialidade, i) => (
+                    <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
+                      {especialidade}
+                    </span>
+                  ))}
                 </div>
-              </div>
-
-              <h3 className="font-medium mb-1">{mentor.name}</h3>
-              <p className="text-sm text-gray-600 mb-1">{mentor.course}</p>
-              <p className="text-sm text-gray-600 mb-3">{mentor.period} • CRA: {mentor.cra}</p>
-
-              <div className="flex flex-wrap gap-2 mb-4">
-                {mentor.specialties.map((specialty, i) => (
-                  <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
-                    {specialty}
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                <Users size={16} />
-                <span>{mentor.sessions} sessões realizadas</span>
-              </div>
+              )}
 
               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors">
                 Solicitar Mentoria
@@ -223,6 +284,7 @@ export function MentorshipPage() {
             </div>
           ))}
         </div>
+        )}
       </div>
         </>
       )}

@@ -7,6 +7,17 @@ export function ConcentrationPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [mode, setMode] = useState<"work" | "break">("work");
 
+  // Exercicio de respiracao guiada 4-7-8 (client-side, RF04 / item H4).
+  const fasesRespiracao = [
+    { nome: "Inspire", instrucao: "Inspire pelo nariz", segundos: 4, escala: "scale-110" },
+    { nome: "Segure", instrucao: "Segure a respiração", segundos: 7, escala: "scale-110" },
+    { nome: "Expire", instrucao: "Expire pela boca", segundos: 8, escala: "scale-75" },
+  ];
+  const [respirando, setRespirando] = useState(false);
+  const [faseIdx, setFaseIdx] = useState(0);
+  const [segRestante, setSegRestante] = useState(fasesRespiracao[0].segundos);
+  const [ciclos, setCiclos] = useState(0);
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isRunning && pomodoroTime > 0) {
@@ -19,6 +30,48 @@ export function ConcentrationPage() {
     }
     return () => clearInterval(interval);
   }, [isRunning, pomodoroTime]);
+
+  // Ciclo da respiracao guiada: avanca de fase ao zerar a contagem.
+  useEffect(() => {
+    if (!respirando) return;
+    const interval = setInterval(() => {
+      setSegRestante((prev) => {
+        if (prev > 1) return prev - 1;
+        // Troca de fase; ao voltar para "Inspire" conta um ciclo completo.
+        setFaseIdx((idxAtual) => {
+          const proximo = (idxAtual + 1) % fasesRespiracao.length;
+          if (proximo === 0) setCiclos((c) => c + 1);
+          return proximo;
+        });
+        // Mantem em 1 ate o efeito de [faseIdx] recarregar a contagem da nova fase.
+        return 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [respirando]);
+
+  // Recarrega a contagem sempre que a fase muda.
+  useEffect(() => {
+    setSegRestante(fasesRespiracao[faseIdx].segundos);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [faseIdx]);
+
+  const faseAtual = fasesRespiracao[faseIdx];
+
+  function alternarRespiracao() {
+    if (respirando) {
+      setRespirando(false);
+      setFaseIdx(0);
+      setSegRestante(fasesRespiracao[0].segundos);
+      setCiclos(0);
+    } else {
+      setFaseIdx(0);
+      setSegRestante(fasesRespiracao[0].segundos);
+      setCiclos(0);
+      setRespirando(true);
+    }
+  }
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -153,28 +206,47 @@ export function ConcentrationPage() {
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="p-8">
             <h2 className="text-2xl mb-4">Exercício de Respiração 4-7-8</h2>
-            <div className="space-y-4 mb-6">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-blue-600">1</span>
+            {respirando ? (
+              <div className="flex flex-col items-center text-center mb-6">
+                <div
+                  className={`w-40 h-40 rounded-full bg-blue-100 border-4 border-blue-500 flex items-center justify-center transition-transform duration-1000 ease-in-out ${faseAtual.escala}`}
+                >
+                  <div>
+                    <div className="text-3xl font-mono text-blue-700">{segRestante}</div>
+                    <div className="text-sm text-blue-600">{faseAtual.nome}</div>
+                  </div>
                 </div>
-                <p className="text-gray-700">Inspire pelo nariz contando até 4</p>
+                <p className="mt-4 text-gray-700">{faseAtual.instrucao}</p>
+                <p className="mt-1 text-sm text-gray-500">Ciclos completos: {ciclos}</p>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-blue-600">2</span>
+            ) : (
+              <div className="space-y-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-600">1</span>
+                  </div>
+                  <p className="text-gray-700">Inspire pelo nariz contando até 4</p>
                 </div>
-                <p className="text-gray-700">Segure a respiração contando até 7</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-blue-600">3</span>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-600">2</span>
+                  </div>
+                  <p className="text-gray-700">Segure a respiração contando até 7</p>
                 </div>
-                <p className="text-gray-700">Expire pela boca contando até 8</p>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-600">3</span>
+                  </div>
+                  <p className="text-gray-700">Expire pela boca contando até 8</p>
+                </div>
               </div>
-            </div>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors">
-              Iniciar Exercício Guiado
+            )}
+            <button
+              type="button"
+              onClick={alternarRespiracao}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+            >
+              {respirando ? "Parar Exercício" : "Iniciar Exercício Guiado"}
             </button>
           </div>
           <div className="h-64 md:h-auto">
