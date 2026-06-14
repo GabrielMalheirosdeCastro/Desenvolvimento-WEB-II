@@ -210,9 +210,14 @@ export function MentorshipPage() {
                   </p>
                   <p className="text-gray-900">{session.time}</p>
                 </div>
-                <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                <button
+                  type="button"
+                  disabled
+                  title="Sala de sessao ao vivo em breve"
+                  className="flex items-center gap-2 bg-gray-300 text-gray-600 px-4 py-2 rounded-lg cursor-not-allowed"
+                >
                   <MessageCircle size={18} />
-                  Entrar
+                  Em breve
                 </button>
               </div>
             </div>
@@ -279,8 +284,13 @@ export function MentorshipPage() {
                 </div>
               )}
 
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors">
-                Solicitar Mentoria
+              <button
+                type="button"
+                disabled
+                title="Solicitacao de mentoria em breve"
+                className="w-full bg-gray-200 text-gray-600 py-2 rounded-lg cursor-not-allowed"
+              >
+                Solicitar Mentoria (em breve)
               </button>
             </div>
           ))}
@@ -313,7 +323,11 @@ export function MentorshipPage() {
                 Faça networking com outros estudantes
               </li>
             </ul>
-            <button className="bg-white text-purple-600 hover:bg-gray-100 px-6 py-3 rounded-lg transition-colors">
+            <button
+              type="button"
+              onClick={() => setModo("mentor")}
+              className="bg-white text-purple-600 hover:bg-gray-100 px-6 py-3 rounded-lg transition-colors"
+            >
               Candidatar-se como Mentor
             </button>
           </div>
