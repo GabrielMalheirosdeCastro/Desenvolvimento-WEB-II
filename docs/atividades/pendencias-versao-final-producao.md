@@ -4,8 +4,8 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-14
-**Versão atual em produção:** v1.9.0 (Dashboard e header interativos — H1/H2)
-**Próximas versões planejadas:** v1.9.1 (seed Fórum/Biblioteca) · v1.10.0 (RBAC A4 + Painel de Coordenação RF14)
+**Versão atual em produção:** v1.12.0 (Notificações RF10 · Eventos RF12 · Gamificação/Ranking RF13 — Bloco B fechado, exceto B3/RF15)
+**Próximas versões planejadas:** Bloco D/E (qualidade, testes, RNFs) · B3/RF15 (chat com NAP) · Bloco G (documentação/entrega)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -105,6 +105,26 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > — ver [docs/plano-2026-06-14-v1.10.0-rbac-a4.md](../plano-2026-06-14-v1.10.0-rbac-a4.md). O
 > **roadmap completo de versões** até a versão final está em
 > [docs/plano-2026-06-14-roadmap-versoes-finais.md](../plano-2026-06-14-roadmap-versoes-finais.md).
+
+> **Atualização 2026-06-14 — Bloco B praticamente fechado (B2 v1.11.0; B5/B6/B7 v1.12.0).** O
+> **Chatbot de Acolhimento (B2 / RF16)** foi entregue na **v1.11.0** (motor curado local, sem LLM
+> externa, com rede de segurança de crise NAP + CVV 188). Na sequência, a **v1.12.0** entregou três
+> requisitos de uma vez: **Notificações (B5 / RF10)** — sino real no cabeçalho com
+> `GET /api/notificacoes` (+ contador de não lidas), `POST /api/notificacoes/:id/marcar-lida` e
+> `/marcar-todas-lidas`, todos escopados ao dono (anti-IDOR) e com `NotificationBell` em fetch real
+> e atualização otimista; **Eventos (B6 / RF12)** — página dedicada `/dashboard/eventos` com item de
+> menu próprio, `POST /api/eventos/:id/inscrever` (idempotente via `ON CONFLICT DO NOTHING`) e
+> `GET /api/eventos/minhas`, removendo a antiga aba de eventos da Biblioteca; **Gamificação
+> (B7 / RF13)** — `GET /api/gamificacao/perfil` (pontos, conquistas, histórico e *streak* reais) e
+> `GET /api/gamificacao/ranking` (função `RANK()` do PostgreSQL, nomes reduzidos por privacidade e
+> destaque do próprio aluno), exibidos como seção no Perfil. O `seed-prod.sql` foi estendido com
+> notificações da persona, alunos de demonstração e gamificação dos demais alunos (ranking com 4
+> entradas) e **aplicado em produção via SSH**. Bump nos três `package.json`, `CHANGELOG` e backlog.
+> Build e suítes core (`test-auth-core`, `test-chatbot-core`) verdes; `/version` e `/healthz`
+> confirmam **1.12.0**. **Validação visual via Playwright MCP** registrou as três telas (sino com 4
+> notificações reais, eventos com inscrição persistida, perfil com ranking Gabriel 1º · Mariana ·
+> Lucas · Beatriz). Com isso o **Bloco B** fica reduzido a **um único item em aberto: B3 / RF15**
+> (chat com suporte psicopedagógico).
 
 ### Legenda
 
@@ -284,16 +304,18 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
 4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0), H1/H2 ✅ (v1.9.0); restante: H10 (idioma, depende de i18n/D8)
-5. Bloco B (RF11 ✅ v1.6.0; RF16 prioritário)   → completar requisitos de alta prioridade
+5. Bloco B (RF11 ✅ v1.6.0; RF16 ✅ v1.11.0; RF10/RF12/RF13 ✅ v1.12.0)   → resta apenas B3/RF15 (chat com NAP)
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
-7. Bloco B restante (RF14, RF15)        → features de menor prioridade
+7. Bloco B restante (RF15 — chat com NAP)        → feature de menor prioridade
 8. Bloco G (documentação/entrega)       → fechamento acadêmico
 ```
 
-> **De onde continuar (2026-06-14):** o **próximo passo imediato** é a **v1.9.1** (aplicar o seed de
-> Fórum/Biblioteca em produção, fechando o achado de `fallback` e o item C4), seguida da **v1.10.0**
-> (RBAC A4 + Painel de Coordenação RF14). A sequência completa de versões até a versão final está
-> detalhada no **roadmap** —
+> **De onde continuar (2026-06-14):** o **Bloco B** está praticamente fechado (resta só **B3/RF15**,
+> chat com o NAP). Com os requisitos funcionais de alta/média prioridade entregues, o **próximo passo
+> recomendado** é o **Bloco D/E** (qualidade: testes automatizados de UI/E2E via Playwright,
+> cobertura dos RNFs) para endurecer a aplicação para "produção de verdade", deixando **B3/RF15** e o
+> **Bloco G** (documentação final no LaTeX/Overleaf + roteiro de demonstração para a banca) como
+> fechamento. A sequência completa de versões está no **roadmap** —
 > [docs/plano-2026-06-14-roadmap-versoes-finais.md](../plano-2026-06-14-roadmap-versoes-finais.md).
 
 
