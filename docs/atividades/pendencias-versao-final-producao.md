@@ -4,7 +4,7 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-13
-**Versão atual em produção:** v1.3.2 (protótipo funcional, banco populado)
+**Versão atual em produção:** v1.4.1 (autenticação local real + nome do usuário na área logada)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -16,10 +16,10 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 (RF01–RF16 / RNF01–RNF10) e no documento LaTeX do projeto.
 
 > **Estado atual em uma frase:** o protótipo está no ar, com SPA React + API Express + PostgreSQL
-> conectado, mas opera **sem autenticação real**, com **dados de exemplo (fallback)** e com as
-> telas funcionando apenas como **mocks somente-leitura** — os botões de ação (criar, salvar,
-> iniciar, alternar) **não disparam operações reais**. As lacunas abaixo são o que separa o
-> protótipo da versão final.
+> conectado e **autenticação local real** (login e-mail+senha, `bcrypt`/`JWT`, logout — v1.4.1).
+> Porém as telas internas ainda operam com **dados parcialmente mocados** e os botões de ação
+> (criar, salvar, iniciar, alternar) **não disparam operações reais de escrita** (Bloco H). As
+> lacunas abaixo são o que separa o protótipo da versão final.
 
 > **Atualização 2026-06-13 — auditoria de usabilidade (vídeo).** Uma varredura manual de todas as
 > telas (executada sobre a aplicação real em <https://acolhimento.faesa.gmcsistemas.com.br>)
@@ -34,6 +34,17 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > subiu para **v1.3.2**. Durante o redeploy foi diagnosticado e corrigido um **OOM no build do
 > EasyPanel** (VPS sem swap) — mitigado com 4 GiB de swap persistente. Detalhes em
 > [docs/plano-2026-06-13-seed-producao-e-autodeploy.md](../plano-2026-06-13-seed-producao-e-autodeploy.md).
+
+> **Atualização 2026-06-13 — Bloco A entregue (autenticação local + login real).** Os itens
+> **A1, A3, A5 e A6** foram concluídos e publicados (**v1.4.0**, corrigida em **v1.4.1**). O sistema
+> agora exige login com **e-mail institucional + senha** (hash `bcrypt` cost 12, sessão `JWT` HS256
+> em cookie `httpOnly` + `SameSite=Strict` + `Secure`), com middleware `requireAuth`, rota `/login`
+> como porta de entrada e **logout real**. O `nome` cadastrado passou a ser exibido na área logada
+> (cabeçalho + saudação), com tratamento de títulos acadêmicos (ex.: "Prof. Ricardo Almeida" →
+> "Ricardo"). O **A4** (RBAC por papel) ficou **parcial**: existem `requireRole` e a coluna
+> `tipo_usuario` (`ALUNO`/`DOCENTE`) + flag `eMentor`, mas o trio aluno/mentor/coordenador ainda não
+> está completo. Como medida de segurança, o `JWT_SECRET` de produção foi **rotacionado** após ter
+> sido exposto em texto durante a sessão.
 
 ### Legenda
 
@@ -52,20 +63,25 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 
 | # | Pendência | RF/RNF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
-| A1 | Implementar autenticação real local: **cadastro e login com e-mail + senha** (sem SSO institucional) | RF01 | 🔴 | G | ⬜ |
+| A1 | Implementar autenticação real local: **cadastro e login com e-mail + senha** (sem SSO institucional) | RF01 | 🔴 | G | ✅ |
 | A2 | ~~Integração SSO / OAuth 2.0 com o provedor institucional FAESA~~ — **DESCARTADO**: sem autorização institucional para usar o provedor de identidade da FAESA. Substituído por autenticação local própria (A1/A3) | RF01, RNF03 | — | — | ❌ |
-| A3 | Sessão/JWT, hash de senha com **`bcrypt`** (`passwordHash`) e middleware de proteção de rotas | RF01, RNF03 | 🔴 | M | ⬜ |
-| A4 | Controle de acesso por papel (aluno / mentor / coordenador) | RF14 | 🔴 | M | ⬜ |
-| A5 | Reverter o redirect `/` → `/dashboard`; tornar `/login` a porta de entrada real | RF01 | 🔴 | P | ⬜ |
-| A6 | **Logout real** — o botão "Sair" hoje apenas recarrega o Dashboard; precisa encerrar sessão e voltar a `/login` (achado do vídeo, 00:28) | RF01 | 🔴 | P | ⬜ |
+| A3 | Sessão/JWT, hash de senha com **`bcrypt`** (`passwordHash`) e middleware de proteção de rotas | RF01, RNF03 | 🔴 | M | ✅ |
+| A4 | Controle de acesso por papel (aluno / mentor / coordenador) | RF14 | 🔴 | M | 🟨 |
+| A5 | Reverter o redirect `/` → `/dashboard`; tornar `/login` a porta de entrada real | RF01 | 🔴 | P | ✅ |
+| A6 | **Logout real** — o botão "Sair" hoje apenas recarrega o Dashboard; precisa encerrar sessão e voltar a `/login` (achado do vídeo, 00:28) | RF01 | 🔴 | P | ✅ |
 
 > **Decisão de escopo (2026-06-13):** a autenticação **não** usará SSO/OAuth 2.0 com o provedor
 > institucional FAESA (sem autorização). O login será **local**: cadastro por e-mail + senha,
 > com hash `bcrypt` e sessão JWT. O e-mail institucional pode continuar sendo **validado por
 > formato** (domínio FAESA) no cadastro, mas sem federação de identidade externa.
 
+> **Status (2026-06-13, v1.4.1):** A1, A3, A5 e A6 ✅ entregues. Falta apenas **A4** (RBAC completo
+> por papel aluno/mentor/coordenador) — a infraestrutura (`requireRole`, `tipo_usuario`, `eMentor`)
+> já existe, mas o modelo de três papéis ainda não foi finalizado.
+
 **Critério de pronto:** usuário só acessa o dashboard após autenticar com e-mail + senha; "Sair"
-encerra a sessão de verdade; rotas de coordenação exigem papel `coordenador`.
+encerra a sessão de verdade; rotas de coordenação exigem papel `coordenador`. **Parcialmente
+atingido:** login/logout reais ✅; falta o RBAC completo (A4).
 
 ---
 
@@ -137,7 +153,7 @@ nome correto. **✅ Atingido.**
 |---|---|---|---|---|---|---|
 | H1 | **Header → Perfil** — avatar/nome no canto superior direito não navega; deve abrir menu ou levar a `/dashboard/perfil` | RF05 | 00:08 | 🟡 | P | ⬜ |
 | H2 | **Dashboard interativo** — "Ver todas as Conquistas" e demais painéis não são clicáveis | RF05, RF13 | 00:36 | 🟡 | M | ⬜ |
-| H3 | **Plano de Estudos — persistir metas** — checkbox "Concluída" não grava; "+ Nova Meta" e "Organizar horários" inertes (CRUD + drag-and-drop) | RF02, RF03 | 00:49 | 🔴 | G | ⬜ |
+| H3 | **Plano de Estudos — persistir metas** — checkbox "Concluída" não gravava; "+ Nova Meta" inerte. **Entregue na v1.5.0:** CRUD real de metas (`GET/POST/PATCH/DELETE /api/metas`) persistido em `atividades_estudo`. _Drag-and-drop ("Organizar horários") adiado para entrega futura._ | RF02, RF03 | 00:49 | 🟢 | G | ✅ |
 | H4 | **Concentração — "Iniciar Exercício Guiado"** não aciona o timer/assistente de respiração | RF04 | 01:06 | 🟡 | M | ⬜ |
 | H5 | **Mentoria — "Entrar"** (sala/sessão ao vivo) não carrega; **"Cadastrar-me como Mentor(a)"** não dá feedback (endpoint existe, falta ligar a UI) | RF09 | 01:15 | 🟡 | M | 🟨 |
 | H6 | **Fórum — "+ Novo Tópico"** não abre editor; falta criação/persistência de tópicos e comentários | RF08 | 01:32 | 🟡 | M | ⬜ |
@@ -200,8 +216,8 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 ```
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
-3. Bloco A (autenticação local e-mail+senha + logout)   → bloqueador de todas as features com papel
-4. Bloco H (tornar as telas mock funcionais)    → fecha o gap exposto na auditoria do vídeo
+3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
+4. Bloco H (tornar as telas mock funcionais)    → fecha o gap exposto na auditoria do vídeo  ← PRÓXIMO
 5. Bloco B (RF11, RF16 prioritários)   → completar requisitos de alta prioridade
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
 7. Bloco B restante (RF14, RF15)        → features de menor prioridade
@@ -223,15 +239,16 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **9 concluídas** (C1, C2, C3, C5, F1, F2, F3, F8 e a
-validação visual E4 parcial); 44 em aberto.
+**Total:** 53 pendências mapeadas — **13 concluídas** (A1, A3, A5, A6, C1, C2, C3, C5, F1, F2, F3,
+F8 e a validação visual E4 parcial) + **A4 parcial**; ~39 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
-> banco conectado e 9 dos 16 RFs em nível de UI/endpoint de leitura). A auditoria de usabilidade
-> (vídeo, 2026-06-13) expôs o principal gap funcional: as telas são **mocks somente-leitura** — os
-> botões de ação não persistem nada (Bloco H). A versão final depende, em ordem de criticidade, de
-> **autenticação real (incl. logout)**, **dados reais em produção**, **tornar as telas funcionais
-> (escrita/CRUD)** e **endurecimento de segurança/infra**, seguidos das features de menor
+> banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
+> local real** (login e-mail+senha com `bcrypt`/`JWT`, logout e proteção de rotas). O próximo gap
+> funcional crítico é o **Bloco H**: as telas RF02–RF09 ainda são **mocks somente-leitura** — os
+> botões de ação não persistem nada. A versão final depende, em ordem de criticidade, de **tornar as
+> telas funcionais (escrita/CRUD)**, **completar o RBAC por papel (A4)**, **features de RF de alta
+> prioridade (RF11/RF16)** e **endurecimento de segurança/infra**, seguidos das features de menor
 > prioridade e da cobertura de testes exigida pelo RNF08.
 
 ---

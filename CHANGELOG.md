@@ -9,6 +9,17 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-06-13
+
+### Added
+
+- **Persistencia real do Plano de Estudos (item H3)** (`apps/api/routes.js`, `apps/web/src/app/pages/StudyPlanPage.tsx`): a pagina de Plano de Estudos deixa de usar dados mockados em estado local e passa a persistir metas no banco via quatro rotas **aditivas** e autenticadas (`requireAuth`), escopadas ao usuario da sessao (`usuario_id = req.usuario.sub`, prevenindo IDOR): `GET /api/metas` (lista), `POST /api/metas` (cria), `PATCH /api/metas/:id` (alterna conclusao) e `DELETE /api/metas/:id` (exclui). As metas sao persistidas na tabela `atividades_estudo` (mapeamento `title->nome`, `subject->descricao`, `deadline->data_agendada`, `completed->status`+`data_realizacao`); um plano de estudos padrao e criado de forma idempotente no primeiro uso. Queries 100% parametrizadas, validacao de entrada (titulo obrigatorio, limites de tamanho, `id` inteiro, data valida) e respostas resilientes quando o banco esta indisponivel (`503`).
+- **Formulario de nova meta e acoes reais na UI** (`StudyPlanPage.tsx`): botao "Nova Meta" abre formulario (titulo, materia, prazo); checkbox alterna conclusao via `PATCH`; lixeira exclui via `DELETE`; estatisticas (total/concluidas/pendentes) calculadas a partir dos dados reais; estados de carregamento, vazio e erro tratados. Removido o placeholder inerte de calendario drag-and-drop (fora do escopo desta entrega).
+
+### Changed
+
+- Bump 1.4.1 -> **1.5.0** (MINOR — nova funcionalidade: CRUD persistente de metas do Plano de Estudos). `apps/web` e `apps/api` alinhados em 1.5.0.
+
 ## [1.4.1] - 2026-06-13
 
 ### Fixed

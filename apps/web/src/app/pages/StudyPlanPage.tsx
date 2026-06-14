@@ -1,25 +1,137 @@
-import { Plus, Calendar, Target, Edit2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Plus, Calendar, Target, Trash2, Loader2, X } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
+
+// --------------------------------------------------------------
+// Plano de Estudos (Bloco H — item H3)
+// CRUD real de metas, persistido via API /api/metas (cookie httpOnly).
+// As metas mapeiam para a tabela atividades_estudo no Postgres.
+// --------------------------------------------------------------
+
+type Meta = {
+  id: number;
+  title: string;
+  subject: string;
+  deadline: string | null;
+  completed: boolean;
+};
 
 export function StudyPlanPage() {
-  const [goals, setGoals] = useState([
-    { id: 1, title: "Revisar Capítulo 3 de Cálculo", subject: "Cálculo I", deadline: "2026-03-15", completed: false },
-    { id: 2, title: "Fazer exercícios de programação", subject: "Programação I", deadline: "2026-03-14", completed: true },
-    { id: 3, title: "Ler artigos sobre estrutura de dados", subject: "Estrutura de Dados", deadline: "2026-03-16", completed: false },
-    { id: 4, title: "Preparar apresentação de projeto", subject: "Engenharia de Software", deadline: "2026-03-18", completed: false },
-  ]);
+  const [goals, setGoals] = useState<Meta[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<number | null>(null);
 
-  const toggleGoal = (id: number) => {
-    setGoals(goals.map(goal => 
-      goal.id === id ? { ...goal, completed: !goal.completed } : goal
-    ));
-  };
+  const [formAberto, setFormAberto] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [novoTitulo, setNovoTitulo] = useState("");
+  const [novaMateria, setNovaMateria] = useState("");
+  const [novoPrazo, setNovoPrazo] = useState("");
 
-  const weeklyStats = {
-    totalGoals: 12,
-    completed: 8,
-    pending: 4,
-  };
+  async function carregarMetas() {
+    setCarregando(true);
+    setErro(null);
+    try {
+      const res = await fetch("/api/metas", { credentials: "include" });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      setGoals(Array.isArray(json.items) ? json.items : []);
+    } catch {
+      setErro("Não foi possível carregar suas metas. Tente novamente.");
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  useEffect(() => {
+    carregarMetas();
+  }, []);
+
+  async function adicionarMeta(e: FormEvent) {
+    e.preventDefault();
+    const title = novoTitulo.trim();
+    if (!title) return;
+    setEnviando(true);
+    setErro(null);
+    try {
+      const res = await fetch("/api/metas", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          subject: novaMateria.trim(),
+          deadline: novoPrazo || undefined,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      if (json.meta) {
+        setGoals((prev) => [json.meta as Meta, ...prev]);
+      }
+      setNovoTitulo("");
+      setNovaMateria("");
+      setNovoPrazo("");
+      setFormAberto(false);
+    } catch {
+      setErro("Não foi possível criar a meta. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  async function alternarMeta(meta: Meta) {
+    setBusyId(meta.id);
+    setErro(null);
+    try {
+      const res = await fetch(`/api/metas/${meta.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed: !meta.completed }),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      if (json.meta) {
+        setGoals((prev) =>
+          prev.map((g) => (g.id === meta.id ? (json.meta as Meta) : g)),
+        );
+      }
+    } catch {
+      setErro("Não foi possível atualizar a meta. Tente novamente.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function excluirMeta(id: number) {
+    setBusyId(id);
+    setErro(null);
+    try {
+      const res = await fetch(`/api/metas/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      setGoals((prev) => prev.filter((g) => g.id !== id));
+    } catch {
+      setErro("Não foi possível excluir a meta. Tente novamente.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  const totalGoals = goals.length;
+  const completed = goals.filter((g) => g.completed).length;
+  const pending = totalGoals - completed;
+  const percentual = totalGoals > 0 ? Math.round((completed / totalGoals) * 100) : 0;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -30,11 +142,83 @@ export function StudyPlanPage() {
             Organize suas metas e acompanhe seu progresso
           </p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors">
-          <Plus size={20} />
-          Nova Meta
+        <button
+          onClick={() => setFormAberto((v) => !v)}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+        >
+          {formAberto ? <X size={20} /> : <Plus size={20} />}
+          {formAberto ? "Cancelar" : "Nova Meta"}
         </button>
       </div>
+
+      {erro && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3">
+          {erro}
+        </div>
+      )}
+
+      {/* Formulário de nova meta */}
+      {formAberto && (
+        <form
+          onSubmit={adicionarMeta}
+          className="bg-white rounded-lg shadow-sm p-6 space-y-4"
+        >
+          <h2 className="text-xl">Nova Meta</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-3">
+              <label className="block text-sm text-gray-600 mb-1" htmlFor="meta-titulo">
+                Título <span className="text-red-600">*</span>
+              </label>
+              <input
+                id="meta-titulo"
+                type="text"
+                required
+                maxLength={200}
+                value={novoTitulo}
+                onChange={(e) => setNovoTitulo(e.target.value)}
+                placeholder="Ex.: Revisar Capítulo 3 de Cálculo"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-600 mb-1" htmlFor="meta-materia">
+                Matéria
+              </label>
+              <input
+                id="meta-materia"
+                type="text"
+                maxLength={100}
+                value={novaMateria}
+                onChange={(e) => setNovaMateria(e.target.value)}
+                placeholder="Ex.: Cálculo I"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1" htmlFor="meta-prazo">
+                Prazo
+              </label>
+              <input
+                id="meta-prazo"
+                type="date"
+                value={novoPrazo}
+                onChange={(e) => setNovoPrazo(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={enviando || !novoTitulo.trim()}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+            >
+              {enviando && <Loader2 size={18} className="animate-spin" />}
+              Salvar Meta
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -45,8 +229,8 @@ export function StudyPlanPage() {
             </div>
             <h3 className="text-lg">Total de Metas</h3>
           </div>
-          <p className="text-3xl">{weeklyStats.totalGoals}</p>
-          <p className="text-sm text-gray-600 mt-1">Esta semana</p>
+          <p className="text-3xl">{totalGoals}</p>
+          <p className="text-sm text-gray-600 mt-1">No seu plano</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
@@ -56,8 +240,8 @@ export function StudyPlanPage() {
             </div>
             <h3 className="text-lg">Concluídas</h3>
           </div>
-          <p className="text-3xl text-green-600">{weeklyStats.completed}</p>
-          <p className="text-sm text-gray-600 mt-1">{Math.round((weeklyStats.completed / weeklyStats.totalGoals) * 100)}% das metas</p>
+          <p className="text-3xl text-green-600">{completed}</p>
+          <p className="text-sm text-gray-600 mt-1">{percentual}% das metas</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
@@ -67,7 +251,7 @@ export function StudyPlanPage() {
             </div>
             <h3 className="text-lg">Pendentes</h3>
           </div>
-          <p className="text-3xl text-yellow-600">{weeklyStats.pending}</p>
+          <p className="text-3xl text-yellow-600">{pending}</p>
           <p className="text-sm text-gray-600 mt-1">Restantes</p>
         </div>
       </div>
@@ -75,67 +259,84 @@ export function StudyPlanPage() {
       {/* Lista de Metas */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-xl mb-6">Minhas Metas</h2>
-        <div className="space-y-3">
-          {goals.map((goal) => (
-            <div
-              key={goal.id}
-              className={`p-4 rounded-lg border-2 transition-all ${
-                goal.completed
-                  ? "bg-green-50 border-green-200"
-                  : "bg-white border-gray-200 hover:border-blue-300"
-              }`}
+
+        {carregando ? (
+          <div className="flex items-center justify-center gap-2 text-gray-500 py-12">
+            <Loader2 size={20} className="animate-spin" />
+            Carregando metas...
+          </div>
+        ) : goals.length === 0 ? (
+          <div className="text-center text-gray-500 py-12">
+            <Target className="mx-auto mb-4 text-gray-300" size={48} />
+            <p className="mb-4">Você ainda não tem metas cadastradas.</p>
+            <button
+              onClick={() => setFormAberto(true)}
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
             >
-              <div className="flex items-start gap-4">
-                <input
-                  type="checkbox"
-                  checked={goal.completed}
-                  onChange={() => toggleGoal(goal.id)}
-                  className="mt-1 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <div className="flex-1">
-                  <h3
-                    className={`font-medium mb-1 ${
-                      goal.completed ? "line-through text-gray-500" : ""
-                    }`}
-                  >
-                    {goal.title}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                      {goal.subject}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar size={14} />
-                      {new Date(goal.deadline).toLocaleDateString("pt-BR")}
-                    </span>
+              <Plus size={18} />
+              Criar primeira meta
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {goals.map((goal) => (
+              <div
+                key={goal.id}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  goal.completed
+                    ? "bg-green-50 border-green-200"
+                    : "bg-white border-gray-200 hover:border-blue-300"
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <input
+                    type="checkbox"
+                    checked={goal.completed}
+                    disabled={busyId === goal.id}
+                    onChange={() => alternarMeta(goal)}
+                    className="mt-1 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+                  />
+                  <div className="flex-1">
+                    <h3
+                      className={`font-medium mb-1 ${
+                        goal.completed ? "line-through text-gray-500" : ""
+                      }`}
+                    >
+                      {goal.title}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                      {goal.subject && (
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                          {goal.subject}
+                        </span>
+                      )}
+                      {goal.deadline && (
+                        <span className="flex items-center gap-1">
+                          <Calendar size={14} />
+                          {new Date(goal.deadline).toLocaleDateString("pt-BR")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => excluirMeta(goal.id)}
+                      disabled={busyId === goal.id}
+                      aria-label="Excluir meta"
+                      className="p-2 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {busyId === goal.id ? (
+                        <Loader2 size={18} className="text-red-600 animate-spin" />
+                      ) : (
+                        <Trash2 size={18} className="text-red-600" />
+                      )}
+                    </button>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                    <Edit2 size={18} className="text-gray-600" />
-                  </button>
-                  <button className="p-2 hover:bg-red-50 rounded-lg transition-colors">
-                    <Trash2 size={18} className="text-red-600" />
-                  </button>
-                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Calendário de Estudos */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl mb-6">Calendário de Estudos</h2>
-        <div className="bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg p-12 text-center">
-          <Calendar className="mx-auto mb-4 text-blue-600" size={48} />
-          <p className="text-gray-600 mb-4">
-            Calendário interativo com drag-and-drop será implementado aqui
-          </p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
-            Organizar Horários
-          </button>
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

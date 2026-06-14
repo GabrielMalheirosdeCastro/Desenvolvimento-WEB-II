@@ -518,3 +518,182 @@ apiRouter.get('/auth/me', requireAuth, (req, res) => {
         },
     });
 });
+
+// ==============================================================
+// METAS DO PLANO DE ESTUDOS (Bloco H — item H3)
+// --------------------------------------------------------------
+// CRUD real de metas, persistido na tabela `atividades_estudo`
+// (ja existente em producao). Todas as rotas exigem sessao valida
+// (requireAuth) e sao escopadas ao dono via usuario_id = req.usuario.sub,
+// evitando IDOR. Queries 100% parametrizadas.
+//
+// Mapeamento UI <-> banco (atividades_estudo):
+//   title     <-> nome
+//   subject   <-> descricao
+//   deadline  <-> data_agendada
+//   completed <-> status ('done' | 'pending') + data_realizacao
+// ==============================================================
+
+const META_TITULO_MAX = 200;
+const META_MATERIA_MAX = 100;
+
+/** Converte uma linha de atividades_estudo no formato consumido pela UI. */
+function mapMetaRow(row) {
+    return {
+        id: row.id,
+        title: row.nome,
+        subject: row.descricao || '',
+        deadline: row.data_agendada ? new Date(row.data_agendada).toISOString() : null,
+        completed: row.status === 'done',
+    };
+}
+
+/**
+ * Obtem o id do plano de estudos mais recente do usuario; cria um
+ * "Plano padrao" idempotente caso ainda nao exista. Retorna o id ou null.
+ */
+async function obterOuCriarPlano(usuarioId) {
+    const existentes = await query(
+        `SELECT id FROM planos_estudo
+             WHERE usuario_id = $1
+             ORDER BY id DESC
+             LIMIT 1`,
+        [usuarioId],
+    );
+    if (existentes && existentes.length > 0) {
+        return existentes[0].id;
+    }
+    const criado = await query(
+        `INSERT INTO planos_estudo (usuario_id, titulo, descricao, status)
+             VALUES ($1, $2, $3, 'ativo')
+             RETURNING id`,
+        [usuarioId, 'Meu Plano de Estudos', 'Plano criado automaticamente.'],
+    );
+    return criado && criado.length > 0 ? criado[0].id : null;
+}
+
+// --------------------------------------------------------------
+// GET /api/metas — lista as metas do usuario logado.
+// --------------------------------------------------------------
+apiRouter.get('/metas', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const rows = await query(
+        `SELECT id, nome, descricao, data_agendada, status
+             FROM atividades_estudo
+             WHERE usuario_id = $1
+             ORDER BY (status = 'done'), data_agendada NULLS LAST, id DESC`,
+        [req.usuario.sub],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({ source: 'db', items: rows.map(mapMetaRow) });
+});
+
+// --------------------------------------------------------------
+// POST /api/metas — cria uma nova meta.
+// Body: { title: string, subject?: string, deadline?: string (ISO) }
+// --------------------------------------------------------------
+apiRouter.post('/metas', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const title = String(req.body?.title || '').trim();
+    const subject = String(req.body?.subject || '').trim();
+    const deadlineRaw = req.body?.deadline ? String(req.body.deadline).trim() : '';
+
+    if (!title || title.length > META_TITULO_MAX) {
+        return res.status(400).json({ error: 'titulo_invalido' });
+    }
+    if (subject.length > META_MATERIA_MAX) {
+        return res.status(400).json({ error: 'materia_invalida' });
+    }
+    let dataAgendada = null;
+    if (deadlineRaw) {
+        const d = new Date(deadlineRaw);
+        if (Number.isNaN(d.getTime())) {
+            return res.status(400).json({ error: 'data_invalida' });
+        }
+        dataAgendada = d.toISOString();
+    }
+
+    const planoId = await obterOuCriarPlano(req.usuario.sub);
+    if (!planoId) {
+        return res.status(500).json({ error: 'falha_plano' });
+    }
+
+    const inserted = await query(
+        `INSERT INTO atividades_estudo
+                (plano_estudo_id, usuario_id, nome, descricao, data_agendada, status)
+             VALUES ($1, $2, $3, $4, $5, 'pending')
+             RETURNING id, nome, descricao, data_agendada, status`,
+        [planoId, req.usuario.sub, title, subject || null, dataAgendada],
+    );
+    if (!inserted || inserted.length === 0) {
+        return res.status(500).json({ error: 'falha_persistencia' });
+    }
+    res.status(201).json({ source: 'db', meta: mapMetaRow(inserted[0]) });
+});
+
+// --------------------------------------------------------------
+// PATCH /api/metas/:id — alterna conclusao da meta.
+// Body: { completed: boolean }
+// --------------------------------------------------------------
+apiRouter.patch('/metas/:id', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const id = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    if (typeof req.body?.completed !== 'boolean') {
+        return res.status(400).json({ error: 'completed_invalido' });
+    }
+    const completed = req.body.completed;
+    const novoStatus = completed ? 'done' : 'pending';
+
+    const updated = await query(
+        `UPDATE atividades_estudo
+             SET status = $1,
+                 data_realizacao = CASE WHEN $2 THEN NOW() ELSE NULL END
+             WHERE id = $3 AND usuario_id = $4
+             RETURNING id, nome, descricao, data_agendada, status`,
+        [novoStatus, completed, id, req.usuario.sub],
+    );
+    if (updated === null) {
+        return res.status(500).json({ error: 'falha_atualizacao' });
+    }
+    if (updated.length === 0) {
+        return res.status(404).json({ error: 'meta_nao_encontrada' });
+    }
+    res.json({ source: 'db', meta: mapMetaRow(updated[0]) });
+});
+
+// --------------------------------------------------------------
+// DELETE /api/metas/:id — exclui a meta do usuario logado.
+// --------------------------------------------------------------
+apiRouter.delete('/metas/:id', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const id = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    const deleted = await query(
+        `DELETE FROM atividades_estudo
+             WHERE id = $1 AND usuario_id = $2
+             RETURNING id`,
+        [id, req.usuario.sub],
+    );
+    if (deleted === null) {
+        return res.status(500).json({ error: 'falha_exclusao' });
+    }
+    if (deleted.length === 0) {
+        return res.status(404).json({ error: 'meta_nao_encontrada' });
+    }
+    res.json({ source: 'db', removido: deleted[0].id });
+});
