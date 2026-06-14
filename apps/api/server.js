@@ -10,6 +10,8 @@
 
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
@@ -21,6 +23,38 @@ const rootDir = path.resolve(__dirname, '..', '..');
 const pkg = JSON.parse(readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
 
 const app = express();
+
+// Atras do Traefik (EasyPanel): confia no primeiro proxy para que o IP real
+// chegue via X-Forwarded-For. Necessario para o rate-limit contar o cliente
+// correto (e nao o IP do proxy). Em dev local nao tem efeito colateral.
+app.set('trust proxy', 1);
+
+// Endurecimento de seguranca (D1 / RNF03). Helmet adiciona cabecalhos como
+// X-Content-Type-Options, Referrer-Policy, HSTS e uma Content-Security-Policy
+// compativel com a SPA (assets same-origin + <style> inline do index.html).
+app.use(helmet({
+    contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+            'default-src': ["'self'"],
+            'script-src': ["'self'"],
+            // Tailwind/Vite injeta um <style> inline no index.html da SPA.
+            'style-src': ["'self'", "'unsafe-inline'"],
+            'img-src': ["'self'", 'data:', 'https:'],
+            'font-src': ["'self'", 'data:'],
+            'connect-src': ["'self'"],
+            'object-src': ["'none'"],
+            'base-uri': ["'self'"],
+            'frame-ancestors': ["'self'"],
+            'upgrade-insecure-requests': [],
+        },
+    },
+    // A SPA e servida na mesma origem; CORP/COEP estritos podem bloquear
+    // assets/imagens externas (https:). Mantemos o restante do Helmet ativo.
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+
 app.use(express.json({ limit: '64kb' }));
 app.use(cookieParser());
 const PORT = Number(process.env.PORT) || 3010;
@@ -43,6 +77,34 @@ app.get('/healthz', (_req, res) => {
 app.get('/version', (_req, res) => {
     res.json({ name: pkg.name, version: pkg.version });
 });
+
+// Rate limiting (D1 / RNF03). Resposta JSON padronizada em 429. Aplicado
+// apenas a API; /healthz e /version (acima) ficam livres para monitoria.
+const limiterMsg = (req, res) => res.status(429).json({
+    error: 'rate_limit',
+    detalhe: 'Muitas requisições em pouco tempo. Tente novamente em instantes.',
+});
+
+// Limite estrito para autenticacao (login/ativar) — mitiga brute force.
+const authLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: limiterMsg,
+});
+
+// Limite geral, generoso, para o restante da API.
+const apiLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: limiterMsg,
+});
+
+app.use('/api/auth', authLimiter);
+app.use('/api', apiLimiter);
 
 // API REST do prototipo (Sprint 7). Resiliente: se DATABASE_URL nao
 // estiver setado os endpoints retornam fallback estatico.
