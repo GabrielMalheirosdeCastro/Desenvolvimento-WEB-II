@@ -279,21 +279,21 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **19 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
-F8, **H3**, **H4**, **H5**, **H8**, **H9** e a validação visual E4 parcial) + **A4 parcial**; ~33 em aberto.
+**Total:** 53 pendências mapeadas — **21 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
+F8, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9** e a validação visual E4 parcial) + **A4 parcial**; ~31 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
 > local real** (login e-mail+senha com `bcrypt`/`JWT`, logout e proteção de rotas). O **Bloco H**
-> (tornar as telas funcionais) já está **em andamento**: o **H3** (Plano de Estudos com CRUD real de
-> metas) foi entregue na **v1.5.0**, a **Avaliação de Bem-estar (B1/RF11)** na **v1.6.0** (com seed da
-> persona em produção) e a **varredura de mocks H4/H5/H8/H9** (Perfil real, Tema persistido, Mentoria
-> e Concentração funcionais) na **v1.7.0**. Restam como mocks somente-leitura as telas de **Fórum
-> (H6/RF08)** e **Biblioteca (H7/RF06–RF07)**. A versão final depende, em ordem de criticidade, de
-> **concluir as telas funcionais restantes (escrita/CRUD do Bloco H — H6, H7)**, **completar o RBAC
-> por papel (A4)**, **a feature de RF de alta prioridade restante (RF16)** e **endurecimento de
-> segurança/infra**, seguidos das features de menor prioridade e da cobertura de testes exigida pelo
-> RNF08.
+> (tornar as telas funcionais) já está **majoritariamente concluído**: o **H3** (Plano de Estudos com
+> CRUD real de metas) foi entregue na **v1.5.0**, a **Avaliação de Bem-estar (B1/RF11)** na **v1.6.0**
+> (com seed da persona em produção), a **varredura de mocks H4/H5/H8/H9** (Perfil real, Tema
+> persistido, Mentoria e Concentração funcionais) na **v1.7.0** e as telas de **Fórum (H6/RF08)** e
+> **Biblioteca (H7/RF06–RF07)** na **v1.8.0**. Restam do Bloco H apenas os itens de navegação/UX
+> **H1** (header→perfil), **H2** (dashboard interativo) e **H10** (idioma, dependente de i18n/D8). A
+> versão final depende, em ordem de criticidade, de **completar o RBAC por papel (A4)**, **a feature
+> de RF de alta prioridade restante (RF16)**, **endurecimento de segurança/infra** e a **cobertura de
+> testes exigida pelo RNF08**, seguidos das features de menor prioridade e do fechamento acadêmico.
 
 ---
 
