@@ -310,13 +310,44 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 8. Bloco G (documentação/entrega)       → fechamento acadêmico
 ```
 
-> **De onde continuar (2026-06-14):** o **Bloco B** está praticamente fechado (resta só **B3/RF15**,
-> chat com o NAP). Com os requisitos funcionais de alta/média prioridade entregues, o **próximo passo
-> recomendado** é o **Bloco D/E** (qualidade: testes automatizados de UI/E2E via Playwright,
-> cobertura dos RNFs) para endurecer a aplicação para "produção de verdade", deixando **B3/RF15** e o
-> **Bloco G** (documentação final no LaTeX/Overleaf + roteiro de demonstração para a banca) como
-> fechamento. A sequência completa de versões está no **roadmap** —
+> **De onde continuar (2026-06-14, pós-v1.13.0):** a base de **qualidade/segurança** foi iniciada —
+> **D1** (helmet + rate limit), **E1** (parcial: `npm test`), **E3/E4** (Playwright) e **E5** (gate
+> de CI) já estão **entregues e validados em produção** (`/version` = 1.13.0, headers de segurança
+> ativos, `npm test` verde). O **ponto de partida da próxima sessão** é escolher entre três frentes,
+> em ordem de prioridade recomendada:
+>
+> 1. **Bloco D restante (qualidade "produção de verdade")** — `D2` acessibilidade (WCAG 2.1 AA),
+>    `D5` performance (lazy loading/bundle ≤ 3s em 3G), `D7` LGPD (finalizar consentimento/exportação/
+>    exclusão — hoje 🟨), `D3` cobertura ≥ 80% (migrar `npm test` para Vitest formal) e `E2` testes
+>    de integração API/DB (supertest). **Recomendado começar por D7 (LGPD)** por ser requisito legal
+>    e já estar parcial, seguido de D2 (acessibilidade) por impacto direto na banca.
+> 2. **B3 / RF15** — chat com Suporte Psicopedagógico (NAP) via mensageria (Socket.io). É o **único
+>    requisito funcional ainda em aberto** (prioridade 🟢 baixa, complexidade G).
+> 3. **Bloco G (fechamento acadêmico)** — `G1` atualizar o documento LaTeX no Overleaf com o estado
+>    final, `G3` diagramas atualizados e `G4` roteiro de demonstração para a banca.
+>
+> A sequência completa de versões está no **roadmap** —
 > [docs/plano-2026-06-14-roadmap-versoes-finais.md](../plano-2026-06-14-roadmap-versoes-finais.md).
+
+---
+
+## 11. Checkpoint de Encerramento — 2026-06-14 (v1.13.0)
+
+| Item | Estado |
+|---|---|
+| Versão em produção | **v1.13.0** (`/version` e `/healthz` confirmados) |
+| `git HEAD` | `7ae997c` em `origin/master`, working tree limpo |
+| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida |
+| Segurança ativa em prod | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy |
+| Testes | `npm test` verde (auth-core + chatbot-core); Playwright só na estação |
+
+**Requisitos funcionais:** todos de alta/média prioridade entregues. **Único RF em aberto: B3/RF15**
+(chat com NAP, prioridade baixa).
+
+**RNFs em aberto:** D2 (acessibilidade), D3 (cobertura ≥ 80%), D4 (monitoria 24/7), D5 (performance),
+D6 (escalabilidade), D7 (LGPD — parcial), D8 (i18n) + H10 (idioma, acoplado a D8).
+
+**Pendência acadêmica:** Bloco G (G1 LaTeX final no Overleaf, G3 diagramas, G4 roteiro da banca).
 
 
 ---
