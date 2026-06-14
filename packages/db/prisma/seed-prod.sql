@@ -148,6 +148,81 @@ CROSS JOIN (VALUES
 ) AS v(data_aplicacao, respostas, resultado, observacoes)
 WHERE u.matricula_institucional = '23110145';
 
+-- 7.6 Biblioteca (H7) — recursos institucionais. Idempotente por titulo
+-- (preserva id e visualizacoes acumuladas em reexecucoes).
+INSERT INTO recursos (titulo, descricao, tipo, url, categoria, visualizacoes)
+SELECT v.titulo, v.descricao, v.tipo, v.url, v.categoria, 0
+FROM (VALUES
+  ('Tecnicas de Estudo Eficazes',
+   'Guia introdutorio sobre metodos de estudo: Pomodoro, Cornell e revisao espacada.',
+   'Artigo', 'https://www.faesa.br', 'Estudos'),
+  ('Guia de Saude Mental na Universidade',
+   'Material de apoio sobre ansiedade, rotina saudavel e quando procurar ajuda.',
+   'PDF', 'https://www.faesa.br', 'Bem-estar'),
+  ('Introducao a Programacao',
+   'Videoaula introdutoria sobre logica de programacao para ingressantes.',
+   'Video', 'https://www.faesa.br', 'Tecnologia'),
+  ('Organizacao do Tempo com Pomodoro',
+   'Como aplicar a tecnica Pomodoro na rotina academica e manter o foco.',
+   'Artigo', 'https://www.faesa.br', 'Produtividade'),
+  ('Gestao de Ansiedade em Provas',
+   'Estrategias praticas para controlar a ansiedade antes e durante avaliacoes.',
+   'Artigo', 'https://www.faesa.br', 'Bem-estar'),
+  ('Fundamentos de Banco de Dados',
+   'Conceitos iniciais de modelagem relacional e introducao ao SQL.',
+   'PDF', 'https://www.faesa.br', 'Tecnologia')
+) AS v(titulo, descricao, tipo, url, categoria)
+WHERE NOT EXISTS (SELECT 1 FROM recursos r WHERE r.titulo = v.titulo);
+
+-- 7.7 Trilhas de aprendizagem — idempotente por nome.
+INSERT INTO trilhas_aprendizagem (nome, descricao, publico_alvo)
+SELECT v.nome, v.descricao, v.publico_alvo
+FROM (VALUES
+  ('Fundamentos de ADS', 'Trilha introdutoria para ingressantes de ADS.', 'Ingressantes'),
+  ('Bem-estar e Saude Mental', 'Recursos para cuidar da saude mental na vida academica.', 'Todos os alunos'),
+  ('Produtividade nos Estudos', 'Metodos e ferramentas para estudar com mais eficiencia.', 'Todos os alunos')
+) AS v(nome, descricao, publico_alvo)
+WHERE NOT EXISTS (SELECT 1 FROM trilhas_aprendizagem t WHERE t.nome = v.nome);
+
+-- 7.8 Vinculo trilha<->recurso com ordem. Idempotente via unique
+-- (trilha_id, recurso_id). Resolve ids por nome/titulo (estaveis).
+INSERT INTO trilha_recursos (trilha_id, recurso_id, ordem)
+SELECT t.id, r.id, v.ordem
+FROM (VALUES
+  ('Fundamentos de ADS',        'Introducao a Programacao',              1),
+  ('Fundamentos de ADS',        'Fundamentos de Banco de Dados',         2),
+  ('Fundamentos de ADS',        'Tecnicas de Estudo Eficazes',           3),
+  ('Bem-estar e Saude Mental',  'Guia de Saude Mental na Universidade',  1),
+  ('Bem-estar e Saude Mental',  'Gestao de Ansiedade em Provas',         2),
+  ('Produtividade nos Estudos', 'Organizacao do Tempo com Pomodoro',     1),
+  ('Produtividade nos Estudos', 'Tecnicas de Estudo Eficazes',           2)
+) AS v(trilha_nome, recurso_titulo, ordem)
+JOIN trilhas_aprendizagem t ON t.nome = v.trilha_nome
+JOIN recursos r ON r.titulo = v.recurso_titulo
+ON CONFLICT (trilha_id, recurso_id) DO NOTHING;
+
+-- 7.9 Usuario institucional NAP — autor dos topicos iniciais do forum.
+-- tipo_usuario COORDENADOR antecipa o RBAC (A4). Nao faz login (sem hash).
+INSERT INTO usuarios (matricula_institucional, email_institucional, nome, tipo_usuario, e_mentor, data_nascimento)
+VALUES ('NAP-FAESA', 'nap@faesa.br', 'Nucleo de Apoio Psicopedagogico (NAP)', 'COORDENADOR', FALSE, '2000-01-01')
+ON CONFLICT (matricula_institucional) DO UPDATE
+SET nome = EXCLUDED.nome, tipo_usuario = 'COORDENADOR';
+
+-- 7.10 Topicos iniciais do forum (H6) — idempotente por titulo.
+INSERT INTO foruns_discussao (criado_por, titulo, descricao, categoria)
+SELECT nap.id, v.titulo, v.descricao, v.categoria
+FROM usuarios nap
+CROSS JOIN (VALUES
+  ('Dicas para a primeira semana de aula',
+   'Compartilhe o que ajudou voce a se adaptar no inicio do curso.', 'Dicas'),
+  ('Como organizar tempo entre trabalho e estudos?',
+   'Estrategias de organizacao para quem concilia emprego e faculdade.', 'Discussao'),
+  ('Grupo de estudos de Calculo I',
+   'Vamos montar um grupo para resolver listas e tirar duvidas juntos.', 'Grupos')
+) AS v(titulo, descricao, categoria)
+WHERE nap.matricula_institucional = 'NAP-FAESA'
+  AND NOT EXISTS (SELECT 1 FROM foruns_discussao f WHERE f.titulo = v.titulo);
+
 COMMIT;
 
 -- 8. Relatorio rapido
@@ -158,4 +233,8 @@ UNION ALL SELECT 'usuarios_conquistas (Gabriel)', COUNT(*) FROM usuarios_conquis
 UNION ALL SELECT 'gamificacao (Gabriel)', COUNT(*) FROM gamificacao g JOIN usuarios u ON u.id=g.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'bem_estar (Gabriel)', COUNT(*) FROM questionarios_bem_estar q JOIN usuarios u ON u.id=q.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'eventos (futuros)', COUNT(*) FROM eventos WHERE data_evento > NOW()
+UNION ALL SELECT 'recursos', COUNT(*) FROM recursos
+UNION ALL SELECT 'trilhas_aprendizagem', COUNT(*) FROM trilhas_aprendizagem
+UNION ALL SELECT 'trilha_recursos', COUNT(*) FROM trilha_recursos
+UNION ALL SELECT 'foruns_discussao', COUNT(*) FROM foruns_discussao
 UNION ALL SELECT 'mentores (e_mentor=true)', COUNT(*) FROM usuarios WHERE e_mentor=TRUE;

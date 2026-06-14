@@ -9,6 +9,17 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-06-14
+
+### Added
+
+- **Seed de producao para Forum e Biblioteca (item C4 / RF06-08)** (`packages/db/prisma/seed-prod.sql`): novas secoes idempotentes (7.6-7.10) que populam o banco de producao com **6 recursos** institucionais (Estudos, Bem-estar, Tecnologia, Produtividade), **3 trilhas de aprendizagem** (`Fundamentos de ADS`, `Bem-estar e Saude Mental`, `Produtividade nos Estudos`), **7 vinculos** `trilha_recursos` com ordem, um usuario institucional **NAP** (`matricula NAP-FAESA`, `tipo_usuario = COORDENADOR`, sem `password_hash` — nao faz login) como autor e **3 topicos iniciais** de forum. A idempotencia usa `WHERE NOT EXISTS` (por `titulo`/`nome`) e `ON CONFLICT DO NOTHING`, sem `DELETE` de dados de usuario, de modo que a reexecucao e segura e nao apaga conteudo criado em producao. O relatorio final do seed foi ampliado com a contagem das novas tabelas.
+
+### Fixed
+
+- **Endpoints `GET /api/forum`, `/api/recursos` e `/api/trilhas` saem do `"source": "fallback"`**: a bateria de testes pos-v1.9.0 revelou que esses tres endpoints respondiam com dados estaticos em producao porque as tabelas existiam mas estavam vazias (o `seed-prod.sql` populava apenas `eventos`). Com o seed estendido, passam a responder `"source": "db"` e o fluxo `POST /api/recursos/:id/acesso` da Biblioteca (H7) passa a persistir o acesso a um recurso real em vez de retornar `404`.
+- Bump 1.9.0 -> **1.9.1** (PATCH — correcao de dados de producao, sem alteracao de codigo da SPA). `apps/web` e `apps/api` alinhados em 1.9.1.
+
 ## [1.9.0] - 2026-06-14
 
 ### Added

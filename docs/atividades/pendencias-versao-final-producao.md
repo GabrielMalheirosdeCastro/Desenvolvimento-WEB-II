@@ -94,11 +94,12 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > na **v1.9.0**. Com isso o **Bloco H** fica reduzido a um único item em aberto: **H10** (idioma,
 > acoplado ao i18n/D8). Uma **bateria de testes** pós-v1.9.0 (unitário de auth, build da SPA, smoke
 > HTTP de `/version`, `/healthz`, endpoints públicos e guardas de auth) passou em **6/6** verificações
-> e revelou **um achado**: `GET /api/forum`, `/api/recursos` e `/api/trilhas` respondem ainda
-> `"source": "fallback"` em produção porque as tabelas existem mas estão **vazias** — o `seed-prod.sql`
-> populava apenas `eventos`. Isso degrada a Biblioteca (o `POST /api/recursos/:id/acesso` num id de
-> fallback retorna 404 e o acesso não persiste). **Correção planejada na v1.9.1** (seed estendido com
-> recursos/trilhas/vínculos + tópicos de fórum, idempotente) — ver
+> e revelou **um achado**: `GET /api/forum`, `/api/recursos` e `/api/trilhas` respondiam então
+> `"source": "fallback"` em produção porque as tabelas existem mas estavam **vazias** — o `seed-prod.sql`
+> populava apenas `eventos`. Isso degradava a Biblioteca (o `POST /api/recursos/:id/acesso` num id de
+> fallback retornava 404 e o acesso não persistia). **✅ Corrigido na v1.9.1 (2026-06-14):** seed
+> estendido (6 recursos, 3 trilhas, 7 vínculos, 3 tópicos de fórum, usuário NAP, idempotente) aplicado
+> em produção via SSH; os três endpoints passaram a responder `"source": "db"` — ver
 > [docs/plano-2026-06-14-v1.9.1-seed-forum-biblioteca.md](../plano-2026-06-14-v1.9.1-seed-forum-biblioteca.md).
 > Em paralelo, o **RBAC completo (A4) + Painel de Coordenação (RF14)** foi planejado para a **v1.10.0**
 > — ver [docs/plano-2026-06-14-v1.10.0-rbac-a4.md](../plano-2026-06-14-v1.10.0-rbac-a4.md). O
@@ -171,14 +172,18 @@ então a maior parte do esforço é UI + endpoints, não modelagem de dados.
 > A conexão com o banco funciona (`/api/_status` → `connected`), mas não há linhas para ler.
 >
 > **✅ Resolvido em 2026-06-13 (v1.3.2):** seed de produção executado; os endpoints passaram a
-> responder `"source": "db"`. C4 (carga de biblioteca/trilhas) permanece em aberto.
+> responder `"source": "db"`.
+>
+> **✅ C4 concluído em 2026-06-14 (v1.9.1):** seed estendido aplicado em produção via SSH (6 recursos,
+> 3 trilhas, 7 vínculos `trilha_recursos`, 3 tópicos de fórum, usuário NAP). `GET /api/forum`,
+> `/api/recursos` e `/api/trilhas` confirmados respondendo `"source": "db"`.
 
 | # | Pendência | Prioridade | Complexidade | Status |
 |---|---|---|---|---|
 | C1 | Popular seed de produção com a persona principal (`23110145`) e dados reais de dashboard | 🔴 | P | ✅ |
 | C2 | Popular `eventos`, `atividades_estudo`, `usuario_conquistas`, `gamificacao` em produção | 🔴 | P | ✅ |
 | C3 | Validar que os endpoints passam a responder `"source": "db"` após o seed | 🔴 | P | ✅ |
-| C4 | Definir estratégia de carga inicial de recursos/biblioteca e trilhas. **Seed escrito (v1.9.1):** 6 recursos, 3 trilhas e 7 vínculos `trilha_recursos` (idempotentes) já no `seed-prod.sql`; aguardando aplicação em produção via SSH | 🟡 | M | 🟨 |
+| C4 | Definir estratégia de carga inicial de recursos/biblioteca e trilhas. **Aplicado em produção (v1.9.1):** 6 recursos, 3 trilhas e 7 vínculos `trilha_recursos` (idempotentes) carregados via `seed-prod.sql`; endpoints confirmados em `"source": "db"` | 🟡 | M | ✅ |
 | C5 | Corrigir o nome exibido no perfil/header — vídeo mostrava "Gabriel Matheos de Castro" (typo); confirmado correto ("Gabriel Malheiros de Castro") na tela após o seed | 🟡 | P | ✅ |
 
 **Critério de pronto:** `GET /api/me` em produção retorna `"source": "db"` com a persona real e o
