@@ -4,7 +4,7 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-13
-**Versão atual em produção:** v1.4.1 (autenticação local real + nome do usuário na área logada)
+**Versão atual em produção:** v1.5.0 (Plano de Estudos com CRUD real de metas persistido em banco)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -45,6 +45,21 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > `tipo_usuario` (`ALUNO`/`DOCENTE`) + flag `eMentor`, mas o trio aluno/mentor/coordenador ainda não
 > está completo. Como medida de segurança, o `JWT_SECRET` de produção foi **rotacionado** após ter
 > sido exposto em texto durante a sessão.
+
+> **Atualização 2026-06-13 — Bloco H iniciado (H3 entregue).** O item **H3** (Plano de Estudos —
+> persistir metas) foi concluído e publicado (**v1.5.0**). As telas RF02/RF03 deixaram de ser mock
+> somente-leitura: agora há **CRUD real de metas** (`GET/POST/PATCH/DELETE /api/metas`) persistido
+> na tabela `atividades_estudo`, com escopo por usuário autenticado (anti-IDOR) e queries
+> parametrizadas. O `GET` foi validado em produção com **10 metas reais** carregadas do seed do
+> banco. O _drag-and-drop_ ("Organizar horários") foi **adiado** para entrega futura. Restam os
+> demais itens do Bloco H (H1, H2, H4–H10).
+
+> **Atualização 2026-06-13 — higiene de segurança.** Removida uma **senha Postgres hardcoded** do
+> script `scripts/diag-prod.sh` (passou a ler a variável de ambiente `PGPASSWORD_GMC`, com
+> validação de presença). Confirmado que `docs/secrets.md` está no `.gitignore` e **não é
+> versionado**. _Pendência aberta:_ a senha da conta de produção `gabriel.castro@faesa.br` precisa
+> ser trocada (foi exposta em captura de tela) e **ainda não há fluxo de redefinição de senha** —
+> candidato a novo item de backlog (ex.: `PATCH /api/auth/senha` autenticada).
 
 ### Legenda
 
@@ -217,7 +232,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
-4. Bloco H (tornar as telas mock funcionais)    → fecha o gap exposto na auditoria do vídeo  ← PRÓXIMO
+4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0); próximos: H1 (P) ou H5 (backend pronto)
 5. Bloco B (RF11, RF16 prioritários)   → completar requisitos de alta prioridade
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
 7. Bloco B restante (RF14, RF15)        → features de menor prioridade
@@ -239,17 +254,18 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **13 concluídas** (A1, A3, A5, A6, C1, C2, C3, C5, F1, F2, F3,
-F8 e a validação visual E4 parcial) + **A4 parcial**; ~39 em aberto.
+**Total:** 53 pendências mapeadas — **14 concluídas** (A1, A3, A5, A6, C1, C2, C3, C5, F1, F2, F3,
+F8, **H3** e a validação visual E4 parcial) + **A4 parcial**; ~38 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
-> local real** (login e-mail+senha com `bcrypt`/`JWT`, logout e proteção de rotas). O próximo gap
-> funcional crítico é o **Bloco H**: as telas RF02–RF09 ainda são **mocks somente-leitura** — os
-> botões de ação não persistem nada. A versão final depende, em ordem de criticidade, de **tornar as
-> telas funcionais (escrita/CRUD)**, **completar o RBAC por papel (A4)**, **features de RF de alta
-> prioridade (RF11/RF16)** e **endurecimento de segurança/infra**, seguidos das features de menor
-> prioridade e da cobertura de testes exigida pelo RNF08.
+> local real** (login e-mail+senha com `bcrypt`/`JWT`, logout e proteção de rotas). O **Bloco H**
+> (tornar as telas funcionais) já está **em andamento**: o **H3** (Plano de Estudos com CRUD real de
+> metas) foi entregue na **v1.5.0**, mas as demais telas RF02–RF09 ainda são **mocks somente-leitura**
+> — seus botões de ação não persistem nada. A versão final depende, em ordem de criticidade, de
+> **concluir as telas funcionais restantes (escrita/CRUD do Bloco H)**, **completar o RBAC por papel
+> (A4)**, **features de RF de alta prioridade (RF11/RF16)** e **endurecimento de segurança/infra**,
+> seguidos das features de menor prioridade e da cobertura de testes exigida pelo RNF08.
 
 ---
 
