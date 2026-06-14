@@ -5,6 +5,7 @@
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-14
 **Versão atual em produção:** v1.9.0 (Dashboard e header interativos — H1/H2)
+**Próximas versões planejadas:** v1.9.1 (seed Fórum/Biblioteca) · v1.10.0 (RBAC A4 + Painel de Coordenação RF14)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -86,6 +87,24 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > mode visual completo (refatorar cores hardcoded para design tokens) foi adiado para fora deste MINOR.
 > Restam os itens H1, H2, H6, H7 e H10 do Bloco H.
 
+> **Atualização 2026-06-14 — Fórum/Biblioteca (H6/H7 v1.8.0) e Dashboard/Header (H1/H2 v1.9.0)
+> publicados; bateria de testes executada.** As telas de **Fórum (H6/RF08)** e **Biblioteca
+> (H7/RF06–RF07)** saíram do estado mock na **v1.8.0** (`GET/POST /api/forum`, `GET /api/recursos`,
+> `GET /api/trilhas`, `POST /api/recursos/:id/acesso`), e o **dashboard/header interativos (H1/H2)**
+> na **v1.9.0**. Com isso o **Bloco H** fica reduzido a um único item em aberto: **H10** (idioma,
+> acoplado ao i18n/D8). Uma **bateria de testes** pós-v1.9.0 (unitário de auth, build da SPA, smoke
+> HTTP de `/version`, `/healthz`, endpoints públicos e guardas de auth) passou em **6/6** verificações
+> e revelou **um achado**: `GET /api/forum`, `/api/recursos` e `/api/trilhas` respondem ainda
+> `"source": "fallback"` em produção porque as tabelas existem mas estão **vazias** — o `seed-prod.sql`
+> populava apenas `eventos`. Isso degrada a Biblioteca (o `POST /api/recursos/:id/acesso` num id de
+> fallback retorna 404 e o acesso não persiste). **Correção planejada na v1.9.1** (seed estendido com
+> recursos/trilhas/vínculos + tópicos de fórum, idempotente) — ver
+> [docs/plano-2026-06-14-v1.9.1-seed-forum-biblioteca.md](../plano-2026-06-14-v1.9.1-seed-forum-biblioteca.md).
+> Em paralelo, o **RBAC completo (A4) + Painel de Coordenação (RF14)** foi planejado para a **v1.10.0**
+> — ver [docs/plano-2026-06-14-v1.10.0-rbac-a4.md](../plano-2026-06-14-v1.10.0-rbac-a4.md). O
+> **roadmap completo de versões** até a versão final está em
+> [docs/plano-2026-06-14-roadmap-versoes-finais.md](../plano-2026-06-14-roadmap-versoes-finais.md).
+
 ### Legenda
 
 | Marcador | Significado |
@@ -159,7 +178,7 @@ então a maior parte do esforço é UI + endpoints, não modelagem de dados.
 | C1 | Popular seed de produção com a persona principal (`23110145`) e dados reais de dashboard | 🔴 | P | ✅ |
 | C2 | Popular `eventos`, `atividades_estudo`, `usuario_conquistas`, `gamificacao` em produção | 🔴 | P | ✅ |
 | C3 | Validar que os endpoints passam a responder `"source": "db"` após o seed | 🔴 | P | ✅ |
-| C4 | Definir estratégia de carga inicial de recursos/biblioteca e trilhas | 🟡 | M | ⬜ |
+| C4 | Definir estratégia de carga inicial de recursos/biblioteca e trilhas. **Seed escrito (v1.9.1):** 6 recursos, 3 trilhas e 7 vínculos `trilha_recursos` (idempotentes) já no `seed-prod.sql`; aguardando aplicação em produção via SSH | 🟡 | M | 🟨 |
 | C5 | Corrigir o nome exibido no perfil/header — vídeo mostrava "Gabriel Matheos de Castro" (typo); confirmado correto ("Gabriel Malheiros de Castro") na tela após o seed | 🟡 | P | ✅ |
 
 **Critério de pronto:** `GET /api/me` em produção retorna `"source": "db"` com a persona real e o
@@ -263,6 +282,13 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 7. Bloco B restante (RF14, RF15)        → features de menor prioridade
 8. Bloco G (documentação/entrega)       → fechamento acadêmico
 ```
+
+> **De onde continuar (2026-06-14):** o **próximo passo imediato** é a **v1.9.1** (aplicar o seed de
+> Fórum/Biblioteca em produção, fechando o achado de `fallback` e o item C4), seguida da **v1.10.0**
+> (RBAC A4 + Painel de Coordenação RF14). A sequência completa de versões até a versão final está
+> detalhada no **roadmap** —
+> [docs/plano-2026-06-14-roadmap-versoes-finais.md](../plano-2026-06-14-roadmap-versoes-finais.md).
+
 
 ---
 
