@@ -4,7 +4,7 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-13
-**Versão atual em produção:** v1.5.0 (Plano de Estudos com CRUD real de metas persistido em banco)
+**Versão atual em produção:** v1.6.0 (Avaliação de Bem-estar / RF11 com persistência real em banco)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -61,6 +61,17 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > ser trocada (foi exposta em captura de tela) e **ainda não há fluxo de redefinição de senha** —
 > candidato a novo item de backlog (ex.: `PATCH /api/auth/senha` autenticada).
 
+> **Atualização 2026-06-14 — Bloco B iniciado (B1 / RF11 entregue).** O item **B1**
+> (**Avaliação de Bem-estar**) foi concluído e publicado (**v1.6.0**). Duas rotas **aditivas** e
+> autenticadas (`GET /api/bem-estar` e `POST /api/bem-estar`, com `requireAuth` e escopo
+> `usuario_id = req.usuario.sub` anti-IDOR) persistem as autoavaliações na tabela
+> `questionarios_bem_estar` (sem migração — schema já existente). As escalas `humor`/`estresse`/`sono`
+> (1–5) são serializadas em JSON na coluna `respostas`, e o `resultado`
+> (`positivo`/`atencao`/`critico`) é calculado no servidor. A SPA ganhou a tela
+> `/dashboard/bem-estar` (formulário + cartões de resumo + histórico). O seed de produção foi
+> atualizado e **executado via túnel SSH**: a persona Gabriel (`23110145`) já tem 3 avaliações reais
+> no banco de produção (validado por consulta direta). Restam os demais itens do Bloco B (B2–B7).
+
 ### Legenda
 
 | Marcador | Significado |
@@ -107,7 +118,7 @@ atingido:** login/logout reais ✅; falta o RBAC completo (A4).
 
 | # | Pendência | RF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
-| B1 | **Avaliação de Bem-estar** — questionários periódicos de autoavaliação (UI + endpoints + persistência) | RF11 | 🟡 | M | ⬜ |
+| B1 | **Avaliação de Bem-estar** — questionários periódicos de autoavaliação. **Entregue na v1.6.0:** UI (`/dashboard/bem-estar`) + `GET/POST /api/bem-estar` + persistência em `questionarios_bem_estar` + seed da persona em produção | RF11 | 🟡 | M | ✅ |
 | B2 | **Chatbot IA de Acolhimento** — respostas adaptadas por faixa etária (17–20, 21–25, 26+) | RF16 | 🔴 | G | ⬜ |
 | B3 | **Chat com Suporte Psicopedagógico** — canal direto com o NAP (mensageria, ex.: Socket.io) | RF15 | 🟢 | G | ⬜ |
 | B4 | **Relatórios para Coordenação** — painel admin com dados agregados e anônimos | RF14 | 🟡 | G | ⬜ |
@@ -233,7 +244,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
 4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0); próximos: H1 (P) ou H5 (backend pronto)
-5. Bloco B (RF11, RF16 prioritários)   → completar requisitos de alta prioridade
+5. Bloco B (RF11 ✅ v1.6.0; RF16 prioritário)   → completar requisitos de alta prioridade
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
 7. Bloco B restante (RF14, RF15)        → features de menor prioridade
 8. Bloco G (documentação/entrega)       → fechamento acadêmico
@@ -254,17 +265,18 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **14 concluídas** (A1, A3, A5, A6, C1, C2, C3, C5, F1, F2, F3,
-F8, **H3** e a validação visual E4 parcial) + **A4 parcial**; ~38 em aberto.
+**Total:** 53 pendências mapeadas — **15 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
+F8, **H3** e a validação visual E4 parcial) + **A4 parcial**; ~37 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
 > local real** (login e-mail+senha com `bcrypt`/`JWT`, logout e proteção de rotas). O **Bloco H**
 > (tornar as telas funcionais) já está **em andamento**: o **H3** (Plano de Estudos com CRUD real de
-> metas) foi entregue na **v1.5.0**, mas as demais telas RF02–RF09 ainda são **mocks somente-leitura**
+> metas) foi entregue na **v1.5.0** e a **Avaliação de Bem-estar (B1/RF11)** na **v1.6.0** (com seed da
+> persona em produção), mas as demais telas RF02–RF09 ainda são **mocks somente-leitura**
 > — seus botões de ação não persistem nada. A versão final depende, em ordem de criticidade, de
 > **concluir as telas funcionais restantes (escrita/CRUD do Bloco H)**, **completar o RBAC por papel
-> (A4)**, **features de RF de alta prioridade (RF11/RF16)** e **endurecimento de segurança/infra**,
+> (A4)**, **a feature de RF de alta prioridade restante (RF16)** e **endurecimento de segurança/infra**,
 > seguidos das features de menor prioridade e da cobertura de testes exigida pelo RNF08.
 
 ---
