@@ -4,7 +4,7 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-14
-**Versão atual em produção:** v1.7.0 (varredura de mocks — Perfil real, Tema persistido, Mentoria e Concentração funcionais)
+**Versão atual em produção:** v1.8.0 (Fórum funcional e Biblioteca funcional — H6/H7)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -196,8 +196,8 @@ nome correto. **✅ Atingido.**
 | H3 | **Plano de Estudos — persistir metas** — checkbox "Concluída" não gravava; "+ Nova Meta" inerte. **Entregue na v1.5.0:** CRUD real de metas (`GET/POST/PATCH/DELETE /api/metas`) persistido em `atividades_estudo`. _Drag-and-drop ("Organizar horários") adiado para entrega futura._ | RF02, RF03 | 00:49 | 🟢 | G | ✅ |
 | H4 | **Concentração — "Iniciar Exercício Guiado"** não aciona o timer/assistente de respiração. **Entregue na v1.7.0:** exercício de respiração guiada 4-7-8 client-side (inspirar/segurar/expirar) | RF04 | 01:06 | 🟡 | M | ✅ |
 | H5 | **Mentoria — "Entrar"** (sala/sessão ao vivo) não carrega; **"Cadastrar-me como Mentor(a)"** não dá feedback. **Entregue na v1.7.0:** fix `credentials:include`, `souMentor` via `eMentor`, lista real `GET /api/mentorias?papel=mentor`, cadastro escopado a `req.usuario.sub`. _Sala ao vivo segue fora de escopo._ | RF09 | 01:15 | 🟡 | M | ✅ |
-| H6 | **Fórum — "+ Novo Tópico"** não abre editor; falta criação/persistência de tópicos e comentários | RF08 | 01:32 | 🟡 | M | ⬜ |
-| H7 | **Biblioteca — "Iniciar Trilha", "Sugerir Recurso", "Acessar Recurso"** sem ação operacional | RF06, RF07 | 01:39 | 🟡 | M | ⬜ |
+| H6 | **Fórum — "+ Novo Tópico"** não abria editor; faltava criação/persistência de tópicos. **Entregue na v1.8.0:** `GET /api/forum` (lista pública com autor e contagem de respostas) e `POST /api/forum` (`requireAuth`, `criado_por`); formulário inline de novo tópico com validação. _Comentários por tópico seguem para entrega futura._ | RF08 | 01:32 | 🟢 | M | ✅ |
+| H7 | **Biblioteca — "Iniciar Trilha", "Sugerir Recurso", "Acessar Recurso"** sem ação operacional. **Entregue na v1.8.0:** `GET /api/recursos`, `GET /api/trilhas` e `POST /api/recursos/:id/acesso` (UPSERT em `usuario_recursos` + incremento de visualizações); "Acessar Recurso" abre a URL e registra acesso; busca filtra client-side. _"Iniciar Trilha"/"Sugerir Recurso" desabilitados ("em breve") por não terem backend nesta fase._ | RF06, RF07 | 01:39 | 🟢 | M | ✅ |
 | H8 | **Perfil — edição de dados** — campos apenas mocados; falta `PUT`/salvar alterações. **Entregue na v1.7.0:** `GET`/`PATCH /api/usuario/perfil`, edição de nome/e-mail com re-emissão do JWT e tratamento de e-mail duplicado (409) | RF05 | 01:52 | 🟡 | M | ✅ |
 | H9 | **Alternância de Tema (Claro/Escuro/Automático)** — seletor abre mas não aplica o tema. **Entregue na v1.7.0:** `ThemeContext` persistido em `localStorage` (efeito visual parcial — só superfícies baseadas em token) | RNF07 | 01:52 | 🟢 | M | ✅ |
 | H10 | **Seletor de Idioma (PT-BR/EN-US)** — abre mas não traduz (depende da estrutura i18n do item D8) | RNF10 | 01:52 | 🟢 | M | ⬜ |
@@ -257,7 +257,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
-4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0); próximos: H6 (Fórum) e H7 (Biblioteca)
+4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0); restantes: H1, H2, H10
 5. Bloco B (RF11 ✅ v1.6.0; RF16 prioritário)   → completar requisitos de alta prioridade
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
 7. Bloco B restante (RF14, RF15)        → features de menor prioridade

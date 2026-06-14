@@ -979,3 +979,260 @@ apiRouter.patch('/usuario/perfil', requireAuth, async (req, res) => {
     const perfil = await buscarPerfil(u.id);
     res.json({ source: 'db', perfil: perfil || mapPerfilRow(u) });
 });
+
+// ============================================================
+// Forum de Discussao (item H6 / RF08) e Biblioteca (item H7 / RF06-07)
+// ------------------------------------------------------------
+// Leitura publica (espelha /api/eventos): GET /api/forum, /api/recursos,
+// /api/trilhas devolvem `source: "db"` quando ha linhas, ou fallback
+// estatico. Escrita exige sessao (requireAuth) e e escopada ao usuario
+// logado via req.usuario.sub (anti-IDOR). Rotas ADITIVAS no fim do arquivo.
+// ============================================================
+
+// Limites de validacao de entrada do forum.
+const FORUM_TITULO_MAX = 160;
+const FORUM_DESCRICAO_MAX = 2000;
+const FORUM_CATEGORIA_MAX = 40;
+
+// --------------------------------------------------------------
+// GET /api/forum — lista topicos de discussao (publico).
+// --------------------------------------------------------------
+apiRouter.get('/forum', async (_req, res) => {
+    const rows = await query(
+        `SELECT f.id, f.titulo, f.descricao, f.categoria, f.created_at,
+                u.nome AS autor_nome,
+                COALESCE(p.total, 0) AS respostas
+             FROM foruns_discussao f
+             LEFT JOIN usuarios u ON u.id = f.criado_por
+             LEFT JOIN (
+                 SELECT forum_id, COUNT(*) AS total
+                     FROM forum_posts GROUP BY forum_id
+             ) p ON p.forum_id = f.id
+             ORDER BY f.created_at DESC
+             LIMIT 50`,
+    );
+    if (rows && rows.length > 0) {
+        return res.json({
+            source: 'db',
+            items: rows.map((r) => ({
+                id: r.id,
+                titulo: r.titulo,
+                descricao: r.descricao,
+                categoria: r.categoria,
+                autor: r.autor_nome,
+                respostas: Number(r.respostas) || 0,
+                createdAt: r.created_at,
+            })),
+        });
+    }
+    res.json({
+        source: 'fallback',
+        items: [
+            {
+                id: 1,
+                titulo: 'Dicas para a primeira semana de aula',
+                descricao: 'Compartilhe o que ajudou voce a se adaptar no inicio do curso.',
+                categoria: 'Dicas',
+                autor: 'Equipe NAP',
+                respostas: 0,
+                createdAt: null,
+            },
+            {
+                id: 2,
+                titulo: 'Como organizar tempo entre trabalho e estudos?',
+                descricao: 'Estrategias de organizacao para quem concilia emprego e faculdade.',
+                categoria: 'Discussao',
+                autor: 'Equipe NAP',
+                respostas: 0,
+                createdAt: null,
+            },
+        ],
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/forum — cria um novo topico (requer sessao).
+// Body: { titulo: string, descricao?: string, categoria?: string }
+// --------------------------------------------------------------
+apiRouter.post('/forum', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+
+    const titulo = req.body?.titulo !== undefined ? String(req.body.titulo).trim() : '';
+    const descricao =
+        req.body?.descricao !== undefined ? String(req.body.descricao).trim() : null;
+    const categoria =
+        req.body?.categoria !== undefined ? String(req.body.categoria).trim() : null;
+
+    if (titulo.length < 3 || titulo.length > FORUM_TITULO_MAX) {
+        return res.status(400).json({ error: 'titulo_invalido' });
+    }
+    if (descricao !== null && descricao.length > FORUM_DESCRICAO_MAX) {
+        return res.status(400).json({ error: 'descricao_invalida' });
+    }
+    if (categoria !== null && categoria.length > FORUM_CATEGORIA_MAX) {
+        return res.status(400).json({ error: 'categoria_invalida' });
+    }
+
+    const inserted = await query(
+        `INSERT INTO foruns_discussao (criado_por, titulo, descricao, categoria)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id, titulo, descricao, categoria, created_at`,
+        [req.usuario.sub, titulo, descricao, categoria],
+    );
+
+    if (inserted === null) {
+        return res.status(500).json({ error: 'falha_criacao' });
+    }
+    const t = inserted[0];
+    res.status(201).json({
+        source: 'db',
+        topico: {
+            id: t.id,
+            titulo: t.titulo,
+            descricao: t.descricao,
+            categoria: t.categoria,
+            autor: req.usuario.nome,
+            respostas: 0,
+            createdAt: t.created_at,
+        },
+    });
+});
+
+// --------------------------------------------------------------
+// GET /api/recursos — lista recursos da biblioteca (publico).
+// --------------------------------------------------------------
+apiRouter.get('/recursos', async (_req, res) => {
+    const rows = await query(
+        `SELECT id, titulo, descricao, tipo, url, categoria, visualizacoes
+             FROM recursos
+             ORDER BY id ASC
+             LIMIT 60`,
+    );
+    if (rows && rows.length > 0) {
+        return res.json({
+            source: 'db',
+            items: rows.map((r) => ({
+                id: r.id,
+                titulo: r.titulo,
+                descricao: r.descricao,
+                tipo: r.tipo,
+                url: r.url,
+                categoria: r.categoria,
+                visualizacoes: Number(r.visualizacoes) || 0,
+            })),
+        });
+    }
+    res.json({
+        source: 'fallback',
+        items: [
+            {
+                id: 1,
+                titulo: 'Tecnicas de Estudo Eficazes',
+                descricao: 'Guia introdutorio sobre metodos de estudo.',
+                tipo: 'Artigo',
+                url: null,
+                categoria: 'Metodologia',
+                visualizacoes: 0,
+            },
+            {
+                id: 2,
+                titulo: 'Como Fazer Anotacoes Cornell',
+                descricao: 'Video explicando o metodo Cornell de anotacoes.',
+                tipo: 'Video',
+                url: null,
+                categoria: 'Tecnicas',
+                visualizacoes: 0,
+            },
+        ],
+    });
+});
+
+// --------------------------------------------------------------
+// GET /api/trilhas — lista trilhas de aprendizagem (publico).
+// --------------------------------------------------------------
+apiRouter.get('/trilhas', async (_req, res) => {
+    const rows = await query(
+        `SELECT t.id, t.nome, t.descricao, t.publico_alvo,
+                COALESCE(c.total, 0) AS total_recursos
+             FROM trilhas_aprendizagem t
+             LEFT JOIN (
+                 SELECT trilha_id, COUNT(*) AS total
+                     FROM trilha_recursos GROUP BY trilha_id
+             ) c ON c.trilha_id = t.id
+             ORDER BY t.id ASC
+             LIMIT 30`,
+    );
+    if (rows && rows.length > 0) {
+        return res.json({
+            source: 'db',
+            items: rows.map((r) => ({
+                id: r.id,
+                nome: r.nome,
+                descricao: r.descricao,
+                publicoAlvo: r.publico_alvo,
+                totalRecursos: Number(r.total_recursos) || 0,
+            })),
+        });
+    }
+    res.json({
+        source: 'fallback',
+        items: [
+            {
+                id: 1,
+                nome: 'Fundamentos de ADS',
+                descricao: 'Trilha introdutoria para ingressantes de ADS.',
+                publicoAlvo: 'Ingressantes',
+                totalRecursos: 0,
+            },
+        ],
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/recursos/:id/acesso — registra acesso do usuario logado
+// a um recurso (UPSERT em usuario_recursos) e incrementa visualizacoes.
+// --------------------------------------------------------------
+apiRouter.post('/recursos/:id/acesso', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+
+    const recursoId = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(recursoId) || recursoId <= 0) {
+        return res.status(400).json({ error: 'recurso_invalido' });
+    }
+
+    // Confirma a existencia do recurso antes de registrar o acesso.
+    const existe = await query(`SELECT id, url FROM recursos WHERE id = $1 LIMIT 1`, [
+        recursoId,
+    ]);
+    if (existe === null) {
+        return res.status(500).json({ error: 'falha_verificacao' });
+    }
+    if (existe.length === 0) {
+        return res.status(404).json({ error: 'recurso_nao_encontrado' });
+    }
+
+    const registro = await query(
+        `INSERT INTO usuario_recursos (usuario_id, recurso_id, data_acesso, favorito)
+             VALUES ($1, $2, NOW(), FALSE)
+             ON CONFLICT (usuario_id, recurso_id)
+             DO UPDATE SET data_acesso = NOW()
+             RETURNING id`,
+        [req.usuario.sub, recursoId],
+    );
+    if (registro === null) {
+        return res.status(500).json({ error: 'falha_registro' });
+    }
+
+    // Incremento de visualizacoes e best-effort; nao bloqueia a resposta.
+    await query(
+        `UPDATE recursos SET visualizacoes = COALESCE(visualizacoes, 0) + 1
+             WHERE id = $1`,
+        [recursoId],
+    );
+
+    res.json({ source: 'db', ok: true, url: existe[0].url ?? null });
+});

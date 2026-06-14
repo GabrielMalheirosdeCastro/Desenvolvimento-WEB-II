@@ -12,6 +12,38 @@ type Evento = {
   vagas?: number;
 };
 
+type Recurso = {
+  id: number;
+  titulo: string;
+  descricao?: string | null;
+  tipo?: string | null;
+  url?: string | null;
+  categoria?: string | null;
+  visualizacoes?: number;
+};
+
+type Trilha = {
+  id: number;
+  nome: string;
+  descricao?: string | null;
+  publicoAlvo?: string | null;
+  totalRecursos: number;
+};
+
+const ICONE_POR_TIPO: Record<string, { icon: typeof FileText; color: string }> = {
+  artigo: { icon: FileText, color: "blue" },
+  video: { icon: Video, color: "red" },
+  "vídeo": { icon: Video, color: "red" },
+  podcast: { icon: Headphones, color: "purple" },
+  ebook: { icon: BookOpen, color: "green" },
+  "e-book": { icon: BookOpen, color: "green" },
+};
+
+function estiloRecurso(tipo?: string | null): { icon: typeof FileText; color: string } {
+  const chave = (tipo ?? "").trim().toLowerCase();
+  return ICONE_POR_TIPO[chave] ?? { icon: FileText, color: "blue" };
+}
+
 export function LibraryPage() {
   const [aba, setAba] = useState<"recursos" | "eventos">("recursos");
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -24,77 +56,54 @@ export function LibraryPage() {
       .catch(() => setEventos([]));
   }, [aba]);
 
-  const resources = [
-    {
-      title: "Técnicas de Estudo Eficazes",
-      type: "Artigo",
-      category: "Metodologia",
-      duration: "10 min",
-      icon: FileText,
-      color: "blue",
-    },
-    {
-      title: "Como Fazer Anotações Cornell",
-      type: "Vídeo",
-      category: "Técnicas",
-      duration: "15 min",
-      icon: Video,
-      color: "red",
-    },
-    {
-      title: "Podcast: Gestão de Tempo para Estudantes",
-      type: "Podcast",
-      category: "Produtividade",
-      duration: "45 min",
-      icon: Headphones,
-      color: "purple",
-    },
-    {
-      title: "Guia Completo de Mapas Mentais",
-      type: "E-book",
-      category: "Ferramentas",
-      duration: "30 min",
-      icon: BookOpen,
-      color: "green",
-    },
-    {
-      title: "Técnicas de Memorização",
-      type: "Artigo",
-      category: "Cognição",
-      duration: "12 min",
-      icon: FileText,
-      color: "blue",
-    },
-    {
-      title: "Organização de Cronograma de Estudos",
-      type: "Vídeo",
-      category: "Planejamento",
-      duration: "20 min",
-      icon: Video,
-      color: "red",
-    },
-  ];
+  const [recursos, setRecursos] = useState<Recurso[]>([]);
+  const [trilhas, setTrilhas] = useState<Trilha[]>([]);
+  const [busca, setBusca] = useState("");
+  const [aviso, setAviso] = useState<string | null>(null);
 
-  const learningPaths = [
-    {
-      title: "Fundamentos de ADS",
-      courses: 8,
-      duration: "6 semanas",
-      level: "Iniciante",
-    },
-    {
-      title: "Desenvolvimento Web Completo",
-      courses: 12,
-      duration: "10 semanas",
-      level: "Intermediário",
-    },
-    {
-      title: "Estruturas de Dados Avançadas",
-      courses: 6,
-      duration: "4 semanas",
-      level: "Avançado",
-    },
-  ];
+  useEffect(() => {
+    if (aba !== "recursos") return;
+    fetch("/api/recursos")
+      .then((r) => r.json())
+      .then((j) => setRecursos(Array.isArray(j?.items) ? j.items : []))
+      .catch(() => setRecursos([]));
+    fetch("/api/trilhas")
+      .then((r) => r.json())
+      .then((j) => setTrilhas(Array.isArray(j?.items) ? j.items : []))
+      .catch(() => setTrilhas([]));
+  }, [aba]);
+
+  async function acessarRecurso(recurso: Recurso) {
+    setAviso(null);
+    try {
+      const r = await fetch(`/api/recursos/${recurso.id}/acesso`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (r.status === 401) {
+        setAviso("Entre na sua conta para registrar o acesso ao recurso.");
+      }
+      const j = await r.json().catch(() => null);
+      const destino = j?.url ?? recurso.url;
+      if (destino) {
+        window.open(destino, "_blank", "noopener,noreferrer");
+      } else if (r.ok) {
+        setAviso("Acesso registrado. Este recurso ainda não possui link disponível.");
+      }
+    } catch {
+      setAviso("Não foi possível registrar o acesso agora. Tente novamente.");
+    }
+  }
+
+  const recursosFiltrados = recursos.filter((rec) => {
+    const termo = busca.trim().toLowerCase();
+    if (!termo) return true;
+    return (
+      rec.titulo.toLowerCase().includes(termo) ||
+      (rec.categoria ?? "").toLowerCase().includes(termo) ||
+      (rec.tipo ?? "").toLowerCase().includes(termo)
+    );
+  });
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -186,86 +195,124 @@ export function LibraryPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar recursos..."
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
             />
           </div>
-          <button className="flex items-center gap-2 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          <button
+            type="button"
+            disabled
+            title="Filtros avançados em breve"
+            className="flex items-center gap-2 px-6 py-3 border border-gray-200 text-gray-400 rounded-lg cursor-not-allowed"
+          >
             <Filter size={20} />
             Filtros
           </button>
         </div>
+        {aviso && <p className="mt-3 text-sm text-blue-700">{aviso}</p>}
       </div>
 
       {/* Trilhas de Aprendizagem */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-xl mb-6">Trilhas de Aprendizagem</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {learningPaths.map((path, index) => (
-            <div
-              key={index}
-              className="border-2 border-blue-200 rounded-lg p-6 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <BookOpen className="text-blue-600" size={20} />
+        {trilhas.length === 0 ? (
+          <p className="text-gray-500">Nenhuma trilha disponível no momento.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {trilhas.map((trilha) => (
+              <div
+                key={trilha.id}
+                className="border-2 border-blue-200 rounded-lg p-6 hover:border-blue-400 hover:shadow-md transition-all"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <BookOpen className="text-blue-600" size={20} />
+                  </div>
+                  {trilha.publicoAlvo && (
+                    <span className="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+                      {trilha.publicoAlvo}
+                    </span>
+                  )}
                 </div>
-                <span
-                  className={`px-2 py-1 text-xs rounded ${
-                    path.level === "Iniciante"
-                      ? "bg-green-100 text-green-700"
-                      : path.level === "Intermediário"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
+                <h3 className="font-medium mb-2">{trilha.nome}</h3>
+                {trilha.descricao && (
+                  <p className="text-sm text-gray-600 mb-2">{trilha.descricao}</p>
+                )}
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>{trilha.totalRecursos} recursos</p>
+                </div>
+                <button
+                  type="button"
+                  disabled
+                  title="Acompanhamento de trilha em breve"
+                  className="mt-4 w-full bg-gray-200 text-gray-500 py-2 rounded-lg cursor-not-allowed"
                 >
-                  {path.level}
-                </span>
+                  Iniciar Trilha (em breve)
+                </button>
               </div>
-              <h3 className="font-medium mb-2">{path.title}</h3>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>{path.courses} cursos</p>
-                <p>{path.duration}</p>
-              </div>
-              <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors">
-                Iniciar Trilha
-              </button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Grid de Recursos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {resources.map((resource, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-          >
-            <div className={`h-2 bg-${resource.color}-600`}></div>
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 bg-${resource.color}-100 rounded-lg flex items-center justify-center`}>
-                  <resource.icon className={`text-${resource.color}-600`} size={24} />
+      {recursosFiltrados.length === 0 ? (
+        <div className="bg-white rounded-lg shadow-sm p-6 text-gray-500">
+          Nenhum recurso encontrado para a busca atual.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recursosFiltrados.map((recurso) => {
+            const estilo = estiloRecurso(recurso.tipo);
+            const Icone = estilo.icon;
+            return (
+              <div
+                key={recurso.id}
+                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+              >
+                <div className={`h-2 bg-${estilo.color}-600`}></div>
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 bg-${estilo.color}-100 rounded-lg flex items-center justify-center`}>
+                      <Icone className={`text-${estilo.color}-600`} size={24} />
+                    </div>
+                    {typeof recurso.visualizacoes === "number" && (
+                      <span className="text-sm text-gray-500">
+                        {recurso.visualizacoes} acessos
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-medium mb-2">{recurso.titulo}</h3>
+                  {recurso.descricao && (
+                    <p className="text-sm text-gray-600 mb-4">{recurso.descricao}</p>
+                  )}
+                  <div className="flex items-center gap-2 mb-4">
+                    {recurso.tipo && (
+                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                        {recurso.tipo}
+                      </span>
+                    )}
+                    {recurso.categoria && (
+                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                        {recurso.categoria}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => acessarRecurso(recurso)}
+                    className="w-full text-blue-600 hover:text-blue-700 py-2 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+                  >
+                    Acessar Recurso
+                  </button>
                 </div>
-                <span className="text-sm text-gray-500">{resource.duration}</span>
               </div>
-              <h3 className="font-medium mb-2">{resource.title}</h3>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
-                  {resource.type}
-                </span>
-                <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
-                  {resource.category}
-                </span>
-              </div>
-              <button className="w-full text-blue-600 hover:text-blue-700 py-2 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors">
-                Acessar Recurso
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
         </>
       )}
 
@@ -278,8 +325,13 @@ export function LibraryPage() {
               Compartilhe com a comunidade! Ajude outros estudantes sugerindo 
               artigos, vídeos ou podcasts que te ajudaram.
             </p>
-            <button className="bg-white text-green-600 hover:bg-gray-100 px-6 py-3 rounded-lg transition-colors">
-              Sugerir Recurso
+            <button
+              type="button"
+              disabled
+              title="Envio de sugestões em breve"
+              className="bg-white/80 text-green-700 px-6 py-3 rounded-lg cursor-not-allowed"
+            >
+              Sugerir Recurso (em breve)
             </button>
           </div>
           <div className="h-64 md:h-auto">

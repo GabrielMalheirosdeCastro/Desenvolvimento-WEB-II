@@ -9,6 +9,18 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-06-14
+
+### Added
+
+- **Forum de Discussao funcional (item H6 / RF08)** (`apps/api/routes.js`, `apps/web/src/app/pages/ForumPage.tsx`): a tela de Forum deixa de exibir topicos mockados e passa a listar topicos reais via rota **aditiva** publica `GET /api/forum` (`LEFT JOIN` em `usuarios` para o autor e contagem de respostas a partir de `forum_posts`), com fallback estatico resiliente quando o banco esta indisponivel. A criacao de topicos usa `POST /api/forum` (`requireAuth`, `criado_por = req.usuario.sub`) com validacao de titulo (3-160 chars), descricao e categoria; o frontend abre um formulario inline, envia com `credentials: "include"`, trata `401` de sessao expirada e recarrega a lista apos publicar. Estados de carregamento/vazio/erro adicionados; paginacao e filtros falsos (botoes inertes) removidos.
+- **Biblioteca de Recursos funcional (itens H7 / RF06-07)** (`apps/api/routes.js`, `apps/web/src/app/pages/LibraryPage.tsx`): recursos e trilhas deixam de ser mockados e passam a carregar de `GET /api/recursos` e `GET /api/trilhas` (publicos, com fallback). O botao "Acessar Recurso" agora chama `POST /api/recursos/:id/acesso` (`requireAuth`, **UPSERT** em `usuario_recursos` via `ON CONFLICT (usuario_id, recurso_id)` e incremento de `visualizacoes`), abrindo a `url` do recurso em nova aba quando disponivel. A busca filtra recursos client-side por titulo/categoria/tipo. Botoes sem backend (`Filtros`, `Iniciar Trilha`, `Sugerir Recurso`) foram desabilitados com rotulo "em breve" para evitar acoes inertes.
+- Bump 1.7.1 -> **1.8.0** (MINOR — novas funcionalidades de Forum e Biblioteca). `apps/web` e `apps/api` alinhados em 1.8.0.
+
+### Fixed
+
+- **UX da tela de Mentoria** (`apps/web/src/app/pages/MentorshipPage.tsx`): o banner "Candidatar-se como Mentor" agora navega para a aba de cadastro de mentor (`setModo("mentor")`) em vez de ser inerte; os botoes "Entrar" (sessao ao vivo) e "Solicitar Mentoria", que nao possuem backend nesta fase, foram desabilitados com rotulo "em breve" para nao induzir o usuario a acoes sem efeito.
+
 ## [1.7.1] - 2026-06-14
 
 ### Fixed
