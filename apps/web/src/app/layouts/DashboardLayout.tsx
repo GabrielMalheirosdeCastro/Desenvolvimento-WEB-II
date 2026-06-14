@@ -7,6 +7,7 @@ import {
   Users,
   MessageSquare,
   Library,
+  Bot,
   User,
   ShieldCheck,
   LogOut,
@@ -40,6 +41,7 @@ export function DashboardLayout() {
     { to: "/dashboard/mentoria", icon: Users, label: "Mentoria" },
     { to: "/dashboard/forum", icon: MessageSquare, label: "Fórum" },
     { to: "/dashboard/biblioteca", icon: Library, label: "Biblioteca" },
+    { to: "/dashboard/chatbot", icon: Bot, label: "Acolhimento" },
     { to: "/dashboard/perfil", icon: User, label: "Perfil" },
     // Item exclusivo da Coordenação (RBAC — A4). Visível apenas para
     // COORDENADOR; a fronteira real de acesso é a API (requireRole).

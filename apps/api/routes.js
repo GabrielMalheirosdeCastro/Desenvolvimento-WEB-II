@@ -27,6 +27,7 @@ import {
     requireAuth,
     requireRole,
 } from './auth.js';
+import { gerarResposta, derivarFaixa, faixaValida, FAIXA_PADRAO } from './chatbot.js';
 
 export const apiRouter = Router();
 
@@ -1301,3 +1302,171 @@ apiRouter.get(
         });
     },
 );
+
+// ==============================================================
+// CHATBOT DE ACOLHIMENTO (RF16 / Bloco B - B2)
+// --------------------------------------------------------------
+// Motor de respostas CURADO LOCAL (apps/api/chatbot.js): sem LLM
+// externa, respeitando "tudo na VPS" e a LGPD (nenhuma PII sai da
+// infraestrutura propria). As respostas sao adaptadas por faixa
+// etaria (17-20 | 21-25 | 26+) e ha rede de seguranca para crise.
+//
+// A resposta e SEMPRE computada no Node (resiliente a banco off).
+// A persistencia em chatbot_conversas/chatbot_mensagens e best-effort
+// e escopada ao dono (anti-IDOR): um conversaId informado pelo cliente
+// so e reutilizado se pertencer ao usuario logado.
+// --------------------------------------------------------------
+
+const CHATBOT_MSG_MAX = 2000;
+
+/** Converte uma linha de chatbot_mensagens no formato consumido pela UI. */
+function mapChatbotMensagem(row) {
+    return {
+        id: row.id,
+        conversaId: row.conversa_id,
+        origem: row.origem,
+        conteudo: row.conteudo,
+        intencao: row.intencao || null,
+        sentimento: row.sentimento || null,
+        dataEnvio: row.data_envio || null,
+    };
+}
+
+/**
+ * Resolve a faixa etaria a usar: preferencia do corpo (se valida), senao
+ * deriva da data_nascimento do usuario, senao cai no padrao.
+ */
+async function resolverFaixa(usuarioId, faixaInformada) {
+    if (faixaValida(faixaInformada)) return faixaInformada;
+    if (isConnected()) {
+        const rows = await query(`SELECT data_nascimento FROM usuarios WHERE id = $1 LIMIT 1`, [
+            usuarioId,
+        ]);
+        if (rows && rows.length > 0) {
+            const derivada = derivarFaixa(rows[0].data_nascimento);
+            if (derivada) return derivada;
+        }
+    }
+    return FAIXA_PADRAO;
+}
+
+/**
+ * Garante uma conversa para o usuario: valida posse de conversaId quando
+ * informado; caso contrario cria uma nova. Retorna o id ou null em falha.
+ */
+async function garantirConversa(usuarioId, conversaId, faixa) {
+    if (Number.isInteger(conversaId) && conversaId > 0) {
+        const dono = await query(
+            `SELECT id FROM chatbot_conversas WHERE id = $1 AND usuario_id = $2 LIMIT 1`,
+            [conversaId, usuarioId],
+        );
+        if (dono && dono.length > 0) return conversaId;
+        // conversaId invalido ou de outro usuario: ignora e cria uma nova.
+    }
+    const criada = await query(
+        `INSERT INTO chatbot_conversas (usuario_id, faixa_etaria, canal, status, iniciou_em)
+             VALUES ($1, $2, 'web', 'aberta', NOW())
+             RETURNING id`,
+        [usuarioId, faixa],
+    );
+    if (criada && criada.length > 0) return criada[0].id;
+    return null;
+}
+
+// --------------------------------------------------------------
+// POST /api/chatbot/mensagem — envia uma mensagem e recebe a resposta.
+// Body: { mensagem: string, faixaEtaria?: '17-20'|'21-25'|'26+', conversaId?: number }
+// --------------------------------------------------------------
+apiRouter.post('/chatbot/mensagem', requireAuth, async (req, res) => {
+    const mensagem = String(req.body?.mensagem || '').trim();
+    if (!mensagem) {
+        return res.status(400).json({ error: 'mensagem_vazia' });
+    }
+    if (mensagem.length > CHATBOT_MSG_MAX) {
+        return res.status(400).json({ error: 'mensagem_muito_longa' });
+    }
+
+    const usuarioId = req.usuario.sub;
+    const faixa = await resolverFaixa(usuarioId, req.body?.faixaEtaria);
+    const resposta = gerarResposta(mensagem, faixa);
+
+    // Persistencia best-effort: nunca bloqueia a resposta ao usuario.
+    let conversaId = null;
+    let persistido = false;
+    if (isConnected()) {
+        const idEntrada = Number.parseInt(req.body?.conversaId, 10);
+        conversaId = await garantirConversa(
+            usuarioId,
+            Number.isNaN(idEntrada) ? null : idEntrada,
+            faixa,
+        );
+        if (conversaId) {
+            const ins = await query(
+                `INSERT INTO chatbot_mensagens
+                        (conversa_id, usuario_id, origem, conteudo, intencao, sentimento, data_envio)
+                     VALUES ($1, $2, 'usuario', $3, $4, $5, NOW()),
+                            ($1, NULL, 'bot', $6, $7, $8, NOW())`,
+                [
+                    conversaId,
+                    usuarioId,
+                    mensagem,
+                    resposta.intencao,
+                    resposta.sentimento,
+                    resposta.conteudo,
+                    resposta.intencao,
+                    resposta.sentimento,
+                ],
+            );
+            persistido = ins !== null;
+        }
+    }
+
+    res.json({
+        source: persistido ? 'db' : 'fallback',
+        conversaId,
+        faixaEtaria: faixa,
+        crise: resposta.crise === true,
+        resposta: {
+            origem: 'bot',
+            conteudo: resposta.conteudo,
+            intencao: resposta.intencao,
+            sentimento: resposta.sentimento,
+        },
+    });
+});
+
+// --------------------------------------------------------------
+// GET /api/chatbot/historico — mensagens da conversa mais recente do
+// usuario logado (escopado ao dono via JOIN com chatbot_conversas).
+// --------------------------------------------------------------
+apiRouter.get('/chatbot/historico', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', conversaId: null, mensagens: [] });
+    }
+    const usuarioId = req.usuario.sub;
+
+    const conversa = await query(
+        `SELECT id FROM chatbot_conversas
+             WHERE usuario_id = $1
+             ORDER BY iniciou_em DESC NULLS LAST, id DESC
+             LIMIT 1`,
+        [usuarioId],
+    );
+    if (!conversa || conversa.length === 0) {
+        return res.json({ source: 'db', conversaId: null, mensagens: [] });
+    }
+    const conversaId = conversa[0].id;
+
+    const rows = await query(
+        `SELECT id, conversa_id, origem, conteudo, intencao, sentimento, data_envio
+             FROM chatbot_mensagens
+             WHERE conversa_id = $1
+             ORDER BY id ASC
+             LIMIT 200`,
+        [conversaId],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({ source: 'db', conversaId, mensagens: rows.map(mapChatbotMensagem) });
+});

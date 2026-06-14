@@ -155,7 +155,7 @@ exige `COORDENADOR` (403 caso contrário).
 | # | Pendência | RF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
 | B1 | **Avaliação de Bem-estar** — questionários periódicos de autoavaliação. **Entregue na v1.6.0:** UI (`/dashboard/bem-estar`) + `GET/POST /api/bem-estar` + persistência em `questionarios_bem_estar` + seed da persona em produção | RF11 | 🟡 | M | ✅ |
-| B2 | **Chatbot IA de Acolhimento** — respostas adaptadas por faixa etária (17–20, 21–25, 26+) | RF16 | 🔴 | G | ⬜ |
+| B2 | **Chatbot IA de Acolhimento** — respostas adaptadas por faixa etária (17–20, 21–25, 26+). **Entregue na v1.11.0:** motor curado local (sem LLM externa, conforme “tudo na VPS” + LGPD), tela `/dashboard/chatbot`, `POST /api/chatbot/mensagem` + `GET /api/chatbot/historico`, com rede de segurança de crise (NAP + CVV 188) | RF16 | 🔴 | G | ✅ |
 | B3 | **Chat com Suporte Psicopedagógico** — canal direto com o NAP (mensageria, ex.: Socket.io) | RF15 | 🟢 | G | ⬜ |
 | B4 | **Relatórios para Coordenação** — painel admin com dados agregados e anônimos. **Entregue na v1.10.0:** `GET /api/coordenacao/overview` (somente `COORDENADOR`) + tela `/dashboard/coordenacao` com métricas institucionais agregadas | RF14 | 🟡 | G | ✅ |
 | B5 | **Notificações e Lembretes** — backend real (push/e-mail); hoje só existe o sininho na UI | RF10 | 🟡 | M | 🟨 |

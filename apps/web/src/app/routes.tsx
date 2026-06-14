@@ -13,6 +13,7 @@ import { MentorshipPage } from "./pages/MentorshipPage";
 import { ForumPage } from "./pages/ForumPage";
 import { LibraryPage } from "./pages/LibraryPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { ChatbotPage } from "./pages/ChatbotPage";
 import { CoordenacaoPage } from "./pages/CoordenacaoPage";
 import { NotFound } from "./pages/NotFound";
 
@@ -41,6 +42,7 @@ export const router = createBrowserRouter([
           { path: "mentoria", Component: MentorshipPage },
           { path: "forum", Component: ForumPage },
           { path: "biblioteca", Component: LibraryPage },
+          { path: "chatbot", Component: ChatbotPage },
           { path: "perfil", Component: ProfilePage },
           {
             path: "coordenacao",

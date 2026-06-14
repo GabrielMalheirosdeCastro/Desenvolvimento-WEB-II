@@ -9,6 +9,17 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-06-14
+
+### Added
+
+- **Chatbot de Acolhimento (item B2 / RF16)**: novo assistente de apoio estudantil acessível em `/dashboard/chatbot`, com respostas **adaptadas por faixa etária** (17–20, 21–25, 26+). O motor de respostas é **curado e local** ([apps/api/chatbot.js](apps/api/chatbot.js)) — **sem LLM externa** —, em conformidade com a política “tudo na VPS” e com a LGPD (nenhuma mensagem do aluno sai da infraestrutura própria). Detecta intenções comuns (ansiedade, sono, organização, motivação, provas, adaptação, finanças, saudação, apoio humano) e inclui uma **rede de segurança determinística para mensagens de crise**, que encaminha ao NAP e ao CVV (188). Novos endpoints `POST /api/chatbot/mensagem` e `GET /api/chatbot/historico` (ambos `requireAuth`), com persistência *best-effort* em `chatbot_conversas`/`chatbot_mensagens` escopada ao dono (anti-IDOR) e resiliente a banco indisponível (a resposta é sempre computada no Node). A faixa etária é derivada da `data_nascimento` do usuário ou selecionável na tela. Sem migração de schema — as tabelas já existiam na migração inicial do Postgres.
+
+### Changed
+
+- **Testes** (`scripts/test-chatbot-core.mjs`): nova suíte unitária do motor do chatbot — validação de faixas, derivação por data de nascimento, prioridade absoluta da rede de segurança de crise, detecção de intenções (tolerante a acentos) e a adaptação efetiva do conteúdo por faixa etária. Determinística, sem banco.
+- Bump 1.10.0 -> **1.11.0** (MINOR — nova funcionalidade compatível) nos três `package.json`.
+
 ## [1.10.0] - 2026-06-14
 
 ### Added
