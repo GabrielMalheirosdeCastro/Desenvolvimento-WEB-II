@@ -9,6 +9,13 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-06-14
+
+### Fixed
+
+- **Tela de Mentoria quebrada em producao (regressao da v1.7.0)** (`apps/web/src/app/pages/MentorshipPage.tsx`): a rota `/dashboard/mentoria` lancava `Unexpected Application Error! ImageWithFallback is not defined` (`ReferenceError` em runtime), derrubando a tela inteira via ErrorBoundary do React Router. A refatoracao do item H5 (v1.7.0) passou a **usar** o componente `<ImageWithFallback>` no card "Candidatar-se como Mentor" mas **removeu o import** correspondente. Restaurado o `import { ImageWithFallback } from "../components/figma/ImageWithFallback"`. O erro nao foi detectado por TS/lint por ser uma referencia resolvida apenas em runtime; varredura confirmou que as demais telas (`ConcentrationPage`, `LibraryPage`) ja importavam o componente corretamente.
+- Bump 1.7.0 -> **1.7.1** (PATCH — correcao de bug de runtime). `apps/web` e `apps/api` alinhados em 1.7.1.
+
 ## [1.7.0] - 2026-06-14
 
 ### Added

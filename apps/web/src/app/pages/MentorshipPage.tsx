@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Users, MessageCircle, Calendar, Star, Search, CheckCircle2 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
 interface Mentor {
   id: number | string;
