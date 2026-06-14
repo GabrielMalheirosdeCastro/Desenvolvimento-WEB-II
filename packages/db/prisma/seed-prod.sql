@@ -132,6 +132,43 @@ INSERT INTO usuarios (matricula_institucional, email_institucional, nome, tipo_u
 VALUES ('20210042', 'mariana.costa@faesa.br', 'Mariana Costa', 'ALUNO', TRUE, '2004-07-22')
 ON CONFLICT (matricula_institucional) DO UPDATE SET e_mentor = TRUE;
 
+-- 7.1 Alunos de demonstracao para popular o ranking de gamificacao (RF13).
+-- Sem hash de senha: nao fazem login, existem apenas para o ranking.
+INSERT INTO usuarios (matricula_institucional, email_institucional, nome, tipo_usuario, e_mentor, data_nascimento)
+VALUES
+  ('23110200', 'lucas.andrade@faesa.br', 'Lucas Andrade', 'ALUNO', FALSE, '2003-03-10'),
+  ('23110201', 'beatriz.lima@faesa.br',  'Beatriz Lima',  'ALUNO', FALSE, '2004-09-18')
+ON CONFLICT (matricula_institucional) DO UPDATE SET nome = EXCLUDED.nome;
+
+-- 7.2 Gamificacao dos demais alunos (Gabriel lidera com 225 pontos).
+INSERT INTO gamificacao (usuario_id, pontos_totais, ranking_posicao, streak_atual, streak_recorde, data_ultima_atividade)
+SELECT u.id, v.pontos, v.posicao, v.streak, v.recorde, DATE_TRUNC('day', NOW()) + INTERVAL '9 hours'
+FROM (VALUES
+  ('20210042', 180, 2, 8, 15),
+  ('23110200', 150, 3, 5, 10),
+  ('23110201', 90,  4, 3, 7)
+) AS v(matricula, pontos, posicao, streak, recorde)
+JOIN usuarios u ON u.matricula_institucional = v.matricula
+ON CONFLICT (usuario_id) DO UPDATE
+SET pontos_totais = EXCLUDED.pontos_totais,
+    ranking_posicao = EXCLUDED.ranking_posicao,
+    streak_atual = EXCLUDED.streak_atual,
+    streak_recorde = EXCLUDED.streak_recorde;
+
+-- 7.3 Notificacoes da persona (RF10). Idempotente por usuario via DELETE+INSERT.
+DELETE FROM notificacoes
+WHERE usuario_id IN (SELECT id FROM usuarios WHERE matricula_institucional = '23110145');
+INSERT INTO notificacoes (usuario_id, titulo, mensagem, tipo, lida, data_criacao)
+SELECT u.id, v.titulo, v.mensagem, v.tipo, v.lida, v.data_criacao
+FROM usuarios u
+CROSS JOIN (VALUES
+  ('Bem-vindo ao Acolhimento FAESA', 'Sua conta foi configurada com sucesso. Explore os recursos disponiveis.', 'sucesso', TRUE,  NOW() - INTERVAL '5 days'),
+  ('Nova conquista desbloqueada',    'Voce conquistou "Meta Cumprida" (+100 pontos).',                         'sucesso', FALSE, NOW() - INTERVAL '2 days'),
+  ('Sessao de mentoria agendada',    'Sua sessao com Mariana Costa esta marcada para esta semana.',            'info',    FALSE, NOW() - INTERVAL '1 days'),
+  ('Lembrete de bem-estar',          'Que tal registrar como foi sua semana? Leva menos de 2 minutos.',        'info',    FALSE, NOW() - INTERVAL '6 hours')
+) AS v(titulo, mensagem, tipo, lida, data_criacao)
+WHERE u.matricula_institucional = '23110145';
+
 -- 7.5 Avaliacoes de bem-estar (RF11) — alimenta GET /api/bem-estar com
 -- historico real da persona. Idempotente por usuario via DELETE+INSERT.
 -- respostas guarda JSON {humor,estresse,sono} (escala 1..5); resultado e a
@@ -231,6 +268,8 @@ UNION ALL SELECT 'planos_estudo (Gabriel)', COUNT(*) FROM planos_estudo p JOIN u
 UNION ALL SELECT 'atividades_estudo (Gabriel)', COUNT(*) FROM atividades_estudo a JOIN usuarios u ON u.id=a.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'usuarios_conquistas (Gabriel)', COUNT(*) FROM usuarios_conquistas uc JOIN usuarios u ON u.id=uc.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'gamificacao (Gabriel)', COUNT(*) FROM gamificacao g JOIN usuarios u ON u.id=g.usuario_id WHERE u.matricula_institucional='23110145'
+UNION ALL SELECT 'gamificacao (ranking total)', COUNT(*) FROM gamificacao
+UNION ALL SELECT 'notificacoes (Gabriel)', COUNT(*) FROM notificacoes n JOIN usuarios u ON u.id=n.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'bem_estar (Gabriel)', COUNT(*) FROM questionarios_bem_estar q JOIN usuarios u ON u.id=q.usuario_id WHERE u.matricula_institucional='23110145'
 UNION ALL SELECT 'eventos (futuros)', COUNT(*) FROM eventos WHERE data_evento > NOW()
 UNION ALL SELECT 'recursos', COUNT(*) FROM recursos

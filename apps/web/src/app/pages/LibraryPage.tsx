@@ -1,16 +1,6 @@
 import { useEffect, useState } from "react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { BookOpen, Video, Headphones, FileText, Search, Filter, Calendar, MapPin } from "lucide-react";
-
-type Evento = {
-  id: number;
-  titulo: string;
-  descricao?: string;
-  tipo?: string;
-  data?: string;
-  local?: string;
-  vagas?: number;
-};
+import { BookOpen, Video, Headphones, FileText, Search, Filter } from "lucide-react";
 
 type Recurso = {
   id: number;
@@ -45,24 +35,12 @@ function estiloRecurso(tipo?: string | null): { icon: typeof FileText; color: st
 }
 
 export function LibraryPage() {
-  const [aba, setAba] = useState<"recursos" | "eventos">("recursos");
-  const [eventos, setEventos] = useState<Evento[]>([]);
-
-  useEffect(() => {
-    if (aba !== "eventos") return;
-    fetch("/api/eventos")
-      .then((r) => r.json())
-      .then((j) => setEventos(Array.isArray(j?.items) ? j.items : []))
-      .catch(() => setEventos([]));
-  }, [aba]);
-
   const [recursos, setRecursos] = useState<Recurso[]>([]);
   const [trilhas, setTrilhas] = useState<Trilha[]>([]);
   const [busca, setBusca] = useState("");
   const [aviso, setAviso] = useState<string | null>(null);
 
   useEffect(() => {
-    if (aba !== "recursos") return;
     fetch("/api/recursos")
       .then((r) => r.json())
       .then((j) => setRecursos(Array.isArray(j?.items) ? j.items : []))
@@ -71,7 +49,7 @@ export function LibraryPage() {
       .then((r) => r.json())
       .then((j) => setTrilhas(Array.isArray(j?.items) ? j.items : []))
       .catch(() => setTrilhas([]));
-  }, [aba]);
+  }, []);
 
   async function acessarRecurso(recurso: Recurso) {
     setAviso(null);
@@ -114,80 +92,6 @@ export function LibraryPage() {
         </p>
       </div>
 
-      {/* Abas Recursos / Eventos (Sprint 8a — RF12) */}
-      <div className="flex gap-2 border-b border-gray-200">
-        <button
-          type="button"
-          onClick={() => setAba("recursos")}
-          className={`px-4 py-2 -mb-px border-b-2 transition-colors ${
-            aba === "recursos"
-              ? "border-blue-600 text-blue-600 font-medium"
-              : "border-transparent text-gray-600 hover:text-gray-900"
-          }`}
-        >
-          Recursos
-        </button>
-        <button
-          type="button"
-          onClick={() => setAba("eventos")}
-          className={`px-4 py-2 -mb-px border-b-2 transition-colors ${
-            aba === "eventos"
-              ? "border-blue-600 text-blue-600 font-medium"
-              : "border-transparent text-gray-600 hover:text-gray-900"
-          }`}
-        >
-          Eventos
-        </button>
-      </div>
-
-      {aba === "eventos" ? (
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-xl mb-6 flex items-center gap-2">
-            <Calendar className="text-blue-600" size={20} />
-            Próximos Eventos Institucionais
-          </h2>
-          {eventos.length === 0 ? (
-            <p className="text-gray-500">Carregando eventos...</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {eventos.map((ev) => (
-                <div key={ev.id} className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">
-                      {ev.tipo || "Evento"}
-                    </span>
-                    {typeof ev.vagas === "number" && (
-                      <span className="text-xs text-gray-500">{ev.vagas} vagas</span>
-                    )}
-                  </div>
-                  <h3 className="font-medium mb-2">{ev.titulo}</h3>
-                  {ev.descricao && (
-                    <p className="text-sm text-gray-600 mb-3">{ev.descricao}</p>
-                  )}
-                  <div className="text-sm text-gray-700 space-y-1">
-                    {ev.data && (
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-gray-400" />
-                        <span>{new Date(ev.data).toLocaleString("pt-BR")}</span>
-                      </div>
-                    )}
-                    {ev.local && (
-                      <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-gray-400" />
-                        <span>{ev.local}</span>
-                      </div>
-                    )}
-                  </div>
-                  <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors">
-                    Inscrever-se
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <>
       {/* Busca e Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex flex-col md:flex-row gap-4">
@@ -312,8 +216,6 @@ export function LibraryPage() {
             );
           })}
         </div>
-      )}
-        </>
       )}
 
       {/* Banner Contribuir */}

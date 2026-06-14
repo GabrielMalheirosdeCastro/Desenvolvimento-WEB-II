@@ -9,6 +9,19 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-06-14
+
+### Added
+
+- **Notificações reais (item B5 / RF10)**: o sino de notificações do cabeçalho ([apps/web/src/app/components/NotificationBell.tsx](apps/web/src/app/components/NotificationBell.tsx)) passa a consumir dados reais via novos endpoints `GET /api/notificacoes` (lista as 50 mais recentes do usuário + contador de não lidas), `POST /api/notificacoes/:id/marcar-lida` e `POST /api/notificacoes/marcar-todas-lidas`. Todos protegidos por `requireAuth`, escopados ao dono (anti-IDOR via `req.usuario.sub`), com contrato `source: db|fallback` e `503 db_indisponivel` nas escritas quando o banco está offline. A UI usa atualização otimista e degrada para lista vazia sem quebrar.
+- **Página dedicada de Eventos (item B6 / RF12)**: nova tela `/dashboard/eventos` ([apps/web/src/app/pages/EventsPage.tsx](apps/web/src/app/pages/EventsPage.tsx)) com item próprio no menu lateral, **separada da Biblioteca**. Lista os eventos institucionais (`GET /api/eventos`, público) e permite **inscrição** do aluno via novo `POST /api/eventos/:id/inscrever` (`requireAuth`, idempotente por `ON CONFLICT DO NOTHING`, `404 evento_nao_encontrado`), além de `GET /api/eventos/minhas` para marcar os eventos já inscritos. A aba de Eventos que existia dentro da Biblioteca foi removida.
+- **Gamificação real e ranking entre alunos (item B7 / RF13)**: o Perfil ([apps/web/src/app/pages/ProfilePage.tsx](apps/web/src/app/pages/ProfilePage.tsx)) passa a exibir pontos, conquistas (com flag `earned`), histórico e *streak* reais via `GET /api/gamificacao/perfil`, além de uma nova seção **"Ranking entre Alunos"** (`GET /api/gamificacao/ranking`) com `RANK()` sobre os pontos, nomes reduzidos por privacidade e destaque para a posição do próprio usuário. Ambos os endpoints (`requireAuth`) seguem o contrato `source: db|fallback`; a UI degrada graciosamente para valores de exemplo quando o banco está indisponível.
+
+### Changed
+
+- **Seed de produção** (`packages/db/prisma/seed-prod.sql`): novas seções idempotentes — notificações da persona Gabriel (7.3), alunos de demonstração (7.1) e gamificação dos demais alunos (7.2) para popular o ranking com múltiplas entradas. O relatório final foi ampliado com as contagens de `notificacoes` e `gamificacao (ranking total)`.
+- Bump 1.11.0 -> **1.12.0** (MINOR — três novas funcionalidades compatíveis: notificações, eventos e gamificação reais) nos três `package.json`.
+
 ## [1.11.0] - 2026-06-14
 
 ### Added

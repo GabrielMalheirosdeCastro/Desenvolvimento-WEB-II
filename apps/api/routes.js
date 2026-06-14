@@ -1470,3 +1470,274 @@ apiRouter.get('/chatbot/historico', requireAuth, async (req, res) => {
     }
     res.json({ source: 'db', conversaId, mensagens: rows.map(mapChatbotMensagem) });
 });
+
+// ==============================================================
+// NOTIFICACOES (RF10 / Bloco B - B5)
+// --------------------------------------------------------------
+// Backend real do "sininho": ate aqui era mock estatico no frontend.
+// Leitura e escrita exigem sessao (requireAuth) e sao escopadas ao
+// usuario logado via req.usuario.sub (anti-IDOR). Resiliente a banco
+// indisponivel: GET cai em fallback estatico; mutacoes retornam 503.
+// --------------------------------------------------------------
+
+/** Converte uma linha de `notificacoes` no formato consumido pela UI. */
+function mapNotificacao(row) {
+    return {
+        id: row.id,
+        titulo: row.titulo,
+        mensagem: row.mensagem,
+        tipo: row.tipo || 'info',
+        lida: row.lida === true,
+        dataCriacao: row.data_criacao || null,
+    };
+}
+
+// --------------------------------------------------------------
+// GET /api/notificacoes — lista as notificacoes do usuario logado.
+// --------------------------------------------------------------
+apiRouter.get('/notificacoes', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', items: [], naoLidas: 0 });
+    }
+    const rows = await query(
+        `SELECT id, titulo, mensagem, tipo, lida, data_criacao
+             FROM notificacoes
+             WHERE usuario_id = $1
+             ORDER BY data_criacao DESC NULLS LAST, id DESC
+             LIMIT 50`,
+        [req.usuario.sub],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    const items = rows.map(mapNotificacao);
+    res.json({
+        source: 'db',
+        items,
+        naoLidas: items.filter((n) => !n.lida).length,
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/notificacoes/:id/marcar-lida — marca uma como lida.
+// --------------------------------------------------------------
+apiRouter.post('/notificacoes/:id/marcar-lida', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const id = Number.parseInt(req.params.id, 10);
+    if (Number.isNaN(id) || id <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    const updated = await query(
+        `UPDATE notificacoes SET lida = TRUE
+             WHERE id = $1 AND usuario_id = $2
+             RETURNING id`,
+        [id, req.usuario.sub],
+    );
+    if (updated === null) {
+        return res.status(500).json({ error: 'falha_atualizacao' });
+    }
+    if (updated.length === 0) {
+        return res.status(404).json({ error: 'notificacao_nao_encontrada' });
+    }
+    res.json({ source: 'db', id, lida: true });
+});
+
+// --------------------------------------------------------------
+// POST /api/notificacoes/marcar-todas-lidas — marca todas como lidas.
+// --------------------------------------------------------------
+apiRouter.post('/notificacoes/marcar-todas-lidas', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const updated = await query(
+        `UPDATE notificacoes SET lida = TRUE
+             WHERE usuario_id = $1 AND (lida IS DISTINCT FROM TRUE)
+             RETURNING id`,
+        [req.usuario.sub],
+    );
+    if (updated === null) {
+        return res.status(500).json({ error: 'falha_atualizacao' });
+    }
+    res.json({ source: 'db', atualizadas: updated.length });
+});
+
+// ==============================================================
+// INSCRICAO EM EVENTOS (RF12 / Bloco B - B6)
+// --------------------------------------------------------------
+// O GET /api/eventos (publico) ja lista os eventos. Aqui entram a
+// inscricao do aluno logado e a consulta das suas inscricoes. UPSERT
+// idempotente em usuario_eventos (UNIQUE usuario_id, evento_id);
+// escrita escopada a req.usuario.sub (anti-IDOR).
+// --------------------------------------------------------------
+
+// --------------------------------------------------------------
+// GET /api/eventos/minhas — ids dos eventos em que o usuario se inscreveu.
+// --------------------------------------------------------------
+apiRouter.get('/eventos/minhas', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', items: [] });
+    }
+    const rows = await query(
+        `SELECT evento_id, data_inscricao
+             FROM usuario_eventos
+             WHERE usuario_id = $1
+             ORDER BY data_inscricao DESC NULLS LAST`,
+        [req.usuario.sub],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({
+        source: 'db',
+        items: rows.map((r) => ({ eventoId: r.evento_id, dataInscricao: r.data_inscricao })),
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/eventos/:id/inscrever — inscreve o usuario no evento.
+// --------------------------------------------------------------
+apiRouter.post('/eventos/:id/inscrever', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const eventoId = Number.parseInt(req.params.id, 10);
+    if (Number.isNaN(eventoId) || eventoId <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+
+    const existe = await query(`SELECT id FROM eventos WHERE id = $1 LIMIT 1`, [eventoId]);
+    if (existe === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (existe.length === 0) {
+        return res.status(404).json({ error: 'evento_nao_encontrado' });
+    }
+
+    const inserted = await query(
+        `INSERT INTO usuario_eventos (usuario_id, evento_id, data_inscricao, presenca_confirmada)
+             VALUES ($1, $2, NOW(), FALSE)
+             ON CONFLICT (usuario_id, evento_id) DO NOTHING
+             RETURNING id`,
+        [req.usuario.sub, eventoId],
+    );
+    if (inserted === null) {
+        return res.status(500).json({ error: 'falha_inscricao' });
+    }
+    // inserted.length === 0 => ja estava inscrito (idempotente): tratamos como sucesso.
+    res.status(201).json({ source: 'db', eventoId, inscrito: true });
+});
+
+// ==============================================================
+// GAMIFICACAO (RF13 / Bloco B - B7)
+// --------------------------------------------------------------
+// Consolida pontos/streak/posicao e o catalogo de conquistas (com a
+// flag `earned`) do usuario logado, alem do ranking entre alunos.
+// O perfil e escopado a req.usuario.sub (anti-IDOR). O ranking expoe
+// apenas nome reduzido (primeiro nome + inicial do sobrenome) + pontos,
+// nunca matricula/e-mail (privacidade / LGPD).
+// --------------------------------------------------------------
+
+/** Reduz o nome para "Primeiro S." preservando privacidade no ranking. */
+function nomeReduzido(nome) {
+    const partes = String(nome || '').trim().split(/\s+/).filter(Boolean);
+    if (partes.length === 0) return 'Aluno';
+    if (partes.length === 1) return partes[0];
+    const inicial = partes[partes.length - 1][0];
+    return `${partes[0]} ${inicial.toUpperCase()}.`;
+}
+
+// --------------------------------------------------------------
+// GET /api/gamificacao/perfil — pontos, streak, posicao, conquistas.
+// --------------------------------------------------------------
+apiRouter.get('/gamificacao/perfil', requireAuth, async (req, res) => {
+    const fallback = {
+        pontosTotais: 0,
+        rankingPosicao: null,
+        streakAtual: 0,
+        streakRecorde: 0,
+        conquistas: [],
+        historico: [],
+    };
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', ...fallback });
+    }
+    const usuarioId = req.usuario.sub;
+
+    const gRows = await query(
+        `SELECT pontos_totais, ranking_posicao, streak_atual, streak_recorde
+             FROM gamificacao WHERE usuario_id = $1 LIMIT 1`,
+        [usuarioId],
+    );
+    if (gRows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+
+    // Catalogo de conquistas com a flag earned (LEFT JOIN com as do usuario).
+    const cRows = await query(
+        `SELECT c.codigo, c.titulo, c.descricao, COALESCE(c.icone, '🏆') AS icone,
+                c.pontos, uc.conquistada_em
+             FROM conquistas c
+             LEFT JOIN usuarios_conquistas uc
+                 ON uc.conquista_id = c.id AND uc.usuario_id = $1
+             ORDER BY (uc.conquistada_em IS NULL), uc.conquistada_em DESC NULLS LAST, c.id ASC`,
+        [usuarioId],
+    );
+    const conquistas = (cRows || []).map((r) => ({
+        codigo: r.codigo,
+        titulo: r.titulo,
+        descricao: r.descricao,
+        icone: r.icone,
+        pontos: Number(r.pontos) || 0,
+        earned: r.conquistada_em != null,
+        conquistadaEm: r.conquistada_em || null,
+    }));
+
+    // Historico de pontos derivado das conquistas obtidas (sem tabela dedicada).
+    const historico = conquistas
+        .filter((c) => c.earned)
+        .map((c) => ({ acao: c.titulo, pontos: c.pontos, data: c.conquistadaEm }));
+
+    const g = (gRows && gRows[0]) || {};
+    res.json({
+        source: 'db',
+        pontosTotais: Number(g.pontos_totais) || 0,
+        rankingPosicao: g.ranking_posicao != null ? Number(g.ranking_posicao) : null,
+        streakAtual: Number(g.streak_atual) || 0,
+        streakRecorde: Number(g.streak_recorde) || 0,
+        conquistas,
+        historico,
+    });
+});
+
+// --------------------------------------------------------------
+// GET /api/gamificacao/ranking — top alunos por pontos (privacidade).
+// --------------------------------------------------------------
+apiRouter.get('/gamificacao/ranking', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', items: [], minhaPosicao: null });
+    }
+    const usuarioId = req.usuario.sub;
+
+    const rows = await query(
+        `SELECT u.id, u.nome, COALESCE(g.pontos_totais, 0) AS pontos,
+                RANK() OVER (ORDER BY COALESCE(g.pontos_totais, 0) DESC) AS posicao
+             FROM gamificacao g
+             JOIN usuarios u ON u.id = g.usuario_id
+             WHERE UPPER(u.tipo_usuario) = 'ALUNO'
+             ORDER BY pontos DESC
+             LIMIT 10`,
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    const items = rows.map((r) => ({
+        posicao: Number(r.posicao) || 0,
+        nome: nomeReduzido(r.nome),
+        pontos: Number(r.pontos) || 0,
+        eu: Number(r.id) === Number(usuarioId),
+    }));
+    const minha = items.find((i) => i.eu);
+    res.json({ source: 'db', items, minhaPosicao: minha ? minha.posicao : null });
+});

@@ -158,9 +158,9 @@ exige `COORDENADOR` (403 caso contrário).
 | B2 | **Chatbot IA de Acolhimento** — respostas adaptadas por faixa etária (17–20, 21–25, 26+). **Entregue na v1.11.0:** motor curado local (sem LLM externa, conforme “tudo na VPS” + LGPD), tela `/dashboard/chatbot`, `POST /api/chatbot/mensagem` + `GET /api/chatbot/historico`, com rede de segurança de crise (NAP + CVV 188) | RF16 | 🔴 | G | ✅ |
 | B3 | **Chat com Suporte Psicopedagógico** — canal direto com o NAP (mensageria, ex.: Socket.io) | RF15 | 🟢 | G | ⬜ |
 | B4 | **Relatórios para Coordenação** — painel admin com dados agregados e anônimos. **Entregue na v1.10.0:** `GET /api/coordenacao/overview` (somente `COORDENADOR`) + tela `/dashboard/coordenacao` com métricas institucionais agregadas | RF14 | 🟡 | G | ✅ |
-| B5 | **Notificações e Lembretes** — backend real (push/e-mail); hoje só existe o sininho na UI | RF10 | 🟡 | M | 🟨 |
-| B6 | **Eventos extracurriculares** — aba/agregador dedicado (hoje misturado na Biblioteca) | RF12 | 🟢 | P | 🟨 |
-| B7 | **Gamificação completa** — ranking dedicado entre alunos (hoje só pontos/badges/streak) | RF13 | 🟢 | M | 🟨 |
+| B5 | **Notificações e Lembretes** — sininho real no cabeçalho. **Entregue na v1.12.0:** `GET /api/notificacoes` (+ contador de não lidas), `POST /api/notificacoes/:id/marcar-lida` e `POST /api/notificacoes/marcar-todas-lidas` (escopados ao dono, anti-IDOR), `NotificationBell` com fetch real e atualização otimista, seed da persona | RF10 | 🟡 | M | ✅ |
+| B6 | **Eventos extracurriculares** — página dedicada (separada da Biblioteca). **Entregue na v1.12.0:** tela `/dashboard/eventos` com item de menu próprio, `POST /api/eventos/:id/inscrever` (idempotente) + `GET /api/eventos/minhas`; aba de eventos removida da Biblioteca | RF12 | 🟢 | P | ✅ |
+| B7 | **Gamificação completa** — ranking dedicado entre alunos. **Entregue na v1.12.0:** `GET /api/gamificacao/perfil` (pontos/conquistas/histórico/streak reais) + `GET /api/gamificacao/ranking` (`RANK()`, nomes reduzidos por privacidade, destaque do próprio aluno), seção no Perfil + seed do ranking | RF13 | 🟢 | M | ✅ |
 
 **Observação:** o schema Prisma **já modela** as tabelas de suporte a RF11, RF14 e RF15
 (`QuestionarioBemEstar`, `RelatorioAnonimizado`/`AuditoriaDado`, `ChatTicket`/`ChatMensagem`),

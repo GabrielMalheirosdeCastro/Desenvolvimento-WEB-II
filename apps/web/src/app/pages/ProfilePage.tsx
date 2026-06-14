@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  User,
-  Book,
   Calendar,
   Award,
   Settings,
@@ -26,6 +24,39 @@ interface Perfil {
   cra: number | null;
 }
 
+interface ConquistaItem {
+  codigo: string;
+  titulo: string;
+  descricao: string | null;
+  icone: string | null;
+  pontos: number;
+  earned: boolean;
+  conquistadaEm: string | null;
+}
+
+interface HistoricoItem {
+  acao: string;
+  pontos: number;
+  data: string;
+}
+
+interface GamificacaoPerfil {
+  source: string;
+  pontosTotais: number;
+  rankingPosicao: number | null;
+  streakAtual: number;
+  streakRecorde: number;
+  conquistas: ConquistaItem[];
+  historico: HistoricoItem[];
+}
+
+interface RankingItem {
+  posicao: number;
+  nome: string;
+  pontos: number;
+  eu: boolean;
+}
+
 export function ProfilePage() {
   const { usuario, recarregar } = useAuth();
   const { tema, definirTema } = useTheme();
@@ -33,6 +64,10 @@ export function ProfilePage() {
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+
+  // Gamificação (RF13) — perfil de pontos/conquistas e ranking entre alunos.
+  const [gamPerfil, setGamPerfil] = useState<GamificacaoPerfil | null>(null);
+  const [ranking, setRanking] = useState<RankingItem[]>([]);
 
   // Campos editaveis (controlados).
   const [nome, setNome] = useState("");
@@ -73,6 +108,38 @@ export function ProfilePage() {
       ativo = false;
     };
   }, [usuario]);
+
+  // Carrega gamificação e ranking (degrada silenciosamente quando indisponível).
+  useEffect(() => {
+    let ativo = true;
+    (async () => {
+      try {
+        const [resPerfil, resRanking] = await Promise.all([
+          fetch("/api/gamificacao/perfil", {
+            credentials: "include",
+            headers: { Accept: "application/json" },
+          }),
+          fetch("/api/gamificacao/ranking", {
+            credentials: "include",
+            headers: { Accept: "application/json" },
+          }),
+        ]);
+        if (ativo && resPerfil.ok) {
+          const data = (await resPerfil.json()) as GamificacaoPerfil;
+          setGamPerfil(data);
+        }
+        if (ativo && resRanking.ok) {
+          const data = await resRanking.json();
+          setRanking(Array.isArray(data?.items) ? data.items : []);
+        }
+      } catch {
+        // Mantém os valores de fallback já renderizados.
+      }
+    })();
+    return () => {
+      ativo = false;
+    };
+  }, []);
 
   const nomeAtual = perfil?.nome ?? usuario?.nome ?? "";
   const emailAtual = perfil?.email ?? usuario?.email ?? "";
@@ -127,33 +194,53 @@ export function ProfilePage() {
   const periodoLabel = perfil?.periodo != null ? `${perfil.periodo}º Período` : "—";
   const craLabel = perfil?.cra != null ? String(perfil.cra) : "—";
 
-  const badges = [
-    { name: "Primeira Semana", icon: "🎓", earned: true },
-    { name: "5 Horas de Estudo", icon: "📚", earned: true },
-    { name: "Meta Cumprida", icon: "🎯", earned: true },
-    { name: "Mentor Ativo", icon: "👨‍🏫", earned: perfil?.eMentor ?? false },
-    { name: "10 Posts no Fórum", icon: "💬", earned: false },
-    { name: "Sequência 30 Dias", icon: "🔥", earned: false },
-  ];
+  const temGamificacao = gamPerfil != null && gamPerfil.source === "db";
+
+  const badges =
+    temGamificacao && gamPerfil!.conquistas.length > 0
+      ? gamPerfil!.conquistas.map((c) => ({
+          name: c.titulo,
+          icon: c.icone || "🏅",
+          earned: c.earned,
+        }))
+      : [
+          { name: "Primeira Semana", icon: "🎓", earned: true },
+          { name: "5 Horas de Estudo", icon: "📚", earned: true },
+          { name: "Meta Cumprida", icon: "🎯", earned: true },
+          { name: "Mentor Ativo", icon: "👨‍🏫", earned: perfil?.eMentor ?? false },
+          { name: "10 Posts no Fórum", icon: "💬", earned: false },
+          { name: "Sequência 30 Dias", icon: "🔥", earned: false },
+        ];
+
+  const conquistasGanhas = temGamificacao
+    ? gamPerfil!.conquistas.filter((c) => c.earned).length
+    : 3;
 
   const stats = [
-    { label: "Horas de Estudo Total", value: "142h", icon: Book },
-    { label: "Metas Cumpridas", value: "38", icon: Award },
-    { label: "Dias Consecutivos", value: "12", icon: Calendar },
-    { label: "Sessões de Mentoria", value: "5", icon: User },
+    { label: "Pontos Totais", value: String(gamPerfil?.pontosTotais ?? 850), icon: Trophy },
+    { label: "Conquistas", value: String(conquistasGanhas), icon: Award },
+    { label: "Dias Consecutivos", value: String(gamPerfil?.streakAtual ?? 12), icon: Calendar },
+    { label: "Recorde de Sequência", value: String(gamPerfil?.streakRecorde ?? 18), icon: TrendingUp },
   ];
 
-  const pointsHistory = [
-    { action: "Meta concluída", points: 50, date: "Hoje" },
-    { action: "Sessão Pomodoro", points: 25, date: "Hoje" },
-    { action: "Post no fórum", points: 10, date: "Ontem" },
-    { action: "Avaliação de bem-estar", points: 15, date: "Ontem" },
-  ];
+  const pointsHistory =
+    temGamificacao && gamPerfil!.historico.length > 0
+      ? gamPerfil!.historico.map((h) => ({
+          action: h.acao,
+          points: h.pontos,
+          date: h.data,
+        }))
+      : [
+          { action: "Meta concluída", points: 50, date: "Hoje" },
+          { action: "Sessão Pomodoro", points: 25, date: "Hoje" },
+          { action: "Post no fórum", points: 10, date: "Ontem" },
+          { action: "Avaliação de bem-estar", points: 15, date: "Ontem" },
+        ];
 
-  const totalPoints = 850;
-  const nextBadgePoints = 1000;
-  const pointsToNextBadge = nextBadgePoints - totalPoints;
-  const progressPercentage = (totalPoints / nextBadgePoints) * 100;
+  const totalPoints = gamPerfil?.pontosTotais ?? 850;
+  const nextBadgePoints = Math.max(1000, Math.ceil((totalPoints + 1) / 500) * 500);
+  const pointsToNextBadge = Math.max(0, nextBadgePoints - totalPoints);
+  const progressPercentage = Math.min(100, (totalPoints / nextBadgePoints) * 100);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -342,6 +429,55 @@ export function ProfilePage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Ranking entre alunos (RF13) */}
+      <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <div className="flex items-center gap-2 mb-6">
+          <Trophy className="text-[#0066CC]" size={24} />
+          <h2 className="text-xl text-[#003366]">Ranking entre Alunos</h2>
+        </div>
+        {ranking.length === 0 ? (
+          <p className="text-sm text-[#6C757D]">
+            O ranking ficará disponível assim que houver pontuação registrada.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {ranking.map((item) => (
+              <div
+                key={item.posicao}
+                className={`flex items-center justify-between rounded-lg px-4 py-3 ${
+                  item.eu
+                    ? "bg-gradient-to-r from-[#003366]/10 to-[#0066CC]/10 border border-[#0066CC]/30"
+                    : "bg-[#F5F7FA]"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                      item.posicao === 1
+                        ? "bg-[#FFD700] text-white"
+                        : item.posicao === 2
+                          ? "bg-[#C0C0C0] text-white"
+                          : item.posicao === 3
+                            ? "bg-[#CD7F32] text-white"
+                            : "bg-[#003366]/10 text-[#003366]"
+                    }`}
+                  >
+                    {item.posicao}
+                  </div>
+                  <span className="text-[#003366] font-medium">
+                    {item.nome}
+                    {item.eu && (
+                      <span className="ml-2 text-xs text-[#0066CC]">(você)</span>
+                    )}
+                  </span>
+                </div>
+                <span className="font-semibold text-[#28A745]">{item.pontos} pts</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Configurações */}
