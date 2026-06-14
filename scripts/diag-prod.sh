@@ -1,7 +1,17 @@
 #!/bin/bash
 # Diagnostico de producao: confirma seed, env do container, logs reais do service
 # e testa conectividade do pooler (postgres.gmc) vs direct (postgres).
+#
+# A senha do pooler NUNCA fica hardcoded aqui. Defina-a no ambiente antes de rodar:
+#   export PGPASSWORD_GMC='<senha-do-postgres.gmc>'
+#   bash scripts/diag-prod.sh
 set +e
+
+if [ -z "$PGPASSWORD_GMC" ]; then
+  echo "ERRO: variavel PGPASSWORD_GMC nao definida." >&2
+  echo "Defina-a antes de rodar: export PGPASSWORD_GMC='<senha-do-postgres.gmc>'" >&2
+  exit 1
+fi
 
 echo "=== 1) count gabriel via DIRECT (supabase-db, user=postgres) ==="
 docker exec -i supabase-db psql -U postgres -d postgres -c \
@@ -28,11 +38,11 @@ fi
 
 echo ""
 echo "=== 4) teste pooler postgres.gmc -> ve usuarios? ==="
-docker exec "$APIC" sh -c 'PGPASSWORD=Rafaebiel_01_Gmc psql -h supabase-pooler -p 6543 -U postgres.gmc -d postgres -c "SELECT current_user, current_database(), (SELECT count(*) FROM usuarios) AS qtd_usuarios;"' 2>&1 | tail -15
+docker exec -e "PGPASSWORD=$PGPASSWORD_GMC" "$APIC" sh -c 'PGPASSWORD="$PGPASSWORD" psql -h supabase-pooler -p 6543 -U postgres.gmc -d postgres -c "SELECT current_user, current_database(), (SELECT count(*) FROM usuarios) AS qtd_usuarios;"' 2>&1 | tail -15
 
 echo ""
 echo "=== 5) teste query identica a /api/me, via pooler ==="
-docker exec "$APIC" sh -c 'PGPASSWORD=Rafaebiel_01_Gmc psql -h supabase-pooler -p 6543 -U postgres.gmc -d postgres -c "SELECT id, nome FROM usuarios WHERE matricula_institucional = '"'"'23110145'"'"';"' 2>&1 | tail -10
+docker exec -e "PGPASSWORD=$PGPASSWORD_GMC" "$APIC" sh -c 'PGPASSWORD="$PGPASSWORD" psql -h supabase-pooler -p 6543 -U postgres.gmc -d postgres -c "SELECT id, nome FROM usuarios WHERE matricula_institucional = '"'"'23110145'"'"';"' 2>&1 | tail -10
 
 echo ""
 echo "=== FIM ==="
