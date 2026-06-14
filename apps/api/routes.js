@@ -25,6 +25,7 @@ import {
     verifyPassword,
     signToken,
     requireAuth,
+    requireRole,
 } from './auth.js';
 
 export const apiRouter = Router();
@@ -1236,3 +1237,67 @@ apiRouter.post('/recursos/:id/acesso', requireAuth, async (req, res) => {
 
     res.json({ source: 'db', ok: true, url: existe[0].url ?? null });
 });
+
+// ==============================================================
+// PAINEL DE COORDENACAO (RF14 / Bloco A — item A4 RBAC)
+// --------------------------------------------------------------
+// GET /api/coordenacao/overview — agregacoes institucionais para o
+// painel de coordenacao. Protegido por requireAuth + requireRole:
+// SOMENTE usuarios com tipo_usuario = COORDENADOR acessam (403 para
+// ALUNO/MENTOR). A autorizacao e imposta no backend (fronteira real,
+// OWASP A01); o menu condicional no frontend e apenas UX. Os dados
+// sao agregados (sem PII), portanto nao ha escopo por usuario/IDOR.
+// --------------------------------------------------------------
+apiRouter.get(
+    '/coordenacao/overview',
+    requireAuth,
+    requireRole('COORDENADOR'),
+    async (_req, res) => {
+        if (!isConnected()) {
+            return res.status(503).json({ error: 'db_indisponivel' });
+        }
+
+        const rows = await query(
+            `SELECT
+                 (SELECT COUNT(*) FROM usuarios
+                      WHERE UPPER(tipo_usuario) = 'ALUNO')          AS total_alunos,
+                 (SELECT COUNT(*) FROM usuarios
+                      WHERE e_mentor = TRUE)                        AS total_mentores,
+                 (SELECT COUNT(*) FROM planos_estudo)               AS total_planos,
+                 (SELECT COUNT(*) FROM atividades_estudo)           AS total_atividades,
+                 (SELECT COUNT(*) FROM questionarios_bem_estar)     AS total_bem_estar,
+                 (SELECT COUNT(*) FROM foruns_discussao)            AS total_topicos_forum,
+                 (SELECT COUNT(*) FROM recursos)                    AS total_recursos`,
+        );
+
+        if (rows && rows.length > 0) {
+            const r = rows[0];
+            return res.json({
+                source: 'db',
+                metricas: {
+                    totalAlunos: Number(r.total_alunos) || 0,
+                    totalMentores: Number(r.total_mentores) || 0,
+                    totalPlanos: Number(r.total_planos) || 0,
+                    totalAtividades: Number(r.total_atividades) || 0,
+                    totalBemEstar: Number(r.total_bem_estar) || 0,
+                    totalTopicosForum: Number(r.total_topicos_forum) || 0,
+                    totalRecursos: Number(r.total_recursos) || 0,
+                },
+            });
+        }
+
+        // Banco conectado mas sem leitura util: devolve zeros sinalizados.
+        res.json({
+            source: 'fallback',
+            metricas: {
+                totalAlunos: 0,
+                totalMentores: 0,
+                totalPlanos: 0,
+                totalAtividades: 0,
+                totalBemEstar: 0,
+                totalTopicosForum: 0,
+                totalRecursos: 0,
+            },
+        });
+    },
+);

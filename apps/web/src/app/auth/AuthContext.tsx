@@ -34,6 +34,8 @@ interface AuthContextValue {
   login: (email: string, senha: string) => Promise<void>;
   logout: () => Promise<void>;
   recarregar: () => Promise<void>;
+  /** Verifica se o usuario logado tem algum dos papeis informados (case-insensitive). */
+  temPapel: (...papeis: string[]) => boolean;
 }
 
 /** Erro de autenticacao com codigo legivel vindo da API. */
@@ -124,6 +126,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       recarregar,
+      temPapel: (...papeis: string[]) => {
+        const atual = (usuario?.tipo ?? "").toUpperCase();
+        return papeis.some((p) => p.toUpperCase() === atual);
+      },
     }),
     [usuario, carregando, login, logout, recarregar],
   );

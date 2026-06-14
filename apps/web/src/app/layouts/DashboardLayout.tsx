@@ -8,6 +8,7 @@ import {
   MessageSquare,
   Library,
   User,
+  ShieldCheck,
   LogOut,
   Menu,
   X,
@@ -20,7 +21,7 @@ import { iniciaisNome } from "../auth/nome";
 export function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const { usuario, logout } = useAuth();
+  const { usuario, logout, temPapel } = useAuth();
 
   // Rotulo e iniciais derivam do nome cadastrado; caem para o e-mail se ausente.
   const rotuloUsuario = usuario?.nome?.trim() || usuario?.email || "Sessão";
@@ -40,6 +41,11 @@ export function DashboardLayout() {
     { to: "/dashboard/forum", icon: MessageSquare, label: "Fórum" },
     { to: "/dashboard/biblioteca", icon: Library, label: "Biblioteca" },
     { to: "/dashboard/perfil", icon: User, label: "Perfil" },
+    // Item exclusivo da Coordenação (RBAC — A4). Visível apenas para
+    // COORDENADOR; a fronteira real de acesso é a API (requireRole).
+    ...(temPapel("COORDENADOR")
+      ? [{ to: "/dashboard/coordenacao", icon: ShieldCheck, label: "Coordenação" }]
+      : []),
   ];
 
   return (

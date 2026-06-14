@@ -7,6 +7,16 @@
 //   - Token entregue em cookie httpOnly + SameSite=Strict + Secure.
 //   - RBAC pela coluna usuarios.tipo_usuario (ALUNO/MENTOR/COORDENADOR).
 //
+// Convencao de papeis (RBAC efetivo — A4):
+//   - tipo_usuario assume os valores canonicos ALUNO ou COORDENADOR
+//     (String livre no schema; comparacao case-insensitive).
+//   - O papel "mentor" NAO e um tipo_usuario separado: e a flag
+//     e_mentor = true sobreposta a um ALUNO. Portanto requireRole trata
+//     papel pela coluna tipo_usuario, enquanto recursos de mentoria
+//     verificam req.usuario.eMentor.
+//   - A autorizacao por papel e SEMPRE imposta no backend (requireRole);
+//     o frontend apenas esconde/mostra a UI (nunca e a fronteira real).
+//
 // Resiliencia (regra "zero quebra"): este modulo NUNCA derruba o
 // servidor no boot. Se JWT_SECRET estiver ausente em producao, as
 // rotas de auth respondem 503 (authIndisponivel) e o restante da

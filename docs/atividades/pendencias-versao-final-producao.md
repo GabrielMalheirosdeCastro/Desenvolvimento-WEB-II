@@ -126,7 +126,7 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 | A1 | Implementar autenticação real local: **cadastro e login com e-mail + senha** (sem SSO institucional) | RF01 | 🔴 | G | ✅ |
 | A2 | ~~Integração SSO / OAuth 2.0 com o provedor institucional FAESA~~ — **DESCARTADO**: sem autorização institucional para usar o provedor de identidade da FAESA. Substituído por autenticação local própria (A1/A3) | RF01, RNF03 | — | — | ❌ |
 | A3 | Sessão/JWT, hash de senha com **`bcrypt`** (`passwordHash`) e middleware de proteção de rotas | RF01, RNF03 | 🔴 | M | ✅ |
-| A4 | Controle de acesso por papel (aluno / mentor / coordenador) | RF14 | 🔴 | M | 🟨 |
+| A4 | Controle de acesso por papel (aluno / mentor / coordenador). **Entregue na v1.10.0:** `requireRole` conectado a rota protegida, `RoleRoute` + menu condicional no frontend, papel exposto via `/api/auth/me`; autorização imposta no backend (OWASP A01) | RF14 | 🔴 | M | ✅ |
 | A5 | Reverter o redirect `/` → `/dashboard`; tornar `/login` a porta de entrada real | RF01 | 🔴 | P | ✅ |
 | A6 | **Logout real** — o botão "Sair" hoje apenas recarrega o Dashboard; precisa encerrar sessão e voltar a `/login` (achado do vídeo, 00:28) | RF01 | 🔴 | P | ✅ |
 
@@ -135,13 +135,15 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > com hash `bcrypt` e sessão JWT. O e-mail institucional pode continuar sendo **validado por
 > formato** (domínio FAESA) no cadastro, mas sem federação de identidade externa.
 
-> **Status (2026-06-13, v1.4.1):** A1, A3, A5 e A6 ✅ entregues. Falta apenas **A4** (RBAC completo
-> por papel aluno/mentor/coordenador) — a infraestrutura (`requireRole`, `tipo_usuario`, `eMentor`)
-> já existe, mas o modelo de três papéis ainda não foi finalizado.
+> **Status (2026-06-14, v1.10.0):** A1, A3, A4, A5 e A6 ✅ entregues. O **A4** (RBAC por papel) foi
+> concretizado: `requireRole` protege `GET /api/coordenacao/overview` (403 para papel insuficiente),
+> `/api/auth/me` expoe o papel, e o frontend tem `RoleRoute` + menu condicional. Mentor permanece
+> como flag `e_mentor=true` sobre `ALUNO`, conforme a convenção documentada em `auth.js`.
 
 **Critério de pronto:** usuário só acessa o dashboard após autenticar com e-mail + senha; "Sair"
-encerra a sessão de verdade; rotas de coordenação exigem papel `coordenador`. **Parcialmente
-atingido:** login/logout reais ✅; falta o RBAC completo (A4).
+encerra a sessão de verdade; rotas de coordenação exigem papel `coordenador`. **✅ Atingido na
+v1.10.0:** login/logout reais e o RBAC por papel completo (A4) — `GET /api/coordenacao/overview`
+exige `COORDENADOR` (403 caso contrário).
 
 ---
 
@@ -155,7 +157,7 @@ atingido:** login/logout reais ✅; falta o RBAC completo (A4).
 | B1 | **Avaliação de Bem-estar** — questionários periódicos de autoavaliação. **Entregue na v1.6.0:** UI (`/dashboard/bem-estar`) + `GET/POST /api/bem-estar` + persistência em `questionarios_bem_estar` + seed da persona em produção | RF11 | 🟡 | M | ✅ |
 | B2 | **Chatbot IA de Acolhimento** — respostas adaptadas por faixa etária (17–20, 21–25, 26+) | RF16 | 🔴 | G | ⬜ |
 | B3 | **Chat com Suporte Psicopedagógico** — canal direto com o NAP (mensageria, ex.: Socket.io) | RF15 | 🟢 | G | ⬜ |
-| B4 | **Relatórios para Coordenação** — painel admin com dados agregados e anônimos | RF14 | 🟡 | G | ⬜ |
+| B4 | **Relatórios para Coordenação** — painel admin com dados agregados e anônimos. **Entregue na v1.10.0:** `GET /api/coordenacao/overview` (somente `COORDENADOR`) + tela `/dashboard/coordenacao` com métricas institucionais agregadas | RF14 | 🟡 | G | ✅ |
 | B5 | **Notificações e Lembretes** — backend real (push/e-mail); hoje só existe o sininho na UI | RF10 | 🟡 | M | 🟨 |
 | B6 | **Eventos extracurriculares** — aba/agregador dedicado (hoje misturado na Biblioteca) | RF12 | 🟢 | P | 🟨 |
 | B7 | **Gamificação completa** — ranking dedicado entre alunos (hoje só pontos/badges/streak) | RF13 | 🟢 | M | 🟨 |

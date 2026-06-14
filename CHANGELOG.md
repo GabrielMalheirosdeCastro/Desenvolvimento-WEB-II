@@ -9,6 +9,18 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-06-14
+
+### Added
+
+- **RBAC efetivo de ponta a ponta (item A4)**: o controle de acesso por papel passa a ser imposto no backend. O middleware `requireRole` (já existente em [apps/api/auth.js](apps/api/auth.js)) foi conectado à primeira rota protegida por papel e a convenção de papéis foi documentada no topo do módulo (`tipo_usuario` canônico `ALUNO`/`COORDENADOR`; "mentor" é a flag `e_mentor = true` sobre um `ALUNO`). No frontend, o `AuthContext` ganhou o helper `temPapel(...)`, foi criado o componente de rota `RoleRoute` (análogo ao `ProtectedRoute`, mas por papel) e o menu do `DashboardLayout` passou a exibir itens condicionalmente ao papel. **Segurança (OWASP A01):** a autorização é sempre validada na API; o condicional no frontend é apenas UX.
+- **Painel de Coordenação (RF14)**: novo endpoint `GET /api/coordenacao/overview` protegido por `requireAuth + requireRole('COORDENADOR')`, retornando agregações institucionais reais (total de alunos, mentores, planos de estudo, atividades, avaliações de bem-estar, tópicos de fórum e recursos) com contrato `source: db|fallback` e `503` quando o banco está indisponível. Nova rota `/dashboard/coordenacao` (sob `RoleRoute('COORDENADOR')`) com a tela `CoordenacaoPage`, que trata os estados de carregamento, erro e acesso negado (403). O usuário institucional **NAP** (`COORDENADOR`, criado na v1.9.1) acessa o painel após ativar a conta pelo fluxo padrão (`POST /api/auth/ativar`).
+
+### Changed
+
+- **Testes de autorização** (`scripts/test-auth-core.mjs`): a suíte do núcleo de auth foi estendida com casos do `requireRole` — papel autorizado segue (`next`), papel insuficiente recebe `403 acesso_negado`, comparação case-insensitive, múltiplos papéis e sessão sem usuário negada. Execução determinística, sem banco.
+- Bump 1.9.1 -> **1.10.0** (MINOR — nova funcionalidade compatível) nos três `package.json`.
+
 ## [1.9.1] - 2026-06-14
 
 ### Added

@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { RootLayout } from "./layouts/RootLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
+import { RoleRoute } from "./auth/RoleRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { AtivarPage } from "./pages/AtivarPage";
 import { DashboardHome } from "./pages/DashboardHome";
@@ -12,6 +13,7 @@ import { MentorshipPage } from "./pages/MentorshipPage";
 import { ForumPage } from "./pages/ForumPage";
 import { LibraryPage } from "./pages/LibraryPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { CoordenacaoPage } from "./pages/CoordenacaoPage";
 import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -40,6 +42,14 @@ export const router = createBrowserRouter([
           { path: "forum", Component: ForumPage },
           { path: "biblioteca", Component: LibraryPage },
           { path: "perfil", Component: ProfilePage },
+          {
+            path: "coordenacao",
+            element: (
+              <RoleRoute papeis={["COORDENADOR"]}>
+                <CoordenacaoPage />
+              </RoleRoute>
+            ),
+          },
         ],
       },
       { path: "*", Component: NotFound },

@@ -24,9 +24,51 @@ assert.equal(payload.matricula, '23110145');
 assert.equal(payload.tipo, 'ALUNO');
 assert.equal(auth.verifyToken('token.invalido.xxx'), null, 'token invalido retorna null');
 
+// ------------------------------------------------------------
+// requireRole (RBAC — A4): autorizacao por papel sobre req.usuario.tipo.
+// Nao depende de DB nem de JWT_SECRET; opera sobre o payload ja injetado.
+// ------------------------------------------------------------
+function simularRole(papeis, tipo) {
+    const mw = auth.requireRole(...papeis);
+    const req = { usuario: tipo === undefined ? undefined : { tipo } };
+    const resultado = { status: null, body: null, nextChamado: false };
+    const res = {
+        status(code) {
+            resultado.status = code;
+            return this;
+        },
+        json(obj) {
+            resultado.body = obj;
+            return this;
+        },
+    };
+    mw(req, res, () => {
+        resultado.nextChamado = true;
+    });
+    return resultado;
+}
+
+let r = simularRole(['COORDENADOR'], 'COORDENADOR');
+assert.equal(r.nextChamado, true, 'COORDENADOR passa em requireRole(COORDENADOR)');
+assert.equal(r.status, null, 'sem status quando autorizado');
+
+r = simularRole(['COORDENADOR'], 'ALUNO');
+assert.equal(r.nextChamado, false, 'ALUNO nao passa em requireRole(COORDENADOR)');
+assert.equal(r.status, 403, 'ALUNO recebe 403');
+assert.equal(r.body?.error, 'acesso_negado', 'erro acesso_negado');
+
+r = simularRole(['COORDENADOR'], 'coordenador');
+assert.equal(r.nextChamado, true, 'comparacao de papel e case-insensitive');
+
+r = simularRole(['ALUNO', 'COORDENADOR'], 'ALUNO');
+assert.equal(r.nextChamado, true, 'multiplos papeis: ALUNO aceito');
+
+r = simularRole(['COORDENADOR'], undefined);
+assert.equal(r.status, 403, 'sem usuario na sessao recebe 403');
+
 // Sem segredo em producao -> auth indisponivel.
 delete process.env.JWT_SECRET;
 assert.equal(auth.authDisponivel(), false, 'sem JWT_SECRET em prod auth fica indisponivel');
 assert.equal(auth.signToken({ id: 1 }), null, 'signToken null sem segredo');
 
-console.log('OK — nucleo de auth validado (hash/verify/jwt/secret-guard).');
+console.log('OK — nucleo de auth validado (hash/verify/jwt/secret-guard/rbac).');
