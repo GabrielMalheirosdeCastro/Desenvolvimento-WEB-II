@@ -3,8 +3,8 @@
 **Projeto:** Site de Acolhimento FAESA
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
-**Data:** 2026-06-13
-**Versão atual em produção:** v1.6.0 (Avaliação de Bem-estar / RF11 com persistência real em banco)
+**Data:** 2026-06-14
+**Versão atual em produção:** v1.7.0 (varredura de mocks — Perfil real, Tema persistido, Mentoria e Concentração funcionais)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -52,7 +52,7 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > na tabela `atividades_estudo`, com escopo por usuário autenticado (anti-IDOR) e queries
 > parametrizadas. O `GET` foi validado em produção com **10 metas reais** carregadas do seed do
 > banco. O _drag-and-drop_ ("Organizar horários") foi **adiado** para entrega futura. Restam os
-> demais itens do Bloco H (H1, H2, H4–H10).
+> demais itens do Bloco H (H1, H2, H6, H7, H10).
 
 > **Atualização 2026-06-13 — higiene de segurança.** Removida uma **senha Postgres hardcoded** do
 > script `scripts/diag-prod.sh` (passou a ler a variável de ambiente `PGPASSWORD_GMC`, com
@@ -71,6 +71,20 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > `/dashboard/bem-estar` (formulário + cartões de resumo + histórico). O seed de produção foi
 > atualizado e **executado via túnel SSH**: a persona Gabriel (`23110145`) já tem 3 avaliações reais
 > no banco de produção (validado por consulta direta). Restam os demais itens do Bloco B (B2–B7).
+
+> **Atualização 2026-06-14 — Fase 2 do Bloco H entregue (H4, H5, H8, H9 / v1.7.0).** A "varredura de
+> mocks" tornou reais quatro telas que antes tinham botões inertes ou dados estáticos, publicada como
+> **v1.7.0**: **H8** (Perfil real) — `GET`/`PATCH /api/usuario/perfil` (`requireAuth`, escopo
+> `WHERE id = req.usuario.sub`), edição de nome/e-mail com re-emissão do JWT/cookie quando o e-mail
+> muda e tratamento de `UNIQUE` (409); **H9** (Tema) — `ThemeContext` claro/escuro/automático
+> persistido em `localStorage` (efeito visual **parcial**, limitado às superfícies baseadas em token);
+> **H5** (Mentoria) — correção do `fetch` com `credentials: "include"`, hidratação de `souMentor` via
+> `useAuth().usuario.eMentor`, lista real via `GET /api/mentorias?papel=mentor` e cadastro de mentor
+> escopado a `req.usuario.sub`; **H4** (Concentração) — exercício de respiração guiada 4-7-8
+> client-side (ciclo inspirar/segurar/expirar). Sem erros de TS/lint; SPA reconstruída (`dist/`
+> versionado); `/version` e `/healthz` confirmam **1.7.0** em produção. _Limitação documentada:_ dark
+> mode visual completo (refatorar cores hardcoded para design tokens) foi adiado para fora deste MINOR.
+> Restam os itens H1, H2, H6, H7 e H10 do Bloco H.
 
 ### Legenda
 
@@ -180,12 +194,12 @@ nome correto. **✅ Atingido.**
 | H1 | **Header → Perfil** — avatar/nome no canto superior direito não navega; deve abrir menu ou levar a `/dashboard/perfil` | RF05 | 00:08 | 🟡 | P | ⬜ |
 | H2 | **Dashboard interativo** — "Ver todas as Conquistas" e demais painéis não são clicáveis | RF05, RF13 | 00:36 | 🟡 | M | ⬜ |
 | H3 | **Plano de Estudos — persistir metas** — checkbox "Concluída" não gravava; "+ Nova Meta" inerte. **Entregue na v1.5.0:** CRUD real de metas (`GET/POST/PATCH/DELETE /api/metas`) persistido em `atividades_estudo`. _Drag-and-drop ("Organizar horários") adiado para entrega futura._ | RF02, RF03 | 00:49 | 🟢 | G | ✅ |
-| H4 | **Concentração — "Iniciar Exercício Guiado"** não aciona o timer/assistente de respiração | RF04 | 01:06 | 🟡 | M | ⬜ |
-| H5 | **Mentoria — "Entrar"** (sala/sessão ao vivo) não carrega; **"Cadastrar-me como Mentor(a)"** não dá feedback (endpoint existe, falta ligar a UI) | RF09 | 01:15 | 🟡 | M | 🟨 |
+| H4 | **Concentração — "Iniciar Exercício Guiado"** não aciona o timer/assistente de respiração. **Entregue na v1.7.0:** exercício de respiração guiada 4-7-8 client-side (inspirar/segurar/expirar) | RF04 | 01:06 | 🟡 | M | ✅ |
+| H5 | **Mentoria — "Entrar"** (sala/sessão ao vivo) não carrega; **"Cadastrar-me como Mentor(a)"** não dá feedback. **Entregue na v1.7.0:** fix `credentials:include`, `souMentor` via `eMentor`, lista real `GET /api/mentorias?papel=mentor`, cadastro escopado a `req.usuario.sub`. _Sala ao vivo segue fora de escopo._ | RF09 | 01:15 | 🟡 | M | ✅ |
 | H6 | **Fórum — "+ Novo Tópico"** não abre editor; falta criação/persistência de tópicos e comentários | RF08 | 01:32 | 🟡 | M | ⬜ |
 | H7 | **Biblioteca — "Iniciar Trilha", "Sugerir Recurso", "Acessar Recurso"** sem ação operacional | RF06, RF07 | 01:39 | 🟡 | M | ⬜ |
-| H8 | **Perfil — edição de dados** — campos apenas mocados; falta `PUT`/salvar alterações | RF05 | 01:52 | 🟡 | M | ⬜ |
-| H9 | **Alternância de Tema (Claro/Escuro/Automático)** — seletor abre mas não aplica o tema | RNF07 | 01:52 | 🟢 | M | ⬜ |
+| H8 | **Perfil — edição de dados** — campos apenas mocados; falta `PUT`/salvar alterações. **Entregue na v1.7.0:** `GET`/`PATCH /api/usuario/perfil`, edição de nome/e-mail com re-emissão do JWT e tratamento de e-mail duplicado (409) | RF05 | 01:52 | 🟡 | M | ✅ |
+| H9 | **Alternância de Tema (Claro/Escuro/Automático)** — seletor abre mas não aplica o tema. **Entregue na v1.7.0:** `ThemeContext` persistido em `localStorage` (efeito visual parcial — só superfícies baseadas em token) | RNF07 | 01:52 | 🟢 | M | ✅ |
 | H10 | **Seletor de Idioma (PT-BR/EN-US)** — abre mas não traduz (depende da estrutura i18n do item D8) | RNF10 | 01:52 | 🟢 | M | ⬜ |
 
 **Critério de pronto:** cada botão de ação das telas existentes dispara uma chamada real à API
@@ -243,7 +257,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
-4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0); próximos: H1 (P) ou H5 (backend pronto)
+4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0); próximos: H6 (Fórum) e H7 (Biblioteca)
 5. Bloco B (RF11 ✅ v1.6.0; RF16 prioritário)   → completar requisitos de alta prioridade
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
 7. Bloco B restante (RF14, RF15)        → features de menor prioridade
@@ -265,19 +279,21 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **15 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
-F8, **H3** e a validação visual E4 parcial) + **A4 parcial**; ~37 em aberto.
+**Total:** 53 pendências mapeadas — **19 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
+F8, **H3**, **H4**, **H5**, **H8**, **H9** e a validação visual E4 parcial) + **A4 parcial**; ~33 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
 > local real** (login e-mail+senha com `bcrypt`/`JWT`, logout e proteção de rotas). O **Bloco H**
 > (tornar as telas funcionais) já está **em andamento**: o **H3** (Plano de Estudos com CRUD real de
-> metas) foi entregue na **v1.5.0** e a **Avaliação de Bem-estar (B1/RF11)** na **v1.6.0** (com seed da
-> persona em produção), mas as demais telas RF02–RF09 ainda são **mocks somente-leitura**
-> — seus botões de ação não persistem nada. A versão final depende, em ordem de criticidade, de
-> **concluir as telas funcionais restantes (escrita/CRUD do Bloco H)**, **completar o RBAC por papel
-> (A4)**, **a feature de RF de alta prioridade restante (RF16)** e **endurecimento de segurança/infra**,
-> seguidos das features de menor prioridade e da cobertura de testes exigida pelo RNF08.
+> metas) foi entregue na **v1.5.0**, a **Avaliação de Bem-estar (B1/RF11)** na **v1.6.0** (com seed da
+> persona em produção) e a **varredura de mocks H4/H5/H8/H9** (Perfil real, Tema persistido, Mentoria
+> e Concentração funcionais) na **v1.7.0**. Restam como mocks somente-leitura as telas de **Fórum
+> (H6/RF08)** e **Biblioteca (H7/RF06–RF07)**. A versão final depende, em ordem de criticidade, de
+> **concluir as telas funcionais restantes (escrita/CRUD do Bloco H — H6, H7)**, **completar o RBAC
+> por papel (A4)**, **a feature de RF de alta prioridade restante (RF16)** e **endurecimento de
+> segurança/infra**, seguidos das features de menor prioridade e da cobertura de testes exigida pelo
+> RNF08.
 
 ---
 
