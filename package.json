@@ -1,6 +1,6 @@
 {
   "name": "site-acolhimento-faesa",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "private": true,
   "type": "module",
   "description": "Site de Acolhimento FAESA — monorepo (apps/web SPA + apps/api Express + packages/db Prisma).",
@@ -17,7 +17,8 @@
     "dev:web": "npm run dev -w @site-acolhimento/web",
     "build": "npm run build -w @site-acolhimento/web",
     "prepare-deploy": "npm run build -w @site-acolhimento/web",
-    "test": "node scripts/test-auth-core.mjs && node scripts/test-chatbot-core.mjs",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
     "test:e2e": "playwright test",
     "deploy": "node scripts/deploy.mjs",
     "docker:build": "docker build -t site-acolhimento-faesa:local .",
@@ -30,7 +31,9 @@
   "license": "UNLICENSED",
   "author": "Gabriel Malheiros de Castro <23110145>",
   "devDependencies": {
-    "@playwright/test": "^1.49.1"
+    "@playwright/test": "^1.49.1",
+    "@vitest/coverage-v8": "^4.1.9",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.9"
   }
 }
-

@@ -261,16 +261,18 @@ Invoke-WebRequest -Uri "http://localhost:3010/api/dashboard/streak" -UseBasicPar
 
 ## 🧪 Testes e Qualidade
 
-A partir da v1.13.0 o projeto tem uma base de testes padronizada e endurecimento de
-segurança na API (`helmet` + `express-rate-limit`).
+A partir da v1.13.0 o projeto tem endurecimento de segurança na API (`helmet` +
+`express-rate-limit`). A **v1.15.0** formaliza a suíte de testes em **Vitest** (unitários +
+integração com `supertest`) com **cobertura ≥ 80%** na lógica de API (atual: **97,46%**).
 
 | Comando | O que roda | Onde |
 |---------|-----------|------|
-| `npm test` | Testes core headless (auth + chatbot), sem banco | Estação **e** CI |
+| `npm test` | Vitest (unit auth/chatbot + integração supertest) com cobertura | Estação **e** CI |
+| `npm run test:watch` | Vitest em modo watch (desenvolvimento) | Estação |
 | `npm run test:e2e` | Specs Playwright (login + smoke v1.12.0) | **Só na estação Windows** |
 
 ```powershell
-# Testes core (lógica de auth e chatbot — não exigem banco nem GUI)
+# Suite Vitest (lógica de auth/chatbot + integração do apiRouter — não exigem banco nem GUI)
 npm test
 
 # E2E na estação (a VPS é headless — não rode Playwright lá)

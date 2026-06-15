@@ -39,9 +39,10 @@ jobs:
       - name: Install (npm ci)
         run: npm ci
 
-      # Roda APENAS os testes core headless (auth + chatbot). Os specs E2E
-      # do Playwright exigem GUI e rodam so na estacao Windows (Secao 2.5).
-      - name: npm test (core)
+      # Suite Vitest (unitarios auth/chatbot + integracao supertest do apiRouter
+      # em modo fallback) com cobertura >= 80%. Os specs E2E do Playwright exigem
+      # GUI e rodam so na estacao Windows (Secao 2.5), fora deste gate.
+      - name: npm test (vitest + cobertura)
         run: npm test
 
   deploy:

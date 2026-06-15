@@ -9,6 +9,24 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-06-15
+
+### Added
+
+- **Suíte de testes automatizada com Vitest (item E1 / Bloco E)**: introduzido `vitest` + `@vitest/coverage-v8` com [vitest.config.ts](vitest.config.ts) (ambiente `node`, limiar de cobertura **80%** em lines/functions/branches/statements). Testes unitários da lógica pura da API em [tests/unit/auth.test.mjs](tests/unit/auth.test.mjs) (hash/verify bcrypt, JWT sign/verify, `getJwtSecret` dev/prod, `cookieOptions`, `requireAuth`, `requireRole`/RBAC) e [tests/unit/chatbot.test.mjs](tests/unit/chatbot.test.mjs) (faixas etárias, derivação por data de nascimento, rede de segurança de crise → CVV/NAP, intenções e adaptação por faixa — RF16).
+- **Testes de integração com supertest (item E2)**: [tests/integration/api.test.mjs](tests/integration/api.test.mjs) sobe o `apiRouter` em modo fallback (sem banco) e valida contratos `source: 'fallback'`, as guardas `requireAuth` (**401** sem cookie, incluindo as rotas LGPD `/api/usuario/dados` e `/api/usuario/conta`) e o fluxo `requireRole('COORDENADOR')` em `/api/coordenacao/overview` (**401** sem sessão → **403** com papel ALUNO → **503** sem banco com papel COORDENADOR). O harness **nunca** aponta para o Postgres de produção.
+- **Cobertura ≥ 80% na lógica de API (item D3 / RNF08)**: a suíte cobre **97,46%** de statements (auth.js 100% / chatbot.js 94,44%), 100% das funções e 100% das linhas dos módulos `auth.js` e `chatbot.js`. Relatório `text`/`html`/`json-summary` gerado em `coverage/`.
+
+### Changed
+
+- `npm test` passa a executar **`vitest run --coverage`** (antes eram os scripts `scripts/test-*.mjs`). Adicionado `npm run test:watch`. O job `test` do CI ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) — que já é gate de deploy — agora roda a suíte Vitest com cobertura.
+- Bump 1.14.0 -> **1.15.0** (MINOR — formalização da suíte de testes e cobertura) nos três `package.json`.
+
+### Notas
+
+- A cobertura é medida sobre a **lógica testável sem banco** (`auth.js` + `chatbot.js`). A cobertura completa dos handlers de `routes.js` que dependem do Postgres exige um banco de teste efêmero/transacional e fica como continuação (não pode apontar para produção). Os scripts antigos `scripts/test-auth-core.mjs` e `scripts/test-chatbot-core.mjs` permanecem no repositório como referência, mas não são mais acionados por `npm test`.
+- Os testes E2E do Playwright (`tests/e2e/`) seguem fora deste gate (exigem GUI; a VPS é headless) e rodam só na estação via `npm run test:e2e` (Seção 2.5).
+
 ## [1.14.0] - 2026-06-15
 
 ### Added

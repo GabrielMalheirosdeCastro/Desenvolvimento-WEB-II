@@ -219,7 +219,7 @@ nome correto. **✅ Atingido.**
 |---|---|---|---|---|---|
 | D1 | **Segurança** — proteção XSS/CSRF, headers de segurança, TLS 1.3, rate limiting. **Entregue na v1.13.0:** `helmet` (headers + CSP compatível com a SPA) + `express-rate-limit` (auth 20/min, geral 200/min, `429` JSON) + `trust proxy` para IP real atrás do Traefik | RNF03 | 🔴 | M | ✅ |
 | D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado). **Baseline na v1.14.0:** `lang="pt-BR"`, skip-link, landmark `<main>`, `aria-label` nas navegações e fallback de `Suspense` acessível. **Falta:** auditoria de contraste AA + dark mode por tokens (axe/Lighthouse via Playwright MCP na estação) | RNF04 | 🟡 | M | 🟨 |
-| D3 | **Cobertura de testes ≥ 80%** — hoje não há suíte automatizada | RNF08 | 🟡 | G | ⬜ |
+| D3 | **Cobertura de testes ≥ 80%** — suíte automatizada. **Entregue na v1.14.0... v1.15.0:** Vitest (unit auth/chatbot) + supertest (integração do `apiRouter` em fallback). Cobertura **97,46%** em `auth.js`+`chatbot.js`; gate de 80% no CI. **Falta:** cobrir handlers de `routes.js` que dependem do banco (exige Postgres de teste efêmero) | RNF08 | 🟡 | G | 🟨 |
 | D4 | **Disponibilidade / monitoria 24/7** — uptime ≥ 99,5% com alertas | RNF05 | 🟡 | M | ⬜ |
 | D5 | **Performance** — carregamento ≤ 3s em 3G (otimização de bundle, lazy loading). **Entregue na v1.14.0:** `React.lazy` por rota do dashboard + `manualChunks` (recharts/d3 e radix isolados). Bundle inicial 741,62 kB → **132,34 kB** (gzip 210→41 kB) | RNF02 | 🟡 | M | ✅ |
 | D6 | **Escalabilidade** — validar comportamento sob carga (meta de 10k usuários simultâneos) | RNF06 | 🟢 | G | ⬜ |
@@ -261,8 +261,8 @@ nome correto. **✅ Atingido.**
 
 | # | Pendência | Prioridade | Complexidade | Status |
 |---|---|---|---|---|
-| E1 | Configurar suíte de testes unitários (Vitest) para lógica da API. **Parcial na v1.13.0:** `npm test` agrega os testes core headless (`test-auth-core` + `test-chatbot-core`); migração formal para Vitest segue pendente | 🟡 | M | 🟨 |
-| E2 | Testes de integração API/DB (supertest) | 🟡 | M | ⬜ |
+| E1 | Configurar suíte de testes unitários (Vitest) para lógica da API. **Entregue na v1.15.0:** Vitest formal (`vitest.config.ts`, limiar 80%), specs `tests/unit/auth.test.mjs` e `tests/unit/chatbot.test.mjs`; `npm test` = `vitest run --coverage` | 🟡 | M | ✅ |
+| E2 | Testes de integração API/DB (supertest). **Entregue na v1.15.0:** `tests/integration/api.test.mjs` valida contratos de fallback e guardas `requireAuth`/`requireRole` (401/403/503) sobre o `apiRouter`, sem tocar produção. **Falta:** integração com banco real (contratos `source: db`) | 🟡 | M | 🟨 |
 | E3 | Testes E2E da SPA via Playwright MCP (rodam **só na estação Windows** — VPS é headless). **Entregue na v1.13.0:** `playwright.config.ts` + specs `login.spec` e `smoke-v1.12.0.spec` (este pulado sem credenciais via env) | 🟡 | M | ✅ |
 | E4 | Validação visual da tela de login (4 metadados + badge de versão) automatizada. **Entregue na v1.13.0:** coberta por `login.spec` (testids dos 4 metadados + badge) | 🟢 | P | ✅ |
 | E5 | Integrar testes ao pipeline de CI (rodar antes do deploy). **Entregue na v1.13.0:** job `test` (npm ci + npm test) com o deploy dependente via `needs: test` | 🟡 | M | ✅ |
@@ -345,7 +345,9 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 (chat com NAP, prioridade baixa).
 
 **RNFs em aberto:** D2 (acessibilidade — baseline na v1.14.0; falta auditoria AA + dark mode),
-D3 (cobertura ≥ 80%), D4 (monitoria 24/7), D6 (escalabilidade), D8 (i18n) + H10 (idioma, acoplado a D8).
+D4 (monitoria 24/7), D6 (escalabilidade), D8 (i18n) + H10 (idioma, acoplado a D8).
+**Concluído/parcial na v1.15.0:** D3/E1/E2 (testes Vitest+supertest, cobertura 97% da lógica de API;
+falta integração com banco real).
 **Concluídos na v1.14.0:** D5 (performance — code-splitting) e D7 (LGPD — exportação/exclusão).
 
 **Pendência acadêmica:** Bloco G (G1 LaTeX final no Overleaf, G3 diagramas, G4 roteiro da banca).
