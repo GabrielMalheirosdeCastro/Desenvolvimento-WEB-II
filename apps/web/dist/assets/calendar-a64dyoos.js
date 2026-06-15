@@ -1,4 +1,4 @@
-import{c as e}from"./index-DIx88Sb_.js";/**
+import{c as e}from"./index-2W-z_imi.js";/**
  * @license lucide-react v0.487.0 - ISC
  *
  * This source code is licensed under the ISC license.

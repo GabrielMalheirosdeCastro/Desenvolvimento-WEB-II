@@ -4,8 +4,8 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-14
-**Versão atual em produção:** v1.13.0 (Qualidade/Segurança — helmet + rate limit RNF03 · suíte de testes + E2E Playwright + gate de CI)
-**Próximas versões planejadas:** Bloco D restante (D2 acessibilidade · D5 performance · D7 LGPD) · B3/RF15 (chat com NAP) · Bloco G (documentação/entrega)
+**Versão atual em produção:** v1.17.0 (Chat com o NAP — RF15/B3 · polling HTTP · encerra o último RF em aberto; todos os 16 RFs concluídos)
+**Próximas versões planejadas:** Bloco D restante (D2 acessibilidade · D5 performance · D7 LGPD) · Bloco G (documentação/entrega)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -176,7 +176,7 @@ exige `COORDENADOR` (403 caso contrário).
 |---|---|---|---|---|---|
 | B1 | **Avaliação de Bem-estar** — questionários periódicos de autoavaliação. **Entregue na v1.6.0:** UI (`/dashboard/bem-estar`) + `GET/POST /api/bem-estar` + persistência em `questionarios_bem_estar` + seed da persona em produção | RF11 | 🟡 | M | ✅ |
 | B2 | **Chatbot IA de Acolhimento** — respostas adaptadas por faixa etária (17–20, 21–25, 26+). **Entregue na v1.11.0:** motor curado local (sem LLM externa, conforme “tudo na VPS” + LGPD), tela `/dashboard/chatbot`, `POST /api/chatbot/mensagem` + `GET /api/chatbot/historico`, com rede de segurança de crise (NAP + CVV 188) | RF16 | 🔴 | G | ✅ |
-| B3 | **Chat com Suporte Psicopedagógico** — canal direto com o NAP (mensageria, ex.: Socket.io) | RF15 | 🟢 | G | ⬜ |
+| B3 | **Chat com Suporte Psicopedagógico** — canal direto com o NAP. **Entregue na v1.17.0:** tela `/dashboard/chat-nap` (polling HTTP, sem Socket.io — RF15 não exige tempo real), `GET/POST /api/chat/tickets`, `GET/POST /api/chat/tickets/:id/mensagens` e `POST /api/chat/tickets/:id/fechar`, persistência em `chat_tickets`/`chat_mensagens`, papel de atendente exercido por `COORDENADOR` (NAP), anti-IDOR e rede de segurança de crise reutilizada (`detectarCrise` → NAP + CVV 188). **Encerra o último RF em aberto** | RF15 | 🟢 | G | ✅ |
 | B4 | **Relatórios para Coordenação** — painel admin com dados agregados e anônimos. **Entregue na v1.10.0:** `GET /api/coordenacao/overview` (somente `COORDENADOR`) + tela `/dashboard/coordenacao` com métricas institucionais agregadas | RF14 | 🟡 | G | ✅ |
 | B5 | **Notificações e Lembretes** — sininho real no cabeçalho. **Entregue na v1.12.0:** `GET /api/notificacoes` (+ contador de não lidas), `POST /api/notificacoes/:id/marcar-lida` e `POST /api/notificacoes/marcar-todas-lidas` (escopados ao dono, anti-IDOR), `NotificationBell` com fetch real e atualização otimista, seed da persona | RF10 | 🟡 | M | ✅ |
 | B6 | **Eventos extracurriculares** — página dedicada (separada da Biblioteca). **Entregue na v1.12.0:** tela `/dashboard/eventos` com item de menu próprio, `POST /api/eventos/:id/inscrever` (idempotente) + `GET /api/eventos/minhas`; aba de eventos removida da Biblioteca | RF12 | 🟢 | P | ✅ |
@@ -305,9 +305,9 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
 4. Bloco H (tornar as telas mock funcionais)    ✅ CONCLUÍDO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0), H1/H2 ✅ (v1.9.0), H10 ✅ (v1.16.0, junto de i18n/D8)
-5. Bloco B (RF11 ✅ v1.6.0; RF16 ✅ v1.11.0; RF10/RF12/RF13 ✅ v1.12.0)   → resta apenas B3/RF15 (chat com NAP)
+5. Bloco B (RF11 ✅ v1.6.0; RF16 ✅ v1.11.0; RF10/RF12/RF13 ✅ v1.12.0; RF15 ✅ v1.17.0)   → CONCLUÍDO — todos os 16 RFs entregues
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
-7. Bloco B restante (RF15 — chat com NAP)        → feature de menor prioridade
+7. Bloco B restante (RF15 — chat com NAP)        ✅ CONCLUÍDO (v1.17.0)
 8. Bloco G (documentação/entrega)       → fechamento acadêmico
 ```
 
@@ -322,8 +322,9 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 >    exclusão — hoje 🟨), `D3` cobertura ≥ 80% (migrar `npm test` para Vitest formal) e `E2` testes
 >    de integração API/DB (supertest). **Recomendado começar por D7 (LGPD)** por ser requisito legal
 >    e já estar parcial, seguido de D2 (acessibilidade) por impacto direto na banca.
-> 2. **B3 / RF15** — chat com Suporte Psicopedagógico (NAP) via mensageria (Socket.io). É o **único
->    requisito funcional ainda em aberto** (prioridade 🟢 baixa, complexidade G).
+> 2. **B3 / RF15** — chat com Suporte Psicopedagógico (NAP). ✅ **CONCLUÍDO na v1.17.0** (polling
+>    HTTP, sem Socket.io). Era o último requisito funcional em aberto; **todos os 16 RFs estão
+>    entregues**.
 > 3. **Bloco G (fechamento acadêmico)** — `G1` atualizar o documento LaTeX no Overleaf com o estado
 >    final, `G3` diagramas atualizados e `G4` roteiro de demonstração para a banca.
 >
@@ -332,19 +333,19 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 
 ---
 
-## 11. Checkpoint de Encerramento — 2026-06-15 (v1.16.0)
+## 11. Checkpoint de Encerramento — 2026-06-15 (v1.17.0)
 
 | Item | Estado |
 |---|---|
-| Versão em produção | **v1.16.0** (`/version` e `/healthz` confirmados) |
-| `git HEAD` | `fa0cdad` em `origin/master`, working tree limpo |
-| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida (1.16.0) |
+| Versão em produção | **v1.17.0** (`/version` e `/healthz` confirmados) |
+| `git HEAD` | atualizado em `origin/master`, working tree limpo |
+| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida (1.17.0) |
 | Segurança ativa em prod | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy |
-| Testes | `npm test` verde (62 testes, cobertura 97,46% auth+chatbot); Playwright só na estação |
-| i18n | seletor PT-BR/EN-US validado em produção via Playwright (login PT-BR e EN-US) |
+| Testes | `npm test` verde (65 testes, cobertura 97,5% auth+chatbot); Playwright só na estação |
+| Chat NAP (RF15) | tela `/dashboard/chat-nap` + endpoints `/api/chat/*` (polling HTTP, anti-IDOR, crise → CVV 188) |
 
-**Requisitos funcionais:** todos de alta/média prioridade entregues. **Único RF em aberto: B3/RF15**
-(chat com NAP, prioridade baixa).
+**Requisitos funcionais:** **todos os 16 RFs concluídos** — o último em aberto (B3/RF15, chat com o
+NAP) foi entregue na v1.17.0.
 
 **RNFs em aberto:** D2 (acessibilidade — baseline na v1.14.0; falta auditoria AA + dark mode),
 D4 (monitoria 24/7), D6 (escalabilidade). **Concluído na v1.16.0:** D8 (i18n) + H10 (idioma) —

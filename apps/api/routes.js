@@ -27,7 +27,7 @@ import {
     requireAuth,
     requireRole,
 } from './auth.js';
-import { gerarResposta, derivarFaixa, faixaValida, FAIXA_PADRAO } from './chatbot.js';
+import { gerarResposta, derivarFaixa, faixaValida, FAIXA_PADRAO, detectarCrise, RESPOSTA_CRISE } from './chatbot.js';
 
 export const apiRouter = Router();
 
@@ -1905,5 +1905,341 @@ apiRouter.delete('/usuario/conta', requireAuth, async (req, res) => {
     res.clearCookie(COOKIE_NAME, opts);
 
     res.json({ source: 'db', anonimizado: true });
+});
+
+// ==============================================================
+// CHAT COM O NAP (RF15 / Bloco B - B3)
+// --------------------------------------------------------------
+// Canal direto de mensageria entre o aluno e o Nucleo de Apoio
+// Psicopedagogico (NAP). Decisao de arquitetura (ver
+// docs/plano-2026-06-15-v1.17.0-chat-nap.md): transporte por POLLING
+// HTTP simples (sem Socket.io). RF15 nao exige tempo real, e o polling
+// dispensa nova dependencia e configuracao de WebSocket no Traefik,
+// reduzindo risco — coerente com a politica "tudo na VPS".
+//
+// Modelo de dados: chat_tickets (1 conversa) + chat_mensagens (N).
+// O papel de atendente e exercido por usuarios COORDENADOR (o usuario
+// institucional NAP ja existe no seed como COORDENADOR).
+//
+// Seguranca (dados sensiveis de saude mental):
+//   - requireAuth em todas as rotas.
+//   - Anti-IDOR: aluno so acessa os proprios tickets (usuario_id = sub);
+//     COORDENADOR (NAP) acessa todos para atender.
+//   - Rede de seguranca de crise: mensagens do aluno passam por
+//     detectarCrise(); ao acionar, a resposta inclui o encaminhamento
+//     imediato ao NAP/CVV 188 (mesma rede do chatbot RF16).
+//   - Resiliente a banco indisponivel: leituras caem em fallback vazio;
+//     mutacoes retornam 503.
+// --------------------------------------------------------------
+
+const CHAT_TITULO_MAX = 120;
+const CHAT_MSG_MAX = 2000;
+
+/** True quando o usuario da sessao tem papel de atendente NAP (COORDENADOR). */
+function ehAtendenteNap(req) {
+    return String(req.usuario?.tipo || '').toUpperCase() === 'COORDENADOR';
+}
+
+/** Converte uma linha de `chat_mensagens` (com nome do autor) para a UI. */
+function mapChatMensagem(row) {
+    return {
+        id: row.id,
+        ticketId: row.ticket_id,
+        autorId: row.autor_id,
+        autorNome: row.autor_nome || null,
+        autorEhNap: String(row.autor_tipo || '').toUpperCase() === 'COORDENADOR',
+        mensagem: row.mensagem,
+        dataEnvio: row.data_envio || null,
+    };
+}
+
+// --------------------------------------------------------------
+// GET /api/chat/tickets — lista as conversas com o NAP.
+// ALUNO recebe apenas as suas; COORDENADOR (NAP) recebe todas para
+// atender. Inclui contagem de mensagens e previa da ultima.
+// --------------------------------------------------------------
+apiRouter.get('/chat/tickets', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', papel: ehAtendenteNap(req) ? 'nap' : 'aluno', items: [] });
+    }
+    const atendente = ehAtendenteNap(req);
+    const params = atendente ? [] : [req.usuario.sub];
+    const filtro = atendente ? '' : 'WHERE t.usuario_id = $1';
+    const rows = await query(
+        `SELECT t.id, t.usuario_id, t.atendente_id, t.titulo, t.status,
+                t.data_criacao, t.data_fechamento,
+                u.nome AS usuario_nome,
+                (SELECT COUNT(*) FROM chat_mensagens m WHERE m.ticket_id = t.id) AS total_mensagens,
+                (SELECT m.mensagem FROM chat_mensagens m WHERE m.ticket_id = t.id
+                     ORDER BY m.id DESC LIMIT 1) AS ultima_mensagem,
+                (SELECT m.data_envio FROM chat_mensagens m WHERE m.ticket_id = t.id
+                     ORDER BY m.id DESC LIMIT 1) AS ultima_em
+             FROM chat_tickets t
+             JOIN usuarios u ON u.id = t.usuario_id
+             ${filtro}
+             ORDER BY COALESCE(
+                 (SELECT MAX(m.data_envio) FROM chat_mensagens m WHERE m.ticket_id = t.id),
+                 t.data_criacao
+             ) DESC NULLS LAST, t.id DESC
+             LIMIT 100`,
+        params,
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({
+        source: 'db',
+        papel: atendente ? 'nap' : 'aluno',
+        items: rows.map((r) => ({
+            id: r.id,
+            usuarioId: r.usuario_id,
+            usuarioNome: r.usuario_nome,
+            atendenteId: r.atendente_id,
+            titulo: r.titulo,
+            status: r.status || 'aberto',
+            dataCriacao: r.data_criacao || null,
+            dataFechamento: r.data_fechamento || null,
+            totalMensagens: Number(r.total_mensagens) || 0,
+            ultimaMensagem: r.ultima_mensagem || null,
+            ultimaEm: r.ultima_em || null,
+        })),
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/chat/tickets — o aluno abre uma nova conversa com o NAP.
+// Body: { titulo: string, mensagem: string }. Cria o ticket e a 1a
+// mensagem do aluno numa transacao logica (insercoes encadeadas).
+// --------------------------------------------------------------
+apiRouter.post('/chat/tickets', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const titulo = String(req.body?.titulo || '').trim();
+    const mensagem = String(req.body?.mensagem || '').trim();
+    if (!titulo) {
+        return res.status(400).json({ error: 'titulo_obrigatorio' });
+    }
+    if (titulo.length > CHAT_TITULO_MAX) {
+        return res.status(400).json({ error: 'titulo_muito_longo' });
+    }
+    if (!mensagem) {
+        return res.status(400).json({ error: 'mensagem_obrigatoria' });
+    }
+    if (mensagem.length > CHAT_MSG_MAX) {
+        return res.status(400).json({ error: 'mensagem_muito_longa' });
+    }
+
+    const usuarioId = req.usuario.sub;
+    const ticketRows = await query(
+        `INSERT INTO chat_tickets (usuario_id, titulo, descricao, status, data_criacao)
+             VALUES ($1, $2, $3, 'aberto', NOW())
+             RETURNING id, status, data_criacao`,
+        [usuarioId, titulo, mensagem],
+    );
+    if (ticketRows === null || ticketRows.length === 0) {
+        return res.status(500).json({ error: 'falha_abertura' });
+    }
+    const ticketId = ticketRows[0].id;
+
+    await query(
+        `INSERT INTO chat_mensagens (ticket_id, autor_id, mensagem, data_envio)
+             VALUES ($1, $2, $3, NOW())`,
+        [ticketId, usuarioId, mensagem],
+    );
+
+    res.status(201).json({
+        source: 'db',
+        ticket: {
+            id: ticketId,
+            titulo,
+            status: ticketRows[0].status || 'aberto',
+            dataCriacao: ticketRows[0].data_criacao || null,
+        },
+        crise: detectarCrise(mensagem),
+        avisoCrise: detectarCrise(mensagem) ? RESPOSTA_CRISE : null,
+    });
+});
+
+// --------------------------------------------------------------
+// GET /api/chat/tickets/:id/mensagens — historico de uma conversa.
+// Anti-IDOR: o dono (usuario_id) ou um COORDENADOR (NAP) acessam; os
+// demais recebem 404 (nao revela existencia do ticket alheio).
+// --------------------------------------------------------------
+apiRouter.get('/chat/tickets/:id/mensagens', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', ticket: null, mensagens: [] });
+    }
+    const id = Number.parseInt(req.params.id, 10);
+    if (Number.isNaN(id) || id <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    const ticketRows = await query(
+        `SELECT t.id, t.usuario_id, t.atendente_id, t.titulo, t.status,
+                t.data_criacao, t.data_fechamento, u.nome AS usuario_nome
+             FROM chat_tickets t
+             JOIN usuarios u ON u.id = t.usuario_id
+             WHERE t.id = $1 LIMIT 1`,
+        [id],
+    );
+    if (ticketRows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (ticketRows.length === 0) {
+        return res.status(404).json({ error: 'ticket_nao_encontrado' });
+    }
+    const ticket = ticketRows[0];
+    const dono = ticket.usuario_id === req.usuario.sub;
+    if (!dono && !ehAtendenteNap(req)) {
+        return res.status(404).json({ error: 'ticket_nao_encontrado' });
+    }
+
+    const rows = await query(
+        `SELECT m.id, m.ticket_id, m.autor_id, m.mensagem, m.data_envio,
+                a.nome AS autor_nome, a.tipo_usuario AS autor_tipo
+             FROM chat_mensagens m
+             JOIN usuarios a ON a.id = m.autor_id
+             WHERE m.ticket_id = $1
+             ORDER BY m.id ASC
+             LIMIT 500`,
+        [id],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({
+        source: 'db',
+        ticket: {
+            id: ticket.id,
+            usuarioId: ticket.usuario_id,
+            usuarioNome: ticket.usuario_nome,
+            atendenteId: ticket.atendente_id,
+            titulo: ticket.titulo,
+            status: ticket.status || 'aberto',
+            dataCriacao: ticket.data_criacao || null,
+            dataFechamento: ticket.data_fechamento || null,
+        },
+        mensagens: rows.map(mapChatMensagem),
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/chat/tickets/:id/mensagens — envia uma mensagem na conversa.
+// Anti-IDOR: dono ou COORDENADOR. Quando o autor e o NAP, registra-se
+// como atendente (atendente_id) e o ticket passa a 'em_atendimento'.
+// Mensagens do aluno passam pela rede de seguranca de crise.
+// --------------------------------------------------------------
+apiRouter.post('/chat/tickets/:id/mensagens', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const id = Number.parseInt(req.params.id, 10);
+    if (Number.isNaN(id) || id <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    const mensagem = String(req.body?.mensagem || '').trim();
+    if (!mensagem) {
+        return res.status(400).json({ error: 'mensagem_vazia' });
+    }
+    if (mensagem.length > CHAT_MSG_MAX) {
+        return res.status(400).json({ error: 'mensagem_muito_longa' });
+    }
+
+    const ticketRows = await query(
+        `SELECT id, usuario_id, status FROM chat_tickets WHERE id = $1 LIMIT 1`,
+        [id],
+    );
+    if (ticketRows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (ticketRows.length === 0) {
+        return res.status(404).json({ error: 'ticket_nao_encontrado' });
+    }
+    const ticket = ticketRows[0];
+    const dono = ticket.usuario_id === req.usuario.sub;
+    const atendente = ehAtendenteNap(req);
+    if (!dono && !atendente) {
+        return res.status(404).json({ error: 'ticket_nao_encontrado' });
+    }
+    if (String(ticket.status || '').toLowerCase() === 'fechado') {
+        return res.status(409).json({ error: 'ticket_fechado' });
+    }
+
+    const ins = await query(
+        `INSERT INTO chat_mensagens (ticket_id, autor_id, mensagem, data_envio)
+             VALUES ($1, $2, $3, NOW())
+             RETURNING id, data_envio`,
+        [id, req.usuario.sub, mensagem],
+    );
+    if (ins === null || ins.length === 0) {
+        return res.status(500).json({ error: 'falha_envio' });
+    }
+
+    // Quando o NAP responde, assume a titularidade do atendimento.
+    if (atendente) {
+        await query(
+            `UPDATE chat_tickets
+                 SET atendente_id = $1,
+                     status = CASE WHEN status = 'fechado' THEN status ELSE 'em_atendimento' END
+                 WHERE id = $2`,
+            [req.usuario.sub, id],
+        );
+    }
+
+    // Rede de seguranca de crise so se aplica a mensagens do aluno.
+    const crise = dono && !atendente ? detectarCrise(mensagem) : false;
+
+    res.status(201).json({
+        source: 'db',
+        mensagem: {
+            id: ins[0].id,
+            ticketId: id,
+            autorId: req.usuario.sub,
+            autorNome: req.usuario.nome || null,
+            autorEhNap: atendente,
+            mensagem,
+            dataEnvio: ins[0].data_envio || null,
+        },
+        crise,
+        avisoCrise: crise ? RESPOSTA_CRISE : null,
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/chat/tickets/:id/fechar — encerra a conversa.
+// Permitido ao dono ou ao NAP. Idempotente: refechar nao gera erro.
+// --------------------------------------------------------------
+apiRouter.post('/chat/tickets/:id/fechar', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const id = Number.parseInt(req.params.id, 10);
+    if (Number.isNaN(id) || id <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    const ticketRows = await query(
+        `SELECT id, usuario_id FROM chat_tickets WHERE id = $1 LIMIT 1`,
+        [id],
+    );
+    if (ticketRows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (ticketRows.length === 0) {
+        return res.status(404).json({ error: 'ticket_nao_encontrado' });
+    }
+    const dono = ticketRows[0].usuario_id === req.usuario.sub;
+    if (!dono && !ehAtendenteNap(req)) {
+        return res.status(404).json({ error: 'ticket_nao_encontrado' });
+    }
+    const upd = await query(
+        `UPDATE chat_tickets
+             SET status = 'fechado', data_fechamento = NOW()
+             WHERE id = $1 RETURNING id`,
+        [id],
+    );
+    if (upd === null) {
+        return res.status(500).json({ error: 'falha_fechamento' });
+    }
+    res.json({ source: 'db', id, status: 'fechado' });
 });
 

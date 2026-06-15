@@ -46,6 +46,26 @@ describe('rede de seguranca (crise tem prioridade absoluta)', () => {
     });
 });
 
+describe('detectarCrise (reuso pelo chat humano com o NAP — RF15)', () => {
+    it('detecta termos de risco em texto livre', () => {
+        expect(cb.detectarCrise('nao aguento mais, penso em suicidio')).toBe(true);
+        expect(cb.detectarCrise('quero me machucar')).toBe(true);
+        expect(cb.detectarCrise('NAO QUERO VIVER')).toBe(true);
+    });
+
+    it('nao aciona para mensagens comuns', () => {
+        expect(cb.detectarCrise('estou ansioso com as provas')).toBe(false);
+        expect(cb.detectarCrise('preciso organizar meu tempo')).toBe(false);
+        expect(cb.detectarCrise('')).toBe(false);
+        expect(cb.detectarCrise(null)).toBe(false);
+    });
+
+    it('expoe a resposta de crise com NAP e CVV 188', () => {
+        expect(cb.RESPOSTA_CRISE).toMatch(/NAP/i);
+        expect(cb.RESPOSTA_CRISE).toContain('188');
+    });
+});
+
 describe('deteccao de intencoes (tolerante a acentos)', () => {
     const casos = [
         ['estou com muita ansiedade', 'ansiedade'],

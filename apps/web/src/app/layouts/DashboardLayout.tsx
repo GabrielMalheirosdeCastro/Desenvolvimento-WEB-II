@@ -9,6 +9,7 @@ import {
   Library,
   CalendarDays,
   Bot,
+  HeartHandshake,
   User,
   ShieldCheck,
   LogOut,
@@ -63,6 +64,7 @@ export function DashboardLayout() {
     { to: "/dashboard/biblioteca", icon: Library, label: t("nav.biblioteca") },
     { to: "/dashboard/eventos", icon: CalendarDays, label: t("nav.eventos") },
     { to: "/dashboard/chatbot", icon: Bot, label: t("nav.acolhimento") },
+    { to: "/dashboard/chat-nap", icon: HeartHandshake, label: t("nav.chatNap") },
     { to: "/dashboard/perfil", icon: User, label: t("nav.perfil") },
     // Item exclusivo da Coordenação (RBAC — A4). Visível apenas para
     // COORDENADOR; a fronteira real de acesso é a API (requireRole).

@@ -9,6 +9,25 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-06-15
+
+### Added
+
+- **Chat com o NAP (Bloco B — item B3 / RF15)**: implementado o canal direto de mensageria entre o aluno e o **Núcleo de Apoio Psicopedagógico (NAP)**, encerrando o **último requisito funcional em aberto** do roadmap (todos os 16 RFs concluídos). Decisão de arquitetura registrada em [docs/plano-2026-06-15-v1.17.0-chat-nap.md](docs/plano-2026-06-15-v1.17.0-chat-nap.md): transporte por **polling HTTP simples (sem Socket.io)** — RF15 não exige tempo real, e o polling dispensa nova dependência e configuração de WebSocket no Traefik, reduzindo risco e mantendo a política "tudo na VPS".
+- **Endpoints REST do chat** (aditivos, em [apps/api/routes.js](apps/api/routes.js), todos `requireAuth`): `GET /api/chat/tickets` (lista — o aluno vê só os seus; o NAP/`COORDENADOR` vê todos), `POST /api/chat/tickets` (o aluno abre um atendimento com assunto + mensagem inicial), `GET /api/chat/tickets/:id/mensagens` (histórico), `POST /api/chat/tickets/:id/mensagens` (envia mensagem) e `POST /api/chat/tickets/:id/fechar` (encerra). Persistência em `chat_tickets`/`chat_mensagens`, contrato `source: db|fallback`, `503` quando o banco está indisponível.
+- **Tela `/dashboard/chat-nap`** ([apps/web/src/app/pages/ChatNapPage.tsx](apps/web/src/app/pages/ChatNapPage.tsx)): lista de atendimentos + janela de conversa com **polling** (mensagens a cada 5s, lista a cada 12s) e envio otimista. A mesma tela adapta-se ao papel — o **aluno** abre atendimentos (modal assunto + mensagem) e o **NAP** (`COORDENADOR`) vê todos os tickets com o nome do aluno e responde, assumindo a titularidade (`atendente_id` + status `em_atendimento`). Rota lazy registrada em [routes.tsx](apps/web/src/app/routes.tsx) e item de menu no [DashboardLayout](apps/web/src/app/layouts/DashboardLayout.tsx).
+- **Rede de segurança de crise reutilizada (RF15 ↔ RF16)**: o motor do chatbot ([apps/api/chatbot.js](apps/api/chatbot.js)) passou a exportar `detectarCrise(texto)` e `RESPOSTA_CRISE`. Mensagens do aluno no chat humano passam pela mesma detecção determinística; ao acionar, a UI exibe o encaminhamento imediato ao **NAP e ao CVV 188**, independente de atendente online. Novos testes em [tests/unit/chatbot.test.mjs](tests/unit/chatbot.test.mjs) cobrem `detectarCrise` (positivos, negativos e `RESPOSTA_CRISE`). Suíte total: **65 testes** verdes.
+- **Seed de produção do chat** ([packages/db/prisma/seed-prod.sql](packages/db/prisma/seed-prod.sql), seção 7.11, idempotente): cria um atendimento de demonstração da persona Gabriel (`23110145`) já atendido pelo NAP (mensagem inicial do aluno + resposta de boas-vindas), para que a tela nasça com histórico real. O relatório final do seed foi ampliado com `chat_tickets` e `chat_mensagens`.
+
+### Changed
+
+- A navegação do dashboard ganhou o item **"Chat com o NAP"** com novas chaves i18n `nav.chatNap` em ambos os catálogos ([pt-BR.json](apps/web/src/app/i18n/locales/pt-BR.json) / [en-US.json](apps/web/src/app/i18n/locales/en-US.json)), preservando a paridade de chaves validada pelo teste de i18n.
+- Bump 1.16.0 -> **1.17.0** (MINOR — nova funcionalidade RF15) nos três `package.json`.
+
+### Segurança
+
+- **Dados sensíveis de saúde mental** tratados com cuidado reforçado: todas as rotas exigem sessão (`requireAuth`); anti-IDOR garante que o aluno só acessa os próprios tickets (`usuario_id = req.usuario.sub`) enquanto o NAP acessa todos para atender; tentativas de acessar ticket alheio retornam **404** (não revelam a existência). A autorização é sempre imposta no backend (OWASP A01); o menu/condicional no frontend é apenas UX.
+
 ## [1.16.0] - 2026-06-15
 
 ### Added

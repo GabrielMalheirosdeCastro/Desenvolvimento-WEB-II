@@ -260,6 +260,45 @@ CROSS JOIN (VALUES
 WHERE nap.matricula_institucional = 'NAP-FAESA'
   AND NOT EXISTS (SELECT 1 FROM foruns_discussao f WHERE f.titulo = v.titulo);
 
+-- 7.11 Atendimento de demonstracao do Chat com o NAP (RF15 / B3).
+-- Idempotente por titulo+aluno: cria um ticket da persona Gabriel com a
+-- mensagem inicial do aluno e a resposta de boas-vindas do NAP, para que
+-- a tela /dashboard/chat-nap nasca com um historico real em producao.
+INSERT INTO chat_tickets (usuario_id, atendente_id, titulo, descricao, status, data_criacao)
+SELECT al.id, nap.id,
+       'Ansiedade antes das provas',
+       'Tenho me sentido muito ansioso conforme as provas se aproximam.',
+       'em_atendimento', NOW() - INTERVAL '2 days'
+FROM usuarios al
+CROSS JOIN usuarios nap
+WHERE al.matricula_institucional = '23110145'
+  AND nap.matricula_institucional = 'NAP-FAESA'
+  AND NOT EXISTS (
+    SELECT 1 FROM chat_tickets t
+    WHERE t.usuario_id = al.id AND t.titulo = 'Ansiedade antes das provas'
+  );
+
+INSERT INTO chat_mensagens (ticket_id, autor_id, mensagem, data_envio)
+SELECT t.id, t.usuario_id,
+       'Tenho me sentido muito ansioso conforme as provas se aproximam.',
+       NOW() - INTERVAL '2 days'
+FROM chat_tickets t
+JOIN usuarios al ON al.id = t.usuario_id
+WHERE al.matricula_institucional = '23110145'
+  AND t.titulo = 'Ansiedade antes das provas'
+  AND NOT EXISTS (SELECT 1 FROM chat_mensagens m WHERE m.ticket_id = t.id);
+
+INSERT INTO chat_mensagens (ticket_id, autor_id, mensagem, data_envio)
+SELECT t.id, t.atendente_id,
+       'Ola! Aqui e o NAP da FAESA. Obrigado por compartilhar. Vamos conversar sobre estrategias para lidar com a ansiedade nas provas. Como tem sido sua rotina de estudos?',
+       NOW() - INTERVAL '1 day'
+FROM chat_tickets t
+JOIN usuarios al ON al.id = t.usuario_id
+WHERE al.matricula_institucional = '23110145'
+  AND t.titulo = 'Ansiedade antes das provas'
+  AND t.atendente_id IS NOT NULL
+  AND (SELECT COUNT(*) FROM chat_mensagens m WHERE m.ticket_id = t.id) < 2;
+
 COMMIT;
 
 -- 8. Relatorio rapido
@@ -276,4 +315,6 @@ UNION ALL SELECT 'recursos', COUNT(*) FROM recursos
 UNION ALL SELECT 'trilhas_aprendizagem', COUNT(*) FROM trilhas_aprendizagem
 UNION ALL SELECT 'trilha_recursos', COUNT(*) FROM trilha_recursos
 UNION ALL SELECT 'foruns_discussao', COUNT(*) FROM foruns_discussao
+UNION ALL SELECT 'chat_tickets', COUNT(*) FROM chat_tickets
+UNION ALL SELECT 'chat_mensagens', COUNT(*) FROM chat_mensagens
 UNION ALL SELECT 'mentores (e_mentor=true)', COUNT(*) FROM usuarios WHERE e_mentor=TRUE;

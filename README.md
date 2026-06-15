@@ -44,7 +44,7 @@ O **Site de Acolhimento FAESA** é uma plataforma web responsiva que centraliza 
 | RF12 | Atividades Extracurriculares | Baixa |
 | RF13 | Gamificação (pontos, badges, rankings) | Baixa |
 | RF14 | Relatórios para Coordenação | Baixa |
-| RF15 | Chat com Suporte psicopedagógico | Baixa |
+| RF15 | Chat com Suporte psicopedagógico (canal direto com o NAP — implementado na v1.17.0 via polling HTTP) | Baixa |
 | RF16 | Chatbot IA de Acolhimento (respostas adaptadas por faixa etária: 17–20, 21–25, 26+) | Alta |
 
 ---

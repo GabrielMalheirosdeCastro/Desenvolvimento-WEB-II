@@ -42,6 +42,9 @@ const ProfilePage = lazy(() =>
 const ChatbotPage = lazy(() =>
   import("./pages/ChatbotPage").then((m) => ({ default: m.ChatbotPage }))
 );
+const ChatNapPage = lazy(() =>
+  import("./pages/ChatNapPage").then((m) => ({ default: m.ChatNapPage }))
+);
 const CoordenacaoPage = lazy(() =>
   import("./pages/CoordenacaoPage").then((m) => ({ default: m.CoordenacaoPage }))
 );
@@ -73,6 +76,7 @@ export const router = createBrowserRouter([
           { path: "biblioteca", Component: LibraryPage },
           { path: "eventos", Component: EventsPage },
           { path: "chatbot", Component: ChatbotPage },
+          { path: "chat-nap", Component: ChatNapPage },
           { path: "perfil", Component: ProfilePage },
           {
             path: "coordenacao",

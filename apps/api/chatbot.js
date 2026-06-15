@@ -74,12 +74,25 @@ const TERMOS_CRISE = [
     'me cortar', 'automutil', 'nao vejo sentido',
 ];
 
-const RESPOSTA_CRISE =
+export const RESPOSTA_CRISE =
     'Sinto que voce esta passando por um momento muito dificil, e voce nao precisa enfrentar ' +
     'isso sozinho(a). Procure agora o NAP (Nucleo de Apoio Psicopedagogico) da FAESA para um ' +
     'atendimento humano. Em caso de emergencia ou risco imediato, ligue para o CVV no numero ' +
     '188 (24h, gratuito e sigiloso) ou acesse cvv.org.br. Se houver perigo a sua vida agora, ' +
     'ligue 192 (SAMU). Voce importa, e ha pessoas prontas para te ajudar.';
+
+/**
+ * Detecta sinais de crise/risco em um texto livre, reaproveitando a mesma rede
+ * de seguranca deterministica do chatbot (RF16). Util para o chat humano com o
+ * NAP (RF15): quando uma mensagem do aluno aciona o gatilho, a UI exibe o
+ * encaminhamento imediato ao NAP/CVV 188 sem depender de atendente online.
+ * Modulo puro (sem banco/rede), portanto unitariamente testavel.
+ * @param {string} texto Mensagem livre do usuario.
+ * @returns {boolean} true quando ha indicio de crise.
+ */
+export function detectarCrise(texto) {
+    return contemAlgum(normalizar(texto), TERMOS_CRISE);
+}
 
 // ------------------------------------------------------------
 // Base de intencoes. Cada intencao tem:
