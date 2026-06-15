@@ -373,21 +373,27 @@ falta integração com banco real).
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **24 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
-F8, **H1**, **H2**, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9**, **H10** e a validação visual E4 parcial) + **A4 parcial**; ~28 em aberto.
+**Total:** 53 pendências mapeadas — **29 concluídas** (A1, A3, A4, A5, A6, **B1**, **B2**, **B3**, C1, C2, C3,
+C5, F1, F2, F3, F8, **H1**, **H2**, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9**, **H10**, D5, D7 e a
+validação visual E4 parcial); ~24 em aberto (predominantemente RNFs do Bloco D e o Bloco G acadêmico).
 
-> **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
-> banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
-> local real** (login e-mail+senha com `bcrypt`/`JWT`, logout e proteção de rotas). O **Bloco H**
-> (tornar as telas funcionais) já está **majoritariamente concluído**: o **H3** (Plano de Estudos com
-> CRUD real de metas) foi entregue na **v1.5.0**, a **Avaliação de Bem-estar (B1/RF11)** na **v1.6.0**
-> (com seed da persona em produção), a **varredura de mocks H4/H5/H8/H9** (Perfil real, Tema
-> persistido, Mentoria e Concentração funcionais) na **v1.7.0**, as telas de **Fórum (H6/RF08)** e
-> **Biblioteca (H7/RF06–RF07)** na **v1.8.0** e o **dashboard/header interativos (H1/H2)** na
-> **v1.9.0**. Resta do Bloco H apenas o item **H10** (idioma, dependente de i18n/D8). A
-> versão final depende, em ordem de criticidade, de **completar o RBAC por papel (A4)**, **a feature
-> de RF de alta prioridade restante (RF16)**, **endurecimento de segurança/infra** e a **cobertura de
-> testes exigida pelo RNF08**, seguidos das features de menor prioridade e do fechamento acadêmico.
+> **Conclusão honesta para a banca:** o protótipo evoluiu para uma aplicação funcional completa em
+> nível de requisitos funcionais — **todos os 16 RFs estão concluídos** (UI + endpoints reais com
+> escrita persistida), com **autenticação local real** (login e-mail+senha `bcrypt`/`JWT`, logout,
+> proteção de rotas e RBAC por papel). O **Bloco H** (tornar as telas funcionais) está **100%
+> encerrado**: H3 (Plano de Estudos, **v1.5.0**), B1/RF11 Bem-estar (**v1.6.0**), varredura de mocks
+> H4/H5/H8/H9 (**v1.7.0**), Fórum H6/RF08 + Biblioteca H7/RF06–RF07 (**v1.8.0**), dashboard/header
+> interativos H1/H2 (**v1.9.0**) e idioma H10 (**v1.16.0**). O **último RF em aberto, B3/RF15 (chat
+> com o NAP)**, foi entregue na **v1.17.0** (polling HTTP, anti-IDOR, rede de crise → CVV 188),
+> fechando o **Bloco B**. O que separa o estado atual da **versão final** é, em ordem de criticidade:
+> **(1)** RNFs do **Bloco D** ainda abertos (D2 acessibilidade AA + dark mode; D4 monitoria 24/7;
+> D6 escalabilidade) e a cobertura de integração com banco real (E/RNF08); e **(2)** o fechamento
+> acadêmico do **Bloco G** (G1 LaTeX final no Overleaf, G3 diagramas, G4 roteiro da banca).
+
+> **Ponto de retomada (próxima sessão):** com os 16 RFs fechados, o foco passa a ser **qualidade
+> (Bloco D/E)** e **entrega acadêmica (Bloco G)**. Sugestão de próxima versão: **auditoria de
+> acessibilidade AA + tokens de dark mode (D2/RNF04)** via Playwright/axe na estação, ou o
+> **fechamento documental do Bloco G** para a banca. Nenhum RF pendente bloqueia a entrega.
 
 ---
 
