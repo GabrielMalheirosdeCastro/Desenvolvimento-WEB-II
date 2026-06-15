@@ -41,10 +41,10 @@ Infra/DevOps** (Bloco F restante) **não consome versões da SPA** — são tare
 
 | Versão | Tipo | Tema | Pendências fechadas | Plano detalhado |
 |--------|------|------|---------------------|-----------------|
-| **v1.14.0** | MINOR | Endurecimento de RNFs | D2/RNF04, D5/RNF02, D7/RNF09 | [plano](plano-2026-06-15-v1.14.0-endurecimento-rnfs.md) |
-| **v1.15.0** | MINOR | Qualidade e Testes | E1 (Vitest formal), E2, D3/RNF08 | [plano](plano-2026-06-15-v1.15.0-qualidade-testes.md) |
-| **v1.16.0** | MINOR | Internacionalização (i18n) + Idioma | D8/RNF10, H10 | [plano](plano-2026-06-15-v1.16.0-i18n-idioma.md) |
-| **v1.17.0** | MINOR | Chat com Suporte Psicopedagógico | B3/RF15 | [plano](plano-2026-06-15-v1.17.0-chat-nap.md) |
+| **v1.14.0** | MINOR | Endurecimento de RNFs | D2/RNF04, D5/RNF02, D7/RNF09 | [plano](plano-2026-06-15-v1.14.0-endurecimento-rnfs.md) — ✅ entregue |
+| **v1.15.0** | MINOR | Qualidade e Testes | E1 (Vitest formal), E2, D3/RNF08 | [plano](plano-2026-06-15-v1.15.0-qualidade-testes.md) — ✅ entregue |
+| **v1.16.0** | MINOR | Internacionalização (i18n) + Idioma | D8/RNF10, H10 | [plano](plano-2026-06-15-v1.16.0-i18n-idioma.md) — ✅ entregue |
+| **v1.17.0** | MINOR | Chat com Suporte Psicopedagógico | B3/RF15 | [plano](plano-2026-06-15-v1.17.0-chat-nap.md) — ⬜ próxima |
 | **v2.0.0** | MAJOR | Versão final + entrega acadêmica | E3 (completo), D4/RNF05, D6/RNF06, G1, G2, G3, G4 | [plano](plano-2026-06-15-v2.0.0-final-entrega-academica.md) |
 
 > **Trilha paralela — Infra/DevOps (sem bump da SPA):** F4 (snapshot da VPS), F5 (RAM do

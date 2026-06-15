@@ -332,15 +332,16 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 
 ---
 
-## 11. Checkpoint de Encerramento — 2026-06-14 (v1.13.0)
+## 11. Checkpoint de Encerramento — 2026-06-15 (v1.16.0)
 
 | Item | Estado |
 |---|---|
-| Versão em produção | **v1.13.0** (`/version` e `/healthz` confirmados) |
-| `git HEAD` | `7ae997c` em `origin/master`, working tree limpo |
-| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida |
+| Versão em produção | **v1.16.0** (`/version` e `/healthz` confirmados) |
+| `git HEAD` | `fa0cdad` em `origin/master`, working tree limpo |
+| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida (1.16.0) |
 | Segurança ativa em prod | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy |
-| Testes | `npm test` verde (auth-core + chatbot-core); Playwright só na estação |
+| Testes | `npm test` verde (62 testes, cobertura 97,46% auth+chatbot); Playwright só na estação |
+| i18n | seletor PT-BR/EN-US validado em produção via Playwright (login PT-BR e EN-US) |
 
 **Requisitos funcionais:** todos de alta/média prioridade entregues. **Único RF em aberto: B3/RF15**
 (chat com NAP, prioridade baixa).
@@ -371,8 +372,8 @@ falta integração com banco real).
 | F | Infraestrutura e DevOps | 8 | 🔴 Alta |
 | G | Documentação e entrega | 4 | 🟢 Baixa |
 
-**Total:** 53 pendências mapeadas — **23 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
-F8, **H1**, **H2**, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9** e a validação visual E4 parcial) + **A4 parcial**; ~29 em aberto.
+**Total:** 53 pendências mapeadas — **24 concluídas** (A1, A3, A5, A6, **B1**, C1, C2, C3, C5, F1, F2, F3,
+F8, **H1**, **H2**, **H3**, **H4**, **H5**, **H6**, **H7**, **H8**, **H9**, **H10** e a validação visual E4 parcial) + **A4 parcial**; ~28 em aberto.
 
 > **Conclusão honesta para a banca:** o protótipo entrega a espinha dorsal (infra, deploy, SPA, API,
 > banco conectado, 9 dos 16 RFs em nível de UI/endpoint de leitura) e, desde a v1.4.1, **autenticação
