@@ -17,27 +17,43 @@ fechamento acadêmico por último).
 
 ## Resumo — quantas versões
 
-**9 versões de aplicação** até o marco final: **6 MINOR** (features/RNF), **1 PATCH** (seed) e o
-**MAJOR v2.0.0** (fechamento), além de **2 itens já planejados** (v1.9.1 e v1.10.0). Em paralelo, uma
-**trilha de Infra/DevOps** (Bloco F restante) que **não consome versões da SPA** — são tarefas
-operacionais na VPS.
+> **⚠️ Reconciliação 2026-06-15.** Este roadmap foi escrito na v1.9.0 e a execução **divergiu** da
+> previsão original: a **v1.13.0 não foi i18n** — foi entregue como **Qualidade/Segurança** (D1
+> `helmet`+rate limit, E3/E4 Playwright, E5 gate de CI, E1 parcial). Por isso a numeração de
+> v1.13.0 em diante foi **renumerada** abaixo. O i18n migrou para a v1.16.0 e a ordem passou a seguir
+> a decisão "robustez primeiro" (RNFs/LGPD → Testes → i18n → Chat NAP → Final), confirmada pelo aluno.
 
-| Versão | Tipo | Tema | Pendências fechadas |
-|--------|------|------|---------------------|
-| **v1.9.1** | PATCH | Seed Fórum/Biblioteca em produção | C4 (e tira fórum/recursos/trilhas do `fallback`) |
-| **v1.10.0** | MINOR | RBAC completo + Painel de Coordenação | A4, B4/RF14 |
-| **v1.11.0** | MINOR | Chatbot IA de Acolhimento | B2/RF16 |
-| **v1.12.0** | MINOR | Notificações, Eventos e Gamificação | B5/RF10, B6/RF12, B7/RF13 |
-| **v1.13.0** | MINOR | Internacionalização (i18n) + Idioma | D8/RNF10, H10 |
-| **v1.14.0** | MINOR | Qualidade e Testes automatizados | E1, E2, E4, E5, D3/RNF08 |
-| **v1.15.0** | MINOR | Endurecimento de RNFs | D1/RNF03, D2/RNF04, D5/RNF02, D7/RNF09 |
-| **v1.16.0** | MINOR | Chat com Suporte Psicopedagógico | B3/RF15 |
-| **v2.0.0** | MAJOR | Versão final + entrega acadêmica | E3, D4/RNF05, D6/RNF06, G1, G2, G3, G4 |
+**Estado atual: v1.13.0 publicada.** Restam **5 releases de aplicação** até o marco final: **4 MINOR**
+(RNFs, testes, i18n, chat NAP) e o **MAJOR v2.0.0** (fechamento). Em paralelo, a **trilha de
+Infra/DevOps** (Bloco F restante) **não consome versões da SPA** — são tarefas operacionais na VPS.
+
+### Histórico entregue (v1.9.1 → v1.13.0)
+
+| Versão | Tipo | Tema | Pendências fechadas | Status |
+|--------|------|------|---------------------|--------|
+| v1.9.1 | PATCH | Seed Fórum/Biblioteca em produção | C4 | ✅ |
+| v1.10.0 | MINOR | RBAC completo + Painel de Coordenação | A4, B4/RF14 | ✅ |
+| v1.11.0 | MINOR | Chatbot IA de Acolhimento | B2/RF16 | ✅ |
+| v1.12.0 | MINOR | Notificações, Eventos e Gamificação | B5/RF10, B6/RF12, B7/RF13 | ✅ |
+| v1.13.0 | MINOR | **Qualidade/Segurança** | D1/RNF03, E3, E4, E5, E1 (parcial) | ✅ |
+
+### Versões restantes (renumeradas — "robustez primeiro")
+
+| Versão | Tipo | Tema | Pendências fechadas | Plano detalhado |
+|--------|------|------|---------------------|-----------------|
+| **v1.14.0** | MINOR | Endurecimento de RNFs | D2/RNF04, D5/RNF02, D7/RNF09 | [plano](plano-2026-06-15-v1.14.0-endurecimento-rnfs.md) |
+| **v1.15.0** | MINOR | Qualidade e Testes | E1 (Vitest formal), E2, D3/RNF08 | [plano](plano-2026-06-15-v1.15.0-qualidade-testes.md) |
+| **v1.16.0** | MINOR | Internacionalização (i18n) + Idioma | D8/RNF10, H10 | [plano](plano-2026-06-15-v1.16.0-i18n-idioma.md) |
+| **v1.17.0** | MINOR | Chat com Suporte Psicopedagógico | B3/RF15 | [plano](plano-2026-06-15-v1.17.0-chat-nap.md) |
+| **v2.0.0** | MAJOR | Versão final + entrega acadêmica | E3 (completo), D4/RNF05, D6/RNF06, G1, G2, G3, G4 | [plano](plano-2026-06-15-v2.0.0-final-entrega-academica.md) |
 
 > **Trilha paralela — Infra/DevOps (sem bump da SPA):** F4 (snapshot da VPS), F5 (RAM do
 > `supabase-analytics`), F6 (Cloudflare proxied), F7 (pipeline de `prisma migrate deploy`). Executar
-> como tarefas operacionais entre versões; F7 idealmente **antes** da v1.11.0 (a primeira que pode
-> exigir migração de schema nova).
+> como tarefas operacionais entre versões; F7 idealmente **antes** de qualquer versão com migração de
+> schema nova.
+
+> **Nota:** o detalhamento textual abaixo (escrito na v1.9.0) é mantido por histórico; a tabela acima
+> é a **fonte de verdade** da sequência atual.
 
 ## Detalhamento por versão
 
