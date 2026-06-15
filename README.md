@@ -229,6 +229,8 @@ demonstrar a aplicação completa sem depender do banco de produção.
 | `GET` | `/api/dashboard/badges` | Conquistas recentes do usuário. | RF13 |
 | `GET` | `/api/eventos` | Eventos institucionais (palestras, oficinas). | RF12 |
 | `POST` | `/api/lgpd/consentimento` | Registra o aceite do termo LGPD. | RNF09 |
+| `GET` | `/api/usuario/dados` | Exporta os dados pessoais do titular (portabilidade). | RNF09 |
+| `DELETE` | `/api/usuario/conta` | Anonimiza/elimina a conta do titular (confirmação obrigatória). | RNF09 |
 | `GET` | `/api/mentorias?papel=mentor` | Lista mentores cadastrados. | RF09 |
 | `POST` | `/api/mentorias/cadastro-mentor` | Marca a persona logada como mentor. | RF09 |
 

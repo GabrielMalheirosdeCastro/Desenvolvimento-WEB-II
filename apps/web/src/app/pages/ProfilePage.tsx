@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import {
   Calendar,
   Award,
@@ -6,6 +7,9 @@ import {
   Bell,
   Trophy,
   TrendingUp,
+  Download,
+  Trash2,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { useTheme, type Tema } from "../theme/ThemeContext";
@@ -58,8 +62,9 @@ interface RankingItem {
 }
 
 export function ProfilePage() {
-  const { usuario, recarregar } = useAuth();
+  const { usuario, recarregar, logout } = useAuth();
   const { tema, definirTema } = useTheme();
+  const navigate = useNavigate();
 
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -74,6 +79,72 @@ export function ProfilePage() {
   const [email, setEmail] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [feedback, setFeedback] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
+
+  // Privacidade / LGPD (D7 / RNF09): exportacao e exclusao de dados.
+  const [exportando, setExportando] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
+  const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
+  const [privacidadeFeedback, setPrivacidadeFeedback] = useState<
+    { tipo: "ok" | "erro"; texto: string } | null
+  >(null);
+
+  // Exporta os dados pessoais do titular como arquivo JSON (download local).
+  async function exportarDados() {
+    setExportando(true);
+    setPrivacidadeFeedback(null);
+    try {
+      const res = await fetch("/api/usuario/dados", {
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      });
+      if (!res.ok) throw new Error("falha");
+      const dados = await res.json();
+      const blob = new Blob([JSON.stringify(dados, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `meus-dados-faesa-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setPrivacidadeFeedback({ tipo: "ok", texto: "Dados exportados com sucesso." });
+    } catch {
+      setPrivacidadeFeedback({
+        tipo: "erro",
+        texto: "Não foi possível exportar os dados agora.",
+      });
+    } finally {
+      setExportando(false);
+    }
+  }
+
+  // Exclui (anonimiza) a conta do titular. Operacao irreversivel.
+  async function excluirConta() {
+    setExcluindo(true);
+    setPrivacidadeFeedback(null);
+    try {
+      const res = await fetch("/api/usuario/conta", {
+        method: "DELETE",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmar: true }),
+      });
+      if (!res.ok) throw new Error("falha");
+      // Sessao ja foi encerrada no servidor; limpa o estado e volta ao login.
+      await logout();
+      navigate("/login", { replace: true });
+    } catch {
+      setExcluindo(false);
+      setConfirmandoExclusao(false);
+      setPrivacidadeFeedback({
+        tipo: "erro",
+        texto: "Não foi possível excluir a conta agora.",
+      });
+    }
+  }
 
   useEffect(() => {
     let ativo = true;
@@ -532,6 +603,78 @@ export function ProfilePage() {
               <span className="text-[#003366]">Perfil público</span>
               <input type="checkbox" defaultChecked className="w-5 h-5 text-[#0066CC] rounded" />
             </label>
+          </div>
+        </div>
+
+        {/* Privacidade / LGPD (D7 / RNF09) */}
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldCheck className="text-[#0066CC]" size={24} />
+            <h2 className="text-xl text-[#003366]">Privacidade</h2>
+          </div>
+          <p className="text-sm text-[#6C757D] mb-6">
+            Exerça seus direitos previstos na LGPD (Lei 13.709/2018): exporte uma cópia dos seus
+            dados pessoais ou solicite a exclusão definitiva da sua conta.
+          </p>
+
+          {privacidadeFeedback && (
+            <p
+              role="status"
+              aria-live="polite"
+              className={`mb-4 text-sm ${
+                privacidadeFeedback.tipo === "ok" ? "text-green-700" : "text-red-700"
+              }`}
+            >
+              {privacidadeFeedback.texto}
+            </p>
+          )}
+
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={exportarDados}
+              disabled={exportando}
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC]/5 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+            >
+              <Download size={18} aria-hidden="true" />
+              <span>{exportando ? "Exportando…" : "Exportar meus dados (JSON)"}</span>
+            </button>
+
+            {!confirmandoExclusao ? (
+              <button
+                type="button"
+                onClick={() => setConfirmandoExclusao(true)}
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border border-red-600 text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+              >
+                <Trash2 size={18} aria-hidden="true" />
+                <span>Excluir minha conta</span>
+              </button>
+            ) : (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-4 space-y-3">
+                <p className="text-sm text-red-800">
+                  Esta ação é <strong>irreversível</strong>. Seus dados pessoais serão anonimizados
+                  e você perderá o acesso. Deseja confirmar?
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={excluirConta}
+                    disabled={excluindo}
+                    className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
+                  >
+                    {excluindo ? "Excluindo…" : "Confirmar exclusão"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmandoExclusao(false)}
+                    disabled={excluindo}
+                    className="flex-1 px-4 py-2 rounded-lg border border-[#003366]/20 text-[#003366] hover:bg-[#003366]/5 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

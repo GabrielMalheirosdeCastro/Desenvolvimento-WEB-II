@@ -218,12 +218,12 @@ nome correto. **✅ Atingido.**
 | # | Pendência | RNF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
 | D1 | **Segurança** — proteção XSS/CSRF, headers de segurança, TLS 1.3, rate limiting. **Entregue na v1.13.0:** `helmet` (headers + CSP compatível com a SPA) + `express-rate-limit` (auth 20/min, geral 200/min, `429` JSON) + `trust proxy` para IP real atrás do Traefik | RNF03 | 🔴 | M | ✅ |
-| D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado) | RNF04 | 🟡 | M | ⬜ |
+| D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado). **Baseline na v1.14.0:** `lang="pt-BR"`, skip-link, landmark `<main>`, `aria-label` nas navegações e fallback de `Suspense` acessível. **Falta:** auditoria de contraste AA + dark mode por tokens (axe/Lighthouse via Playwright MCP na estação) | RNF04 | 🟡 | M | 🟨 |
 | D3 | **Cobertura de testes ≥ 80%** — hoje não há suíte automatizada | RNF08 | 🟡 | G | ⬜ |
 | D4 | **Disponibilidade / monitoria 24/7** — uptime ≥ 99,5% com alertas | RNF05 | 🟡 | M | ⬜ |
-| D5 | **Performance** — carregamento ≤ 3s em 3G (otimização de bundle, lazy loading) | RNF02 | 🟡 | M | ⬜ |
+| D5 | **Performance** — carregamento ≤ 3s em 3G (otimização de bundle, lazy loading). **Entregue na v1.14.0:** `React.lazy` por rota do dashboard + `manualChunks` (recharts/d3 e radix isolados). Bundle inicial 741,62 kB → **132,34 kB** (gzip 210→41 kB) | RNF02 | 🟡 | M | ✅ |
 | D6 | **Escalabilidade** — validar comportamento sob carga (meta de 10k usuários simultâneos) | RNF06 | 🟢 | G | ⬜ |
-| D7 | **LGPD** — completar gestão de consentimento, exportação e exclusão de dados pessoais | RNF09 | 🟡 | M | 🟨 |
+| D7 | **LGPD** — completar gestão de consentimento, exportação e exclusão de dados pessoais. **Entregue na v1.14.0:** `GET /api/usuario/dados` (portabilidade JSON) + `DELETE /api/usuario/conta` (anonimização com confirmação) + UI de Privacidade no Perfil + trilha em `auditoria_dados`. Consentimento já existia (`POST /api/lgpd/consentimento`) | RNF09 | 🟡 | M | ✅ |
 | D8 | **Internacionalização** — preparar estrutura i18n (pt-BR → en-US) | RNF10 | 🟢 | M | ⬜ |
 
 ---
@@ -344,8 +344,9 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 **Requisitos funcionais:** todos de alta/média prioridade entregues. **Único RF em aberto: B3/RF15**
 (chat com NAP, prioridade baixa).
 
-**RNFs em aberto:** D2 (acessibilidade), D3 (cobertura ≥ 80%), D4 (monitoria 24/7), D5 (performance),
-D6 (escalabilidade), D7 (LGPD — parcial), D8 (i18n) + H10 (idioma, acoplado a D8).
+**RNFs em aberto:** D2 (acessibilidade — baseline na v1.14.0; falta auditoria AA + dark mode),
+D3 (cobertura ≥ 80%), D4 (monitoria 24/7), D6 (escalabilidade), D8 (i18n) + H10 (idioma, acoplado a D8).
+**Concluídos na v1.14.0:** D5 (performance — code-splitting) e D7 (LGPD — exportação/exclusão).
 
 **Pendência acadêmica:** Bloco G (G1 LaTeX final no Overleaf, G3 diagramas, G4 roteiro da banca).
 

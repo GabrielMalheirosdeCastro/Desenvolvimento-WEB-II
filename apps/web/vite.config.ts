@@ -45,4 +45,21 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
+
+  // D5/RNF02 — manualChunks separa as libs pesadas (graficos/radix) em chunks
+  // proprios, melhorando o cache do navegador entre deploys. As paginas internas
+  // ja sao code-split via React.lazy (routes.tsx). React permanece no entry para
+  // evitar problemas de ordem de inicializacao.
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('recharts') || id.includes('d3-')) return 'charts'
+            if (id.includes('@radix-ui')) return 'radix'
+          }
+        },
+      },
+    },
+  },
 })

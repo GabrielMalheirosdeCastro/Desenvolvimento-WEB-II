@@ -1,22 +1,50 @@
+import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import { RootLayout } from "./layouts/RootLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { RoleRoute } from "./auth/RoleRoute";
+// Entrada e paginas pequenas permanecem eager (sem flash no primeiro paint).
 import { LoginPage } from "./pages/LoginPage";
 import { AtivarPage } from "./pages/AtivarPage";
-import { DashboardHome } from "./pages/DashboardHome";
-import { StudyPlanPage } from "./pages/StudyPlanPage";
-import { WellbeingPage } from "./pages/WellbeingPage";
-import { ConcentrationPage } from "./pages/ConcentrationPage";
-import { MentorshipPage } from "./pages/MentorshipPage";
-import { ForumPage } from "./pages/ForumPage";
-import { LibraryPage } from "./pages/LibraryPage";
-import { EventsPage } from "./pages/EventsPage";
-import { ProfilePage } from "./pages/ProfilePage";
-import { ChatbotPage } from "./pages/ChatbotPage";
-import { CoordenacaoPage } from "./pages/CoordenacaoPage";
 import { NotFound } from "./pages/NotFound";
+
+// D5/RNF02 — code-splitting: as paginas internas do dashboard sao carregadas
+// sob demanda (chunks separados), reduzindo o bundle inicial. O <Suspense> que
+// captura o carregamento fica no DashboardLayout (em volta do <Outlet/>).
+const DashboardHome = lazy(() =>
+  import("./pages/DashboardHome").then((m) => ({ default: m.DashboardHome }))
+);
+const StudyPlanPage = lazy(() =>
+  import("./pages/StudyPlanPage").then((m) => ({ default: m.StudyPlanPage }))
+);
+const WellbeingPage = lazy(() =>
+  import("./pages/WellbeingPage").then((m) => ({ default: m.WellbeingPage }))
+);
+const ConcentrationPage = lazy(() =>
+  import("./pages/ConcentrationPage").then((m) => ({ default: m.ConcentrationPage }))
+);
+const MentorshipPage = lazy(() =>
+  import("./pages/MentorshipPage").then((m) => ({ default: m.MentorshipPage }))
+);
+const ForumPage = lazy(() =>
+  import("./pages/ForumPage").then((m) => ({ default: m.ForumPage }))
+);
+const LibraryPage = lazy(() =>
+  import("./pages/LibraryPage").then((m) => ({ default: m.LibraryPage }))
+);
+const EventsPage = lazy(() =>
+  import("./pages/EventsPage").then((m) => ({ default: m.EventsPage }))
+);
+const ProfilePage = lazy(() =>
+  import("./pages/ProfilePage").then((m) => ({ default: m.ProfilePage }))
+);
+const ChatbotPage = lazy(() =>
+  import("./pages/ChatbotPage").then((m) => ({ default: m.ChatbotPage }))
+);
+const CoordenacaoPage = lazy(() =>
+  import("./pages/CoordenacaoPage").then((m) => ({ default: m.CoordenacaoPage }))
+);
 
 export const router = createBrowserRouter([
   {

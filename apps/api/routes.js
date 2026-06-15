@@ -1741,3 +1741,169 @@ apiRouter.get('/gamificacao/ranking', requireAuth, async (req, res) => {
     const minha = items.find((i) => i.eu);
     res.json({ source: 'db', items, minhaPosicao: minha ? minha.posicao : null });
 });
+
+// ============================================================
+// LGPD — Portabilidade e Exclusao de dados (D7 / RNF09 / v1.14.0)
+// ------------------------------------------------------------
+// Direitos do titular (Lei 13.709/2018, Art. 18): acesso/portabilidade
+// (GET /api/usuario/dados) e eliminacao (DELETE /api/usuario/conta).
+// Ambas exigem sessao e sao escopadas a req.usuario.sub (anti-IDOR).
+// Rotas ADITIVAS no fim do arquivo.
+// ============================================================
+
+/** Registra um evento LGPD em auditoria_dados (best-effort, nao bloqueia). */
+async function registrarAuditoriaLgpd(usuarioId, acao, finalidade) {
+    try {
+        await query(
+            `INSERT INTO auditoria_dados
+                     (usuario_id, ator, acao, entidade, entidade_id, base_legal, finalidade, data_evento)
+                 VALUES ($1, 'titular', $2, 'usuario', $1, 'Art. 18 da Lei 13.709/2018', $3, NOW())`,
+            [usuarioId, acao, finalidade],
+        );
+    } catch {
+        // Auditoria e secundaria: falha aqui nao invalida a operacao principal.
+    }
+}
+
+// --------------------------------------------------------------
+// GET /api/usuario/dados — exporta os dados pessoais do titular (JSON).
+// Atende o direito de acesso/portabilidade (LGPD Art. 18, II e V).
+// --------------------------------------------------------------
+apiRouter.get('/usuario/dados', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const id = req.usuario.sub;
+
+    // Perfil (sem password_hash — nunca exportar credencial).
+    const perfilRows = await query(
+        `SELECT id, matricula_institucional, email_institucional, nome,
+                tipo_usuario, data_nascimento, e_mentor, created_at
+             FROM usuarios WHERE id = $1 LIMIT 1`,
+        [id],
+    );
+    if (perfilRows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (perfilRows.length === 0) {
+        return res.status(404).json({ error: 'usuario_nao_encontrado' });
+    }
+
+    // Cada conjunto e consultado de forma independente e resiliente.
+    const consentimentos = (await query(
+        `SELECT finalidade, versao_termo, consentiu, data_consentimento
+             FROM consentimentos_lgpd WHERE usuario_id = $1
+             ORDER BY data_consentimento DESC`,
+        [id],
+    )) || [];
+    const metas = (await query(
+        `SELECT nome, descricao, data_agendada, data_realizacao, duracao_minutos, status
+             FROM atividades_estudo WHERE usuario_id = $1
+             ORDER BY id DESC`,
+        [id],
+    )) || [];
+    const bemEstar = (await query(
+        `SELECT data_aplicacao, respostas, resultado, observacoes
+             FROM questionarios_bem_estar WHERE usuario_id = $1
+             ORDER BY data_aplicacao DESC`,
+        [id],
+    )) || [];
+    const forunsCriados = (await query(
+        `SELECT titulo, descricao, categoria, created_at
+             FROM foruns_discussao WHERE criado_por = $1
+             ORDER BY created_at DESC`,
+        [id],
+    )) || [];
+    const notificacoes = (await query(
+        `SELECT titulo, mensagem, tipo, lida, data_criacao
+             FROM notificacoes WHERE usuario_id = $1
+             ORDER BY data_criacao DESC`,
+        [id],
+    )) || [];
+    const gamificacaoRows = (await query(
+        `SELECT pontos_totais, ranking_posicao, streak_atual, streak_recorde
+             FROM gamificacao WHERE usuario_id = $1 LIMIT 1`,
+        [id],
+    )) || [];
+    const eventosInscritos = (await query(
+        `SELECT e.titulo, e.data_evento, ue.data_inscricao
+             FROM usuario_eventos ue JOIN eventos e ON e.id = ue.evento_id
+             WHERE ue.usuario_id = $1 ORDER BY ue.data_inscricao DESC`,
+        [id],
+    )) || [];
+
+    await registrarAuditoriaLgpd(id, 'exportacao', 'portabilidade');
+
+    res.json({
+        source: 'db',
+        exportadoEm: new Date().toISOString(),
+        baseLegal: 'Art. 18, II e V da Lei 13.709/2018 (LGPD)',
+        titular: perfilRows[0],
+        consentimentos,
+        planoEstudos: metas,
+        bemEstar,
+        forunsCriados,
+        notificacoes,
+        gamificacao: gamificacaoRows[0] || null,
+        eventosInscritos,
+    });
+});
+
+// --------------------------------------------------------------
+// DELETE /api/usuario/conta — elimina/anonimiza a conta do titular.
+// Atende o direito de eliminacao (LGPD Art. 18, VI). Operacao
+// IRREVERSIVEL: exige body { confirmar: true }. Anonimiza o registro
+// (preservando integridade referencial e metricas agregadas anonimas),
+// revoga o consentimento e encerra a sessao.
+// --------------------------------------------------------------
+apiRouter.delete('/usuario/conta', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    if (req.body?.confirmar !== true) {
+        return res.status(400).json({ error: 'confirmacao_obrigatoria' });
+    }
+    const id = req.usuario.sub;
+
+    // Anonimizacao atomica (UPDATE unico). E-mail/matricula recebem valores
+    // unicos por id para nao violar as constraints UNIQUE; password_hash vira
+    // NULL para impedir login posterior.
+    const anon = await query(
+        `UPDATE usuarios
+             SET nome = 'Usuário removido',
+                 email_institucional = 'removido+' || id || '@removido.invalid',
+                 matricula_institucional = 'ANON-' || id,
+                 password_hash = NULL,
+                 data_nascimento = NULL
+             WHERE id = $1
+             RETURNING id`,
+        [id],
+    );
+    if (anon === null) {
+        return res.status(500).json({ error: 'falha_exclusao' });
+    }
+    if (anon.length === 0) {
+        return res.status(404).json({ error: 'usuario_nao_encontrado' });
+    }
+
+    // Registra a revogacao de consentimento (append-only) e a auditoria.
+    try {
+        await query(
+            `INSERT INTO consentimentos_lgpd
+                     (usuario_id, finalidade, versao_termo, consentiu, data_consentimento)
+                 VALUES ($1, 'revogacao_exclusao', '1.0', FALSE, NOW())`,
+            [id],
+        );
+    } catch {
+        // segue: log secundario
+    }
+    await registrarAuditoriaLgpd(id, 'exclusao', 'eliminacao');
+
+    // Encerra a sessao do titular (mesmo padrao do logout).
+    const opts = cookieOptions();
+    delete opts.maxAge;
+    res.clearCookie(COOKIE_NAME, opts);
+
+    res.json({ source: 'db', anonimizado: true });
+});
+

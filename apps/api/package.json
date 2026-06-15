@@ -1,7 +1,7 @@
 {
   "name": "@site-acolhimento/api",
   "private": true,
-  "version": "1.13.0",
+  "version": "1.14.0",
   "type": "module",
   "description": "Backend Express do Site de Acolhimento FAESA — serve a SPA web e expoe a API.",
   "engines": {

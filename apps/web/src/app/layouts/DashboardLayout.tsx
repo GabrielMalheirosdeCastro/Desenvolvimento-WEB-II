@@ -15,10 +15,27 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { NotificationBell } from "../components/NotificationBell";
 import { useAuth } from "../auth/AuthContext";
 import { iniciaisNome } from "../auth/nome";
+
+// Fallback acessivel exibido enquanto o chunk da pagina (D5/RNF02) carrega.
+function PageFallback() {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex items-center justify-center py-16 text-[#6C757D]"
+    >
+      <span className="sr-only">Carregando conteúdo…</span>
+      <div
+        aria-hidden="true"
+        className="h-8 w-8 animate-spin rounded-full border-4 border-[#003366]/20 border-t-[#003366]"
+      />
+    </div>
+  );
+}
 
 export function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -54,13 +71,20 @@ export function DashboardLayout() {
 
   return (
     <div className="flex h-screen bg-[#F5F7FA]">
+      {/* Skip-link (D2/RNF04): pula a navegacao para o conteudo principal. */}
+      <a
+        href="#conteudo-principal"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-[#003366] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
+      >
+        Pular para o conteúdo
+      </a>
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-[#003366] text-white">
         <div className="p-6 border-b border-white/10">
           <h1 className="text-xl font-semibold">FAESA Acolhimento</h1>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-2" aria-label="Navegação principal">
           {menuItems.map((item) => (
             <NavLink
               key={item.to}
@@ -106,7 +130,7 @@ export function DashboardLayout() {
               </button>
             </div>
 
-            <nav className="px-4 py-6 space-y-2">
+            <nav className="px-4 py-6 space-y-2" aria-label="Navegação principal">
               {menuItems.map((item) => (
                 <NavLink
                   key={item.to}
@@ -169,8 +193,14 @@ export function DashboardLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
-          <Outlet />
+        <main
+          id="conteudo-principal"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto p-4 lg:p-8"
+        >
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

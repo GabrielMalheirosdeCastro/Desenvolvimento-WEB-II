@@ -9,6 +9,23 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-06-15
+
+### Added
+
+- **Code-splitting da SPA (item D5 / RNF02)**: as páginas internas do dashboard ([apps/web/src/app/routes.tsx](apps/web/src/app/routes.tsx)) passaram a ser carregadas sob demanda via `React.lazy`, com um `<Suspense>` acessível (`role="status"` + `aria-live`) em volta do `<Outlet/>` no [DashboardLayout](apps/web/src/app/layouts/DashboardLayout.tsx). Adicionado `manualChunks` no [vite.config.ts](apps/web/vite.config.ts) separando as libs pesadas (`recharts`/`d3` em `charts`, `@radix-ui` em `radix`). **O bundle inicial caiu de 741,62 kB → 132,34 kB** (gzip 210,79 → 41,24 kB), ~82% menor; os gráficos (525 kB) só carregam nas telas que os usam.
+- **Portabilidade de dados — LGPD (item D7 / RNF09)**: novo endpoint `GET /api/usuario/dados` ([apps/api/routes.js](apps/api/routes.js)) que exporta os dados pessoais do titular logado em JSON (perfil sem `password_hash`, consentimentos, plano de estudos, bem-estar, fóruns criados, notificações, gamificação e eventos inscritos), escopado a `req.usuario.sub` (anti-IDOR) e registrado em `auditoria_dados`. A SPA ganhou um botão **"Exportar meus dados (JSON)"** na nova seção **Privacidade** do [Perfil](apps/web/src/app/pages/ProfilePage.tsx), que baixa o arquivo localmente.
+- **Exclusão de conta — LGPD (item D7 / RNF09)**: novo endpoint `DELETE /api/usuario/conta` que **anonimiza** o registro do titular (nome, e-mail e matrícula substituídos por valores únicos, `password_hash` → `NULL`), preservando a integridade referencial e as métricas agregadas anônimas. Exige confirmação explícita (`{ confirmar: true }`), revoga o consentimento (`consentimentos_lgpd`), registra auditoria e encerra a sessão. A UI tem um fluxo de confirmação dupla na seção Privacidade do Perfil, redirecionando ao `/login` após a exclusão.
+- **Baseline de acessibilidade (item D2 / RNF04 — parcial)**: `lang="pt-BR"` e `<meta description>` corrigidos no [index.html](apps/web/index.html); **skip-link** ("Pular para o conteúdo") e landmark `<main id="conteudo-principal">` no dashboard; `aria-label` nas navegações principal (desktop/mobile); componentes novos com `role="status"`, `aria-live`, `aria-hidden`, `sr-only` e anéis de foco visíveis (`focus-visible:ring`).
+
+### Changed
+
+- Bump 1.13.0 -> **1.14.0** (MINOR — performance, LGPD e baseline de acessibilidade) nos três `package.json`.
+
+### Notas
+
+- **D2 (acessibilidade) permanece parcial**: a auditoria completa de contraste WCAG 2.1 AA e a conclusão do dark mode por *design tokens* exigem a execução do axe-core/Lighthouse via Playwright MCP **na estação** (a VPS é headless) e ficam como continuação.
+
 ## [1.13.0] - 2026-06-14
 
 ### Added
