@@ -1,0 +1,61 @@
+{
+  "comum": {
+    "carregando": "Loading content…",
+    "salvarPreferencia": "This preference is saved on this device."
+  },
+  "nav": {
+    "marca": "FAESA Acolhimento",
+    "inicio": "Home",
+    "planoEstudos": "Study Plan",
+    "bemEstar": "Well-being",
+    "concentracao": "Focus",
+    "mentoria": "Mentorship",
+    "forum": "Forum",
+    "biblioteca": "Library",
+    "eventos": "Events",
+    "acolhimento": "Support",
+    "perfil": "Profile",
+    "coordenacao": "Coordination",
+    "sair": "Sign out",
+    "menu": "Menu",
+    "abrirPerfil": "Open my profile",
+    "pularConteudo": "Skip to content",
+    "navegacaoPrincipal": "Main navigation",
+    "sessao": "Session"
+  },
+  "login": {
+    "tituloApp": "FAESA Acolhimento",
+    "subtitulo": "Student Support System",
+    "disciplina": "Course",
+    "docente": "Professor",
+    "aluno": "Student",
+    "repositorio": "Repository",
+    "emailLabel": "Institutional e-mail",
+    "emailPlaceholder": "your.name@faesa.br",
+    "senhaLabel": "Password",
+    "entrar": "Sign in",
+    "entrando": "Signing in…",
+    "primeiroAcesso": "First time here?",
+    "ativeConta": "Activate your account",
+    "erros": {
+      "campos_obrigatorios": "Enter e-mail and password.",
+      "email_invalido": "Use an institutional @faesa.br e-mail.",
+      "senha_invalida": "The password must be between 8 and 72 characters.",
+      "credenciais_invalidas": "Incorrect e-mail or password.",
+      "auth_indisponivel": "Authentication temporarily unavailable. Try again later.",
+      "db_indisponivel": "Service temporarily unavailable. Try again later.",
+      "erro_desconhecido": "Could not sign in. Please try again."
+    }
+  },
+  "perfil": {
+    "preferencias": "Preferences",
+    "tema": "Theme",
+    "temaClaro": "Light",
+    "temaEscuro": "Dark",
+    "temaAuto": "Automatic",
+    "idioma": "Language",
+    "idiomaPtBr": "Português (Brasil)",
+    "idiomaEnUs": "English (US)",
+    "perfilPublico": "Public profile"
+  }
+}

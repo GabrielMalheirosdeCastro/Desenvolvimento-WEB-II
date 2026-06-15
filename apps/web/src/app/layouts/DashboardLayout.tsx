@@ -18,6 +18,7 @@ import {
 import { Suspense, useState } from "react";
 import { NotificationBell } from "../components/NotificationBell";
 import { useAuth } from "../auth/AuthContext";
+import { useI18n } from "../i18n/LanguageContext";
 import { iniciaisNome } from "../auth/nome";
 
 // Fallback acessivel exibido enquanto o chunk da pagina (D5/RNF02) carrega.
@@ -41,9 +42,10 @@ export function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const { usuario, logout, temPapel } = useAuth();
+  const { t } = useI18n();
 
   // Rotulo e iniciais derivam do nome cadastrado; caem para o e-mail se ausente.
-  const rotuloUsuario = usuario?.nome?.trim() || usuario?.email || "Sessão";
+  const rotuloUsuario = usuario?.nome?.trim() || usuario?.email || t("nav.sessao");
   const iniciais = iniciaisNome(usuario?.nome, usuario?.email);
 
   const handleLogout = async () => {
@@ -52,20 +54,20 @@ export function DashboardLayout() {
   };
 
   const menuItems = [
-    { to: "/dashboard", icon: Home, label: "Início", end: true },
-    { to: "/dashboard/plano-estudos", icon: BookOpen, label: "Plano de Estudos" },
-    { to: "/dashboard/bem-estar", icon: HeartPulse, label: "Bem-estar" },
-    { to: "/dashboard/concentracao", icon: Brain, label: "Concentração" },
-    { to: "/dashboard/mentoria", icon: Users, label: "Mentoria" },
-    { to: "/dashboard/forum", icon: MessageSquare, label: "Fórum" },
-    { to: "/dashboard/biblioteca", icon: Library, label: "Biblioteca" },
-    { to: "/dashboard/eventos", icon: CalendarDays, label: "Eventos" },
-    { to: "/dashboard/chatbot", icon: Bot, label: "Acolhimento" },
-    { to: "/dashboard/perfil", icon: User, label: "Perfil" },
+    { to: "/dashboard", icon: Home, label: t("nav.inicio"), end: true },
+    { to: "/dashboard/plano-estudos", icon: BookOpen, label: t("nav.planoEstudos") },
+    { to: "/dashboard/bem-estar", icon: HeartPulse, label: t("nav.bemEstar") },
+    { to: "/dashboard/concentracao", icon: Brain, label: t("nav.concentracao") },
+    { to: "/dashboard/mentoria", icon: Users, label: t("nav.mentoria") },
+    { to: "/dashboard/forum", icon: MessageSquare, label: t("nav.forum") },
+    { to: "/dashboard/biblioteca", icon: Library, label: t("nav.biblioteca") },
+    { to: "/dashboard/eventos", icon: CalendarDays, label: t("nav.eventos") },
+    { to: "/dashboard/chatbot", icon: Bot, label: t("nav.acolhimento") },
+    { to: "/dashboard/perfil", icon: User, label: t("nav.perfil") },
     // Item exclusivo da Coordenação (RBAC — A4). Visível apenas para
     // COORDENADOR; a fronteira real de acesso é a API (requireRole).
     ...(temPapel("COORDENADOR")
-      ? [{ to: "/dashboard/coordenacao", icon: ShieldCheck, label: "Coordenação" }]
+      ? [{ to: "/dashboard/coordenacao", icon: ShieldCheck, label: t("nav.coordenacao") }]
       : []),
   ];
 
@@ -76,15 +78,15 @@ export function DashboardLayout() {
         href="#conteudo-principal"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-[#003366] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
       >
-        Pular para o conteúdo
+        {t("nav.pularConteudo")}
       </a>
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-[#003366] text-white">
         <div className="p-6 border-b border-white/10">
-          <h1 className="text-xl font-semibold">FAESA Acolhimento</h1>
+          <h1 className="text-xl font-semibold">{t("nav.marca")}</h1>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2" aria-label="Navegação principal">
+        <nav className="flex-1 px-4 py-6 space-y-2" aria-label={t("nav.navegacaoPrincipal")}>
           {menuItems.map((item) => (
             <NavLink
               key={item.to}
@@ -110,7 +112,7 @@ export function DashboardLayout() {
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors w-full"
           >
             <LogOut size={20} />
-            <span>Sair</span>
+            <span>{t("nav.sair")}</span>
           </button>
         </div>
       </aside>
@@ -124,13 +126,13 @@ export function DashboardLayout() {
           ></div>
           <aside className="fixed top-0 left-0 bottom-0 w-64 bg-[#003366] text-white">
             <div className="p-6 flex justify-between items-center border-b border-white/10">
-              <h1 className="text-lg font-semibold">FAESA Acolhimento</h1>
+              <h1 className="text-lg font-semibold">{t("nav.marca")}</h1>
               <button onClick={() => setIsSidebarOpen(false)}>
                 <X size={24} />
               </button>
             </div>
 
-            <nav className="px-4 py-6 space-y-2" aria-label="Navegação principal">
+            <nav className="px-4 py-6 space-y-2" aria-label={t("nav.navegacaoPrincipal")}>
               {menuItems.map((item) => (
                 <NavLink
                   key={item.to}
@@ -157,7 +159,7 @@ export function DashboardLayout() {
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors w-full"
               >
                 <LogOut size={20} />
-                <span>Sair</span>
+                <span>{t("nav.sair")}</span>
               </button>
             </div>
           </aside>
@@ -171,7 +173,7 @@ export function DashboardLayout() {
           <button
             className="lg:hidden text-[#003366]"
             onClick={() => setIsSidebarOpen(true)}
-            aria-label="Menu"
+            aria-label={t("nav.menu")}
           >
             <Menu size={24} />
           </button>
@@ -179,7 +181,7 @@ export function DashboardLayout() {
             <NotificationBell />
             <Link
               to="/dashboard/perfil"
-              aria-label="Abrir meu perfil"
+              aria-label={t("nav.abrirPerfil")}
               className="flex items-center gap-3 rounded-full px-1 py-1 transition-colors hover:bg-[#003366]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
             >
               <span className="text-sm text-[#6C757D] hidden sm:inline">

@@ -1,0 +1,61 @@
+{
+  "comum": {
+    "carregando": "Carregando conteúdo…",
+    "salvarPreferencia": "A preferência é salva neste dispositivo."
+  },
+  "nav": {
+    "marca": "FAESA Acolhimento",
+    "inicio": "Início",
+    "planoEstudos": "Plano de Estudos",
+    "bemEstar": "Bem-estar",
+    "concentracao": "Concentração",
+    "mentoria": "Mentoria",
+    "forum": "Fórum",
+    "biblioteca": "Biblioteca",
+    "eventos": "Eventos",
+    "acolhimento": "Acolhimento",
+    "perfil": "Perfil",
+    "coordenacao": "Coordenação",
+    "sair": "Sair",
+    "menu": "Menu",
+    "abrirPerfil": "Abrir meu perfil",
+    "pularConteudo": "Pular para o conteúdo",
+    "navegacaoPrincipal": "Navegação principal",
+    "sessao": "Sessão"
+  },
+  "login": {
+    "tituloApp": "FAESA Acolhimento",
+    "subtitulo": "Sistema de Acolhimento Estudantil",
+    "disciplina": "Disciplina",
+    "docente": "Docente",
+    "aluno": "Aluno",
+    "repositorio": "Repositório",
+    "emailLabel": "E-mail institucional",
+    "emailPlaceholder": "seu.nome@faesa.br",
+    "senhaLabel": "Senha",
+    "entrar": "Entrar",
+    "entrando": "Entrando…",
+    "primeiroAcesso": "Primeiro acesso?",
+    "ativeConta": "Ative sua conta",
+    "erros": {
+      "campos_obrigatorios": "Informe e-mail e senha.",
+      "email_invalido": "Use um e-mail institucional @faesa.br.",
+      "senha_invalida": "A senha deve ter entre 8 e 72 caracteres.",
+      "credenciais_invalidas": "E-mail ou senha incorretos.",
+      "auth_indisponivel": "Autenticação temporariamente indisponível. Tente mais tarde.",
+      "db_indisponivel": "Serviço temporariamente indisponível. Tente mais tarde.",
+      "erro_desconhecido": "Não foi possível entrar. Tente novamente."
+    }
+  },
+  "perfil": {
+    "preferencias": "Preferências",
+    "tema": "Tema",
+    "temaClaro": "Claro",
+    "temaEscuro": "Escuro",
+    "temaAuto": "Automático",
+    "idioma": "Idioma",
+    "idiomaPtBr": "Português (Brasil)",
+    "idiomaEnUs": "English (US)",
+    "perfilPublico": "Perfil público"
+  }
+}

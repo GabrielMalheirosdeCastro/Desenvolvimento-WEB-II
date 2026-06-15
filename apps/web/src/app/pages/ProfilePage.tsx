@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { useTheme, type Tema } from "../theme/ThemeContext";
+import { useI18n, type Idioma } from "../i18n/LanguageContext";
 import { iniciaisNome } from "../auth/nome";
 
 interface Perfil {
@@ -64,6 +65,7 @@ interface RankingItem {
 export function ProfilePage() {
   const { usuario, recarregar, logout } = useAuth();
   const { tema, definirTema } = useTheme();
+  const { idioma, definirIdioma, t } = useI18n();
   const navigate = useNavigate();
 
   const [perfil, setPerfil] = useState<Perfil | null>(null);
@@ -581,26 +583,41 @@ export function ProfilePage() {
         <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
           <div className="flex items-center gap-2 mb-6">
             <Settings className="text-[#0066CC]" size={24} />
-            <h2 className="text-xl text-[#003366]">Preferências</h2>
+            <h2 className="text-xl text-[#003366]">{t("perfil.preferencias")}</h2>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-[#6C757D] mb-2">Tema</label>
+              <label className="block text-sm text-[#6C757D] mb-2">{t("perfil.tema")}</label>
               <select
                 value={tema}
                 onChange={(e) => definirTema(e.target.value as Tema)}
                 className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
               >
-                <option value="claro">Claro</option>
-                <option value="escuro">Escuro</option>
-                <option value="auto">Automático</option>
+                <option value="claro">{t("perfil.temaClaro")}</option>
+                <option value="escuro">{t("perfil.temaEscuro")}</option>
+                <option value="auto">{t("perfil.temaAuto")}</option>
               </select>
               <p className="mt-1 text-xs text-[#6C757D]">
-                A preferência é salva neste dispositivo.
+                {t("comum.salvarPreferencia")}
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm text-[#6C757D] mb-2">{t("perfil.idioma")}</label>
+              <select
+                value={idioma}
+                onChange={(e) => definirIdioma(e.target.value as Idioma)}
+                className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
+                data-testid="perfil-idioma"
+              >
+                <option value="pt-BR">{t("perfil.idiomaPtBr")}</option>
+                <option value="en-US">{t("perfil.idiomaEnUs")}</option>
+              </select>
+              <p className="mt-1 text-xs text-[#6C757D]">
+                {t("comum.salvarPreferencia")}
               </p>
             </div>
             <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-[#003366]">Perfil público</span>
+              <span className="text-[#003366]">{t("perfil.perfilPublico")}</span>
               <input type="checkbox" defaultChecked className="w-5 h-5 text-[#0066CC] rounded" />
             </label>
           </div>

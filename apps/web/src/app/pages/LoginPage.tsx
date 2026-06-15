@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { BookOpen, GraduationCap, User, Github, Mail, Lock, Loader2 } from "lucide-react";
 import { AuthError, useAuth } from "../auth/AuthContext";
+import { useI18n } from "../i18n/LanguageContext";
 
 interface VersionInfo {
   name: string;
@@ -16,21 +17,23 @@ const FALLBACK_VERSION: VersionInfo = {
 const REPO_URL =
   "https://github.com/GabrielMalheirosdeCastro/Desenvolvimento-WEB-II";
 
-// Mensagens amigaveis por codigo de erro da API de auth.
-const MENSAGENS_ERRO: Record<string, string> = {
-  campos_obrigatorios: "Informe e-mail e senha.",
-  email_invalido: "Use um e-mail institucional @faesa.br.",
-  senha_invalida: "A senha deve ter entre 8 e 72 caracteres.",
-  credenciais_invalidas: "E-mail ou senha incorretos.",
-  auth_indisponivel: "Autenticação temporariamente indisponível. Tente mais tarde.",
-  db_indisponivel: "Serviço temporariamente indisponível. Tente mais tarde.",
-  erro_desconhecido: "Não foi possível entrar. Tente novamente.",
-};
+// Codigos de erro conhecidos da API de auth; o texto vem do catalogo i18n
+// (login.erros.*), com fallback para erro_desconhecido.
+const CODIGOS_ERRO = new Set([
+  "campos_obrigatorios",
+  "email_invalido",
+  "senha_invalida",
+  "credenciais_invalidas",
+  "auth_indisponivel",
+  "db_indisponivel",
+  "erro_desconhecido",
+]);
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { t } = useI18n();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -65,7 +68,8 @@ export function LoginPage() {
       navigate(destino, { replace: true });
     } catch (err) {
       const codigo = err instanceof AuthError ? err.codigo : "erro_desconhecido";
-      setErro(MENSAGENS_ERRO[codigo] ?? MENSAGENS_ERRO.erro_desconhecido);
+      const chave = CODIGOS_ERRO.has(codigo) ? codigo : "erro_desconhecido";
+      setErro(t(`login.erros.${chave}`));
     } finally {
       setEnviando(false);
     }
@@ -81,9 +85,9 @@ export function LoginPage() {
           <div className="w-20 h-20 bg-[#003366] rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl font-bold text-white">F</span>
           </div>
-          <h1 className="text-3xl mb-1 text-[#003366]">FAESA Acolhimento</h1>
+          <h1 className="text-3xl mb-1 text-[#003366]">{t("login.tituloApp")}</h1>
           <p className="text-sm text-[#6C757D]">
-            Sistema de Acolhimento Estudantil
+            {t("login.subtitulo")}
           </p>
         </div>
 
@@ -97,7 +101,7 @@ export function LoginPage() {
             <BookOpen size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
             <div>
               <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
-                Disciplina
+                {t("login.disciplina")}
               </dt>
               <dd className="text-[#003366]" data-testid="meta-disciplina">
                 Desenvolvimento de Aplicações Web II (D001508)
@@ -108,7 +112,7 @@ export function LoginPage() {
             <GraduationCap size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
             <div>
               <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
-                Docente
+                {t("login.docente")}
               </dt>
               <dd className="text-[#003366]" data-testid="meta-docente">
                 Otávio Lube dos Santos
@@ -119,7 +123,7 @@ export function LoginPage() {
             <User size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
             <div>
               <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
-                Aluno
+                {t("login.aluno")}
               </dt>
               <dd className="text-[#003366]" data-testid="meta-aluno">
                 Gabriel Malheiros de Castro · 23110145
@@ -130,7 +134,7 @@ export function LoginPage() {
             <Github size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
             <div>
               <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
-                Repositório
+                {t("login.repositorio")}
               </dt>
               <dd
                 className="text-[#003366] break-all"
@@ -155,7 +159,7 @@ export function LoginPage() {
               htmlFor="email"
               className="block text-sm text-[#003366] mb-1"
             >
-              E-mail institucional
+              {t("login.emailLabel")}
             </label>
             <div className="relative">
               <Mail
@@ -171,7 +175,7 @@ export function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu.nome@faesa.br"
+                placeholder={t("login.emailPlaceholder")}
                 className="w-full pl-10 pr-3 py-3 rounded-lg border border-[#003366]/20 focus:outline-none focus:ring-2 focus:ring-[#0066CC] text-[#003366]"
                 data-testid="login-email"
               />
@@ -183,7 +187,7 @@ export function LoginPage() {
               htmlFor="senha"
               className="block text-sm text-[#003366] mb-1"
             >
-              Senha
+              {t("login.senhaLabel")}
             </label>
             <div className="relative">
               <Lock
@@ -224,17 +228,17 @@ export function LoginPage() {
             data-testid="login-submit"
           >
             {enviando && <Loader2 size={18} className="animate-spin" />}
-            {enviando ? "Entrando…" : "Entrar"}
+            {enviando ? t("login.entrando") : t("login.entrar")}
           </button>
 
           <p className="text-center text-sm text-[#6C757D]">
-            Primeiro acesso?{" "}
+            {t("login.primeiroAcesso")}{" "}
             <Link
               to="/ativar"
               className="text-[#0066CC] hover:underline"
               data-testid="login-link-ativar"
             >
-              Ative sua conta
+              {t("login.ativeConta")}
             </Link>
           </p>
         </form>

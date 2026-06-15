@@ -9,6 +9,25 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.16.0] - 2026-06-15
+
+### Added
+
+- **Internacionalização da SPA (item D8 / RNF10 + Bloco H / H10)**: introduzido um núcleo de i18n client-side **sem dependências externas** (política "tudo na VPS"), espelhando o padrão já validado do `ThemeContext`. Novo módulo puro [apps/web/src/app/i18n/translate.ts](apps/web/src/app/i18n/translate.ts) (`resolverChave` em notação de ponto, `interpolar` `{{var}}`, `criarT` com fallback) e o provedor [apps/web/src/app/i18n/LanguageContext.tsx](apps/web/src/app/i18n/LanguageContext.tsx) (`useI18n()` → `t(chave)`), que persiste a preferência em `localStorage` (`sa_idioma`) e reflete o idioma ativo no atributo `lang` do `<html>` (sinergia com a acessibilidade — D2).
+- **Catálogos PT-BR / EN-US**: [apps/web/src/app/i18n/locales/pt-BR.json](apps/web/src/app/i18n/locales/pt-BR.json) (idioma-base) e [apps/web/src/app/i18n/locales/en-US.json](apps/web/src/app/i18n/locales/en-US.json) cobrindo o **shell sempre visível** — navegação do dashboard, tela de login e card de Preferências do perfil.
+- **Seletor de idioma funcional (H10)**: novo `<select>` PT-BR ↔ EN-US no card **Preferências** do [Perfil](apps/web/src/app/pages/ProfilePage.tsx) (`data-testid="perfil-idioma"`), ao lado do seletor de Tema. A troca é imediata, persistente entre sessões e atualiza o `lang` do documento.
+- **Cobertura do núcleo i18n**: [tests/unit/i18n.test.ts](tests/unit/i18n.test.ts) valida `resolverChave`/`interpolar`/`criarT` (lookup, fallback e chave crua) e a **paridade de chaves** entre pt-BR e en-US (rede de segurança contra telas meio-traduzidas). Suíte total: **62 testes** verdes.
+
+### Changed
+
+- O shell sempre visível passou a renderizar textos via `t()`: navegação principal/mobile, marca, skip-link e botão "Sair" no [DashboardLayout](apps/web/src/app/layouts/DashboardLayout.tsx); títulos, rótulos do formulário, mensagens de erro e CTA na [LoginPage](apps/web/src/app/pages/LoginPage.tsx); e os rótulos do card de Preferências no [Perfil](apps/web/src/app/pages/ProfilePage.tsx). O `LanguageProvider` envolve a árvore no [RootLayout](apps/web/src/app/layouts/RootLayout.tsx).
+- Bump 1.15.0 -> **1.16.0** (MINOR — internacionalização) nos três `package.json`.
+
+### Notas
+
+- Os `data-testid` obrigatórios da tela de login (`login-metadata`, `meta-disciplina/docente/aluno/repositorio`) e o badge de versão (`login-version-badge`, formato `{name} · v{version}`) foram **preservados intactos** — apenas os rótulos foram traduzidos; os valores acadêmicos (disciplina, docente, aluno, repositório) permanecem fixos.
+- A tradução nesta versão cobre o **shell sempre visível** (navegação, login, preferências). O conteúdo interno de cada tela (textos de cada página do dashboard) permanece em pt-BR via fallback do catálogo e fica como **continuação** — a infraestrutura (`t()` + catálogos) já está pronta para a extração incremental por tela. Com isto, o **Bloco H (UI/UX residual)** é encerrado: o seletor de idioma agora é funcional e persistente (H10).
+
 ## [1.15.0] - 2026-06-15
 
 ### Added

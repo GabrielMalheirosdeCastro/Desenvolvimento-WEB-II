@@ -224,7 +224,7 @@ nome correto. **✅ Atingido.**
 | D5 | **Performance** — carregamento ≤ 3s em 3G (otimização de bundle, lazy loading). **Entregue na v1.14.0:** `React.lazy` por rota do dashboard + `manualChunks` (recharts/d3 e radix isolados). Bundle inicial 741,62 kB → **132,34 kB** (gzip 210→41 kB) | RNF02 | 🟡 | M | ✅ |
 | D6 | **Escalabilidade** — validar comportamento sob carga (meta de 10k usuários simultâneos) | RNF06 | 🟢 | G | ⬜ |
 | D7 | **LGPD** — completar gestão de consentimento, exportação e exclusão de dados pessoais. **Entregue na v1.14.0:** `GET /api/usuario/dados` (portabilidade JSON) + `DELETE /api/usuario/conta` (anonimização com confirmação) + UI de Privacidade no Perfil + trilha em `auditoria_dados`. Consentimento já existia (`POST /api/lgpd/consentimento`) | RNF09 | 🟡 | M | ✅ |
-| D8 | **Internacionalização** — preparar estrutura i18n (pt-BR → en-US) | RNF10 | 🟢 | M | ⬜ |
+| D8 | **Internacionalização** — preparar estrutura i18n (pt-BR → en-US). **Entregue na v1.16.0:** núcleo i18n client-side sem dependências (`i18n/translate.ts` + `LanguageContext`), catálogos `pt-BR.json`/`en-US.json`, persistência em `localStorage` (`sa_idioma`) e `lang` do `<html>` dinâmico. **Falta:** extração incremental dos textos internos de cada tela do dashboard (infra pronta; conteúdo cai em pt-BR via fallback) | RNF10 | 🟢 | M | 🟨 |
 
 ---
 
@@ -246,13 +246,14 @@ nome correto. **✅ Atingido.**
 | H7 | **Biblioteca — "Iniciar Trilha", "Sugerir Recurso", "Acessar Recurso"** sem ação operacional. **Entregue na v1.8.0:** `GET /api/recursos`, `GET /api/trilhas` e `POST /api/recursos/:id/acesso` (UPSERT em `usuario_recursos` + incremento de visualizações); "Acessar Recurso" abre a URL e registra acesso; busca filtra client-side. _"Iniciar Trilha"/"Sugerir Recurso" desabilitados ("em breve") por não terem backend nesta fase._ | RF06, RF07 | 01:39 | 🟢 | M | ✅ |
 | H8 | **Perfil — edição de dados** — campos apenas mocados; falta `PUT`/salvar alterações. **Entregue na v1.7.0:** `GET`/`PATCH /api/usuario/perfil`, edição de nome/e-mail com re-emissão do JWT e tratamento de e-mail duplicado (409) | RF05 | 01:52 | 🟡 | M | ✅ |
 | H9 | **Alternância de Tema (Claro/Escuro/Automático)** — seletor abre mas não aplica o tema. **Entregue na v1.7.0:** `ThemeContext` persistido em `localStorage` (efeito visual parcial — só superfícies baseadas em token) | RNF07 | 01:52 | 🟢 | M | ✅ |
-| H10 | **Seletor de Idioma (PT-BR/EN-US)** — abre mas não traduz (depende da estrutura i18n do item D8) | RNF10 | 01:52 | 🟢 | M | ⬜ |
+| H10 | **Seletor de Idioma (PT-BR/EN-US)** — abre mas não traduz (depende da estrutura i18n do item D8). **Entregue na v1.16.0:** `<select>` PT-BR ↔ EN-US no card Preferências do Perfil (`data-testid="perfil-idioma"`), troca imediata e persistente (`localStorage`/`sa_idioma`), `lang` do `<html>` dinâmico; shell sempre visível (nav, login, preferências) traduzido via `t()` | RNF10 | 01:52 | 🟢 | M | ✅ |
 
 **Critério de pronto:** cada botão de ação das telas existentes dispara uma chamada real à API
 (ou efeito visual real, no caso de tema), com persistência verificável no banco quando aplicável.
 
-> **Nota de ligação com outros blocos:** H10 (idioma) é a contraparte de UI do item **D8** (i18n);
-> H9 (tema) atende **RNF07** (usabilidade/Design System); H5 reaproveita os endpoints de mentoria
+> **Nota de ligação com outros blocos:** H10 (idioma) é a contraparte de UI do item **D8** (i18n)
+> — ambos entregues na v1.16.0, encerrando o **Bloco H**; H9 (tema) atende **RNF07**
+> (usabilidade/Design System); H5 reaproveita os endpoints de mentoria
 > já entregues na v1.2.0 (faltando apenas o feedback de UI e a sala de sessão).
 
 ---
@@ -303,7 +304,7 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 1. Bloco C (seed em produção)          ✅ CONCLUÍDO (v1.3.2) — tirou tudo do "fallback"
 2. Bloco F (F1 auto-deploy ✅, F8 swap ✅, F2 backup ✅, F3 SSH ✅)  → estabilidade e segurança da base
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
-4. Bloco H (tornar as telas mock funcionais)    🟨 EM ANDAMENTO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0), H1/H2 ✅ (v1.9.0); restante: H10 (idioma, depende de i18n/D8)
+4. Bloco H (tornar as telas mock funcionais)    ✅ CONCLUÍDO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0), H1/H2 ✅ (v1.9.0), H10 ✅ (v1.16.0, junto de i18n/D8)
 5. Bloco B (RF11 ✅ v1.6.0; RF16 ✅ v1.11.0; RF10/RF12/RF13 ✅ v1.12.0)   → resta apenas B3/RF15 (chat com NAP)
 6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
 7. Bloco B restante (RF15 — chat com NAP)        → feature de menor prioridade
@@ -345,7 +346,9 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 (chat com NAP, prioridade baixa).
 
 **RNFs em aberto:** D2 (acessibilidade — baseline na v1.14.0; falta auditoria AA + dark mode),
-D4 (monitoria 24/7), D6 (escalabilidade), D8 (i18n) + H10 (idioma, acoplado a D8).
+D4 (monitoria 24/7), D6 (escalabilidade). **Concluído na v1.16.0:** D8 (i18n) + H10 (idioma) —
+infra i18n + seletor PT-BR/EN-US funcional; resta apenas extrair os textos internos de cada tela
+(fallback pt-BR). Com H10, o **Bloco H** está 100% encerrado.
 **Concluído/parcial na v1.15.0:** D3/E1/E2 (testes Vitest+supertest, cobertura 97% da lógica de API;
 falta integração com banco real).
 **Concluídos na v1.14.0:** D5 (performance — code-splitting) e D7 (LGPD — exportação/exclusão).
