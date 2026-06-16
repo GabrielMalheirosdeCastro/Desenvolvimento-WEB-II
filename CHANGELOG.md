@@ -9,6 +9,16 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+### Changed
+- `README.md` reconciliado com a implementação real (v1.30.0): o diagrama de
+  arquitetura em 4 camadas e a tabela de Stack Tecnológica deixaram de descrever
+  a proposta inicial (Next.js/NestJS/Supabase Cloud/Redis/Socket.io/GraphQL/S3)
+  e passaram a refletir o monolito entregue (React 18 + Vite, Express 4, JWT
+  local com bcrypt, PostgreSQL 17.6 self-hosted via pool `pg`, deploy
+  single-stage no EasyPanel). Ajuste exclusivo de documentação, sem alteração de
+  código nem bump de versão. Parte do Bloco G (fechamento acadêmico) rumo à
+  v2.0.0.
+
 ## [1.30.0] - 2026-06-16
 
 ### Added

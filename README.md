@@ -51,31 +51,33 @@ O **Site de Acolhimento FAESA** é uma plataforma web responsiva que centraliza 
 
 ## 🏗️ Arquitetura do Sistema
 
-A plataforma segue uma arquitetura em 4 camadas:
+A plataforma adota uma arquitetura **monolítica em 4 camadas**, com a SPA React servida
+pelo mesmo backend Express que expõe a API REST. O diagrama reflete a **implementação real**
+(v1.30.0), não a proposta inicial:
 
 ```
 ┌─────────────────────────────────────────┐
 │   Camada de Apresentação (Frontend)     │
-│   React.js / Next.js · Tailwind CSS     │
-│   PWA / Service Worker                  │
+│   React 18 + Vite (SPA) · Tailwind 4    │
+│   Radix UI / shadcn · React Router      │
 └──────────────────┬──────────────────────┘
-                   │ HTTP/HTTPS
+                   │ HTTPS (cookie httpOnly)
 ┌──────────────────▼──────────────────────┐
 │   Camada de API (Backend)               │
-│   API REST / GraphQL · Auth JWT/OAuth   │
-│   WebSocket (Real-time)                 │
+│   Express 4 · API REST · JWT (HS256)    │
+│   Helmet · rate-limit · polling HTTP    │
 └──────────────────┬──────────────────────┘
                    │ Chamadas de Serviço
 ┌──────────────────▼──────────────────────┐
 │   Camada de Serviços (Domínio)          │
 │   Plano de Estudos · Concentração       │
-│   Mentoria · Gamificação                │
+│   Mentoria · Gamificação · Chatbot      │
 └──────────────────┬──────────────────────┘
-                   │ ORM / Queries
+                   │ Queries (pg Pool)
 ┌──────────────────▼──────────────────────┐
 │   Camada de Dados (Persistência)        │
-│   PostgreSQL · Redis (Cache)            │
-│   S3 / Storage                          │
+│   PostgreSQL 17.6 (Supabase self-hosted)│
+│   Prisma (geração de tipos) · Supavisor │
 └─────────────────────────────────────────┘
 ```
 
@@ -83,25 +85,30 @@ A plataforma segue uma arquitetura em 4 camadas:
 
 ## 🛠️ Stack Tecnológica
 
+A tabela reflete a **stack efetivamente implementada** na v1.30.0. A proposta inicial
+(Next.js/NestJS/Supabase Cloud/Redis/Socket.io) foi substituída por um monolito
+auto-hospedado, por custo, simplicidade de *deploy* e conformidade LGPD.
+
 | Camada | Tecnologia | Justificativa |
 |---|---|---|
-| **Frontend** | React.js / Next.js 14+ | SSR/SSG para performance, TypeScript |
-| **Estilização** | Tailwind CSS + shadcn/ui | Design system responsivo, dark mode |
-| **Backend** | Node.js + NestJS | Alta performance, ecossistema JS unificado |
+| **Frontend** | React 18 + Vite 6 (SPA) | TypeScript, *lazy-loading* de rotas, build estático otimizado; SSR dispensado no escopo |
+| **Estilização** | Tailwind CSS 4 + Radix UI / shadcn/ui | Design system responsivo, acessível por padrão, dark mode por tokens |
+| **Backend** | Node.js 20 + Express 4 | Servidor leve que entrega a SPA estática e expõe a API REST |
 | **Banco de Dados** | **Supabase self-hosted** (PostgreSQL 17.6) | Stack Supabase completa instalada na **mesma VPS** que hospeda a aplicação; pooler Supavisor incluso |
-| **Cache** | Redis (a definir) | Avaliação pendente: container Redis na própria VPS *vs.* Upstash serverless |
-| **ORM** | Prisma | Type-safe, migrations automáticas; conexão direta ao Postgres via rede overlay Docker |
-| **Autenticação** | Supabase Auth (GoTrue) + NextAuth.js | OAuth 2.0, JWT, RLS, SSO institucional |
-| **Real-time** | Supabase Realtime / Socket.io | Chat, fórum e notificações ao vivo |
-| **Deploy** | **EasyPanel (Docker Swarm) + Traefik** em **VPS Hostinger** | Build a partir de `Dockerfile`, TLS Let's Encrypt automático, redeploy via webhook |
-| **Testes** | Jest + Cypress + Playwright | Cobertura unitária, integração e E2E |
-| **Monitoramento** | Sentry + (Grafana/Uptime Kuma a definir) | Error tracking; observabilidade pendente |
+| **Acesso a Dados** | Prisma (geração de tipos) + `pg` (pool direto) | Prisma documenta o schema e gera tipos; as rotas consultam o Postgres via *pool* `node-postgres` |
+| **Autenticação** | bcryptjs + JWT (HS256) | Hash custo 12, token em *cookie* `httpOnly`/`SameSite=Strict`; sem provedor externo (SSO descartado) |
+| **Segurança** | Helmet + express-rate-limit | Cabeçalhos CSP/HSTS e limitação de taxa (auth 20/min, API 200/min) |
+| **Tempo Real** | Polling HTTP | Atualização do chat NAP e notificações por requisições periódicas; WebSocket fora do escopo atual |
+| **Deploy** | **EasyPanel (Docker Swarm) + Traefik** em **VPS Hostinger** | Build *single-stage* a partir de `Dockerfile`, TLS Let's Encrypt automático, redeploy via webhook |
+| **Testes** | Vitest + Supertest + Playwright | Unitários e integração (cobertura ≥ 80%) e E2E de navegação |
+| **Monitoramento** | (Uptime Kuma — pendente D4) | Observabilidade prevista para a versão final (v2.0.0) |
 
 > **Banco de Dados — Decisão Técnica revisada (2026-04-26):** o projeto adota **Supabase self-hosted**
 > (PostgreSQL 17.6 + Kong + GoTrue + PostgREST + Realtime + Storage + Edge Functions + Supavisor)
 > rodando na **mesma VPS Hostinger** que executa o EasyPanel. A aplicação se conecta pela rede
-> overlay Docker `easypanel`, sem expor o Postgres na internet. O Prisma usa `DATABASE_URL`
-> (`supabase-pooler:6543`, transaction mode) para queries e `DIRECT_URL` (`supabase-db:5432`) para
+> overlay Docker `easypanel`, sem expor o Postgres na internet. As rotas consultam o banco via
+> *pool* `node-postgres` usando `DATABASE_URL` (`supabase-pooler:6543`, transaction mode); o
+> `DIRECT_URL` (`supabase-db:5432`) e o Prisma ficam reservados para geração de tipos e futuras
 > migrations. Detalhes operacionais em [`/opt/supabase/.../DEPLOY-EXECUTADO-2026-04.md`](../postgres17-supabase-easypanel/docs/DEPLOY-EXECUTADO-2026-04.md)
 > e em [docs/ambiente-producao-easypanel.md](docs/ambiente-producao-easypanel.md).
 
