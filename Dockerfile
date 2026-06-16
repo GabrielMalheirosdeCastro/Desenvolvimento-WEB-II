@@ -1,13 +1,13 @@
 # ============================================================
 # Site de Acolhimento FAESA — imagem single-stage para EasyPanel.
 # ------------------------------------------------------------
-# Decisao 2026-05-03 (em vigor ate v1.30.0): o build do Vite falhava
-# silenciosamente no EasyPanel/VPS (provavelmente OOM no estagio
-# web-build com multi-stage). Estrategia adotada: o `apps/web/dist/`
-# e gerado localmente (`npm run build`) e VERSIONADO no Git, sendo
-# RECONSTRUIDO a cada release antes do commit/deploy. O Dockerfile
-# apenas instala a API (sem devDependencies) e copia o dist pronto.
-# Imagem version-agnostica: nao requer alteracao a cada bump de
+# Decisao 2026-05-03 (vigente desde a v1.0.2, mantida na v2.0.0): o
+# build do Vite falhava silenciosamente no EasyPanel/VPS (provavelmente
+# OOM no estagio web-build com multi-stage). Estrategia adotada: o
+# `apps/web/dist/` e gerado localmente (`npm run build`) e VERSIONADO
+# no Git, sendo RECONSTRUIDO a cada release antes do commit/deploy. O
+# Dockerfile apenas instala a API (sem devDependencies) e copia o dist
+# pronto. Imagem version-agnostica: nao requer alteracao a cada bump de
 # versao. Trade-off academico aceitavel para um prototipo em VPS
 # apertada (a VPS tem 4 GiB de swap para mitigar OOM residual).
 # ============================================================
