@@ -9,6 +9,22 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.30.0] - 2026-06-16
+
+### Added
+- Fórum de Discussão agora permite **entrar em um tópico** e ver suas respostas.
+  Cada tópico ganhou o botão "Entrar" (alterna para "Fechar"), que expande o card
+  e carrega as respostas existentes.
+- Dentro de um tópico aberto há o botão "Pedir informações sobre a matéria", que
+  abre um formulário com **confirmação reversível** ("Confirmar" / "Cancelar")
+  para enviar uma pergunta à comunidade.
+- As categorias da barra lateral viraram **botões de filtro funcionais**: clicar
+  filtra a lista de tópicos pela categoria; um botão "Todas" remove o filtro.
+- Endpoints `GET /api/forum/:id/posts` (leitura pública das respostas de um
+  tópico) e `POST /api/forum/:id/posts` (`requireAuth`, publica uma pergunta/
+  resposta, validando a existência do tópico). Ambos reutilizam a tabela
+  `forum_posts` já existente, sem migração.
+
 ## [1.29.0] - 2026-06-16
 
 ### Added

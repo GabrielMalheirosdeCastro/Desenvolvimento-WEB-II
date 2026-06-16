@@ -1347,6 +1347,90 @@ apiRouter.post('/forum', requireAuth, async (req, res) => {
 });
 
 // --------------------------------------------------------------
+// GET /api/forum/:id/posts — lista as respostas/perguntas de um
+// topico (publico, espelha a leitura de /api/forum).
+// --------------------------------------------------------------
+apiRouter.get('/forum/:id/posts', async (req, res) => {
+    const forumId = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(forumId) || forumId <= 0) {
+        return res.status(400).json({ error: 'forum_invalido' });
+    }
+    const rows = await query(
+        `SELECT p.id, p.conteudo, p.created_at, u.nome AS autor_nome
+             FROM forum_posts p
+             LEFT JOIN usuarios u ON u.id = p.usuario_id
+             WHERE p.forum_id = $1
+             ORDER BY p.created_at ASC, p.id ASC
+             LIMIT 200`,
+        [forumId],
+    );
+    if (rows === null) {
+        return res.json({ source: 'fallback', items: [] });
+    }
+    res.json({
+        source: 'db',
+        items: rows.map((r) => ({
+            id: r.id,
+            conteudo: r.conteudo,
+            autor: r.autor_nome,
+            createdAt: r.created_at,
+        })),
+    });
+});
+
+// --------------------------------------------------------------
+// POST /api/forum/:id/posts — publica uma pergunta/resposta no
+// topico (requer sessao). Body: { conteudo: string }.
+// --------------------------------------------------------------
+apiRouter.post('/forum/:id/posts', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+
+    const forumId = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(forumId) || forumId <= 0) {
+        return res.status(400).json({ error: 'forum_invalido' });
+    }
+
+    const conteudo =
+        req.body?.conteudo !== undefined ? String(req.body.conteudo).trim() : '';
+    if (conteudo.length < 3 || conteudo.length > FORUM_DESCRICAO_MAX) {
+        return res.status(400).json({ error: 'conteudo_invalido' });
+    }
+
+    // Confirma a existencia do topico antes de publicar a resposta.
+    const existe = await query(`SELECT id FROM foruns_discussao WHERE id = $1 LIMIT 1`, [
+        forumId,
+    ]);
+    if (existe === null) {
+        return res.status(500).json({ error: 'falha_verificacao' });
+    }
+    if (existe.length === 0) {
+        return res.status(404).json({ error: 'topico_nao_encontrado' });
+    }
+
+    const inserted = await query(
+        `INSERT INTO forum_posts (forum_id, usuario_id, conteudo, votos_positivos)
+             VALUES ($1, $2, $3, 0)
+             RETURNING id, conteudo, created_at`,
+        [forumId, req.usuario.sub, conteudo],
+    );
+    if (inserted === null) {
+        return res.status(500).json({ error: 'falha_criacao' });
+    }
+    const p = inserted[0];
+    res.status(201).json({
+        source: 'db',
+        post: {
+            id: p.id,
+            conteudo: p.conteudo,
+            autor: req.usuario.nome,
+            createdAt: p.created_at,
+        },
+    });
+});
+
+// --------------------------------------------------------------
 // GET /api/recursos — lista recursos da biblioteca (publico).
 // --------------------------------------------------------------
 apiRouter.get('/recursos', async (_req, res) => {
