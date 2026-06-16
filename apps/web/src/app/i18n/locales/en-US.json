@@ -77,5 +77,34 @@
     "conquistasRecentes": "Recent Achievements",
     "desbloqueadoRecentemente": "Recently unlocked",
     "verTodasConquistas": "View All Achievements"
+  },
+  "estudos": {
+    "titulo": "Study Plan",
+    "subtitulo": "Organize your goals and track your progress",
+    "novaMeta": "New Goal",
+    "cancelar": "Cancel",
+    "tituloLabel": "Title",
+    "tituloPlaceholder": "e.g.: Review Chapter 3 of Calculus",
+    "materiaLabel": "Subject",
+    "materiaPlaceholder": "e.g.: Calculus I",
+    "prazoLabel": "Due date",
+    "salvarMeta": "Save Goal",
+    "totalMetas": "Total Goals",
+    "noSeuPlano": "In your plan",
+    "concluidas": "Completed",
+    "percentualMetas": "{{percentual}}% of goals",
+    "pendentes": "Pending",
+    "restantes": "Remaining",
+    "minhasMetas": "My Goals",
+    "carregandoMetas": "Loading goals...",
+    "semMetas": "You don't have any goals yet.",
+    "criarPrimeira": "Create first goal",
+    "excluirMeta": "Delete goal",
+    "erros": {
+      "carregar": "Could not load your goals. Please try again.",
+      "criar": "Could not create the goal. Please try again.",
+      "atualizar": "Could not update the goal. Please try again.",
+      "excluir": "Could not delete the goal. Please try again."
+    }
   }
 }

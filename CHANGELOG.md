@@ -9,6 +9,27 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.20.0] - 2026-06-16
+
+### Added
+- Internacionalização (i18n) da tela **Plano de Estudos** (`StudyPlanPage`, RF02/RF03):
+  título/subtítulo, botão e formulário de nova meta (rótulos, placeholders e ação
+  "Salvar Meta"), cartões de estatísticas (Total/Concluídas/Pendentes), lista
+  "Minhas Metas", estados de carregamento/vazio e mensagens de erro de CRUD.
+- Namespace `estudos` adicionado aos catálogos `pt-BR.json` e `en-US.json`, com
+  paridade de chaves validada por `tests/unit/i18n.test.ts`.
+
+### Changed
+- `StudyPlanPage` passa a consumir `useI18n()`/`t()` no lugar de literais em
+  português; a data do prazo das metas passa a ser formatada conforme o idioma ativo
+  (`toLocaleDateString(idioma)`), refletindo PT-BR ↔ EN-US sem recarregar.
+
+### Notas
+- Conteúdo dinâmico das metas (título, matéria vindos do banco) permanece como o
+  usuário cadastrou — é dado, não chrome de interface.
+- Extração das demais telas do dashboard segue incremental (infra i18n pronta desde
+  a v1.16.0; fallback garante texto pt-BR onde a chave ainda não existe).
+
 ## [1.19.0] - 2026-06-16
 
 ### Added

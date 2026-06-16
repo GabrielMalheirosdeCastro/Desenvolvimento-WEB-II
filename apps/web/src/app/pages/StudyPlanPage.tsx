@@ -1,5 +1,6 @@
 import { Plus, Calendar, Target, Trash2, Loader2, X } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
+import { useI18n } from "../i18n/LanguageContext";
 
 // --------------------------------------------------------------
 // Plano de Estudos (Bloco H — item H3)
@@ -16,6 +17,7 @@ type Meta = {
 };
 
 export function StudyPlanPage() {
+  const { t, idioma } = useI18n();
   const [goals, setGoals] = useState<Meta[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -38,7 +40,7 @@ export function StudyPlanPage() {
       const json = await res.json();
       setGoals(Array.isArray(json.items) ? json.items : []);
     } catch {
-      setErro("Não foi possível carregar suas metas. Tente novamente.");
+      setErro(t("estudos.erros.carregar"));
     } finally {
       setCarregando(false);
     }
@@ -77,7 +79,7 @@ export function StudyPlanPage() {
       setNovoPrazo("");
       setFormAberto(false);
     } catch {
-      setErro("Não foi possível criar a meta. Tente novamente.");
+      setErro(t("estudos.erros.criar"));
     } finally {
       setEnviando(false);
     }
@@ -103,7 +105,7 @@ export function StudyPlanPage() {
         );
       }
     } catch {
-      setErro("Não foi possível atualizar a meta. Tente novamente.");
+      setErro(t("estudos.erros.atualizar"));
     } finally {
       setBusyId(null);
     }
@@ -122,7 +124,7 @@ export function StudyPlanPage() {
       }
       setGoals((prev) => prev.filter((g) => g.id !== id));
     } catch {
-      setErro("Não foi possível excluir a meta. Tente novamente.");
+      setErro(t("estudos.erros.excluir"));
     } finally {
       setBusyId(null);
     }
@@ -137,9 +139,9 @@ export function StudyPlanPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl mb-2 text-foreground">Plano de Estudos</h1>
+          <h1 className="text-3xl mb-2 text-foreground">{t("estudos.titulo")}</h1>
           <p className="text-muted-foreground">
-            Organize suas metas e acompanhe seu progresso
+            {t("estudos.subtitulo")}
           </p>
         </div>
         <button
@@ -147,7 +149,7 @@ export function StudyPlanPage() {
           className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg transition-colors"
         >
           {formAberto ? <X size={20} /> : <Plus size={20} />}
-          {formAberto ? "Cancelar" : "Nova Meta"}
+          {formAberto ? t("estudos.cancelar") : t("estudos.novaMeta")}
         </button>
       </div>
 
@@ -163,11 +165,11 @@ export function StudyPlanPage() {
           onSubmit={adicionarMeta}
           className="bg-card rounded-lg shadow-sm p-6 space-y-4"
         >
-          <h2 className="text-xl text-foreground">Nova Meta</h2>
+          <h2 className="text-xl text-foreground">{t("estudos.novaMeta")}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-3">
               <label className="block text-sm text-muted-foreground mb-1" htmlFor="meta-titulo">
-                Título <span className="text-destructive">*</span>
+                {t("estudos.tituloLabel")} <span className="text-destructive">*</span>
               </label>
               <input
                 id="meta-titulo"
@@ -176,13 +178,13 @@ export function StudyPlanPage() {
                 maxLength={200}
                 value={novoTitulo}
                 onChange={(e) => setNovoTitulo(e.target.value)}
-                placeholder="Ex.: Revisar Capítulo 3 de Cálculo"
+                placeholder={t("estudos.tituloPlaceholder")}
                 className="w-full px-3 py-2 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-ring"
               />
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm text-muted-foreground mb-1" htmlFor="meta-materia">
-                Matéria
+                {t("estudos.materiaLabel")}
               </label>
               <input
                 id="meta-materia"
@@ -190,13 +192,13 @@ export function StudyPlanPage() {
                 maxLength={100}
                 value={novaMateria}
                 onChange={(e) => setNovaMateria(e.target.value)}
-                placeholder="Ex.: Cálculo I"
+                placeholder={t("estudos.materiaPlaceholder")}
                 className="w-full px-3 py-2 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-ring"
               />
             </div>
             <div>
               <label className="block text-sm text-muted-foreground mb-1" htmlFor="meta-prazo">
-                Prazo
+                {t("estudos.prazoLabel")}
               </label>
               <input
                 id="meta-prazo"
@@ -214,7 +216,7 @@ export function StudyPlanPage() {
               className="flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               {enviando && <Loader2 size={18} className="animate-spin" />}
-              Salvar Meta
+              {t("estudos.salvarMeta")}
             </button>
           </div>
         </form>
@@ -227,10 +229,10 @@ export function StudyPlanPage() {
             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
               <Target className="text-primary" size={20} />
             </div>
-            <h3 className="text-lg text-foreground">Total de Metas</h3>
+            <h3 className="text-lg text-foreground">{t("estudos.totalMetas")}</h3>
           </div>
           <p className="text-3xl text-foreground">{totalGoals}</p>
-          <p className="text-sm text-muted-foreground mt-1">No seu plano</p>
+          <p className="text-sm text-muted-foreground mt-1">{t("estudos.noSeuPlano")}</p>
         </div>
 
         <div className="bg-card rounded-lg shadow-sm p-6">
@@ -238,10 +240,10 @@ export function StudyPlanPage() {
             <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
               <Target className="text-success" size={20} />
             </div>
-            <h3 className="text-lg text-foreground">Concluídas</h3>
+            <h3 className="text-lg text-foreground">{t("estudos.concluidas")}</h3>
           </div>
           <p className="text-3xl text-success">{completed}</p>
-          <p className="text-sm text-muted-foreground mt-1">{percentual}% das metas</p>
+          <p className="text-sm text-muted-foreground mt-1">{t("estudos.percentualMetas", { percentual })}</p>
         </div>
 
         <div className="bg-card rounded-lg shadow-sm p-6">
@@ -249,32 +251,32 @@ export function StudyPlanPage() {
             <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
               <Target className="text-warning" size={20} />
             </div>
-            <h3 className="text-lg text-foreground">Pendentes</h3>
+            <h3 className="text-lg text-foreground">{t("estudos.pendentes")}</h3>
           </div>
           <p className="text-3xl text-warning">{pending}</p>
-          <p className="text-sm text-muted-foreground mt-1">Restantes</p>
+          <p className="text-sm text-muted-foreground mt-1">{t("estudos.restantes")}</p>
         </div>
       </div>
 
       {/* Lista de Metas */}
       <div className="bg-card rounded-lg shadow-sm p-6">
-        <h2 className="text-xl mb-6 text-foreground">Minhas Metas</h2>
+        <h2 className="text-xl mb-6 text-foreground">{t("estudos.minhasMetas")}</h2>
 
         {carregando ? (
           <div className="flex items-center justify-center gap-2 text-muted-foreground py-12">
             <Loader2 size={20} className="animate-spin" />
-            Carregando metas...
+            {t("estudos.carregandoMetas")}
           </div>
         ) : goals.length === 0 ? (
           <div className="text-center text-muted-foreground py-12">
             <Target className="mx-auto mb-4 text-muted-foreground/50" size={48} />
-            <p className="mb-4">Você ainda não tem metas cadastradas.</p>
+            <p className="mb-4">{t("estudos.semMetas")}</p>
             <button
               onClick={() => setFormAberto(true)}
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               <Plus size={18} />
-              Criar primeira meta
+              {t("estudos.criarPrimeira")}
             </button>
           </div>
         ) : (
@@ -313,7 +315,7 @@ export function StudyPlanPage() {
                       {goal.deadline && (
                         <span className="flex items-center gap-1">
                           <Calendar size={14} />
-                          {new Date(goal.deadline).toLocaleDateString("pt-BR")}
+                          {new Date(goal.deadline).toLocaleDateString(idioma)}
                         </span>
                       )}
                     </div>
@@ -322,7 +324,7 @@ export function StudyPlanPage() {
                     <button
                       onClick={() => excluirMeta(goal.id)}
                       disabled={busyId === goal.id}
-                      aria-label="Excluir meta"
+                      aria-label={t("estudos.excluirMeta")}
                       className="p-2 hover:bg-destructive/10 rounded-lg transition-colors disabled:opacity-50"
                     >
                       {busyId === goal.id ? (

@@ -77,5 +77,34 @@
     "conquistasRecentes": "Conquistas Recentes",
     "desbloqueadoRecentemente": "Desbloqueado recentemente",
     "verTodasConquistas": "Ver Todas as Conquistas"
+  },
+  "estudos": {
+    "titulo": "Plano de Estudos",
+    "subtitulo": "Organize suas metas e acompanhe seu progresso",
+    "novaMeta": "Nova Meta",
+    "cancelar": "Cancelar",
+    "tituloLabel": "Título",
+    "tituloPlaceholder": "Ex.: Revisar Capítulo 3 de Cálculo",
+    "materiaLabel": "Matéria",
+    "materiaPlaceholder": "Ex.: Cálculo I",
+    "prazoLabel": "Prazo",
+    "salvarMeta": "Salvar Meta",
+    "totalMetas": "Total de Metas",
+    "noSeuPlano": "No seu plano",
+    "concluidas": "Concluídas",
+    "percentualMetas": "{{percentual}}% das metas",
+    "pendentes": "Pendentes",
+    "restantes": "Restantes",
+    "minhasMetas": "Minhas Metas",
+    "carregandoMetas": "Carregando metas...",
+    "semMetas": "Você ainda não tem metas cadastradas.",
+    "criarPrimeira": "Criar primeira meta",
+    "excluirMeta": "Excluir meta",
+    "erros": {
+      "carregar": "Não foi possível carregar suas metas. Tente novamente.",
+      "criar": "Não foi possível criar a meta. Tente novamente.",
+      "atualizar": "Não foi possível atualizar a meta. Tente novamente.",
+      "excluir": "Não foi possível excluir a meta. Tente novamente."
+    }
   }
 }
