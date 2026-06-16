@@ -13,14 +13,29 @@ interface Mentor {
   email?: string;
   rating?: number;
   sessoes?: number;
+  tipo?: string;
 }
 
 interface Sessao {
   id: number;
   mentorId: number;
   mentorNome: string;
+  mentorTipo?: string;
   tema: string;
   dataInicio: string;
+}
+
+// Normaliza o `tipo_usuario` (ALUNO/COORDENADOR/PROFESSOR/...) num rotulo
+// legivel, evitando ambiguidade sobre quem e o mentor (aluno x professor).
+function rotuloPapel(tipo?: string): string {
+  const t = (tipo ?? "").trim().toUpperCase();
+  if (t === "PROFESSOR" || t === "DOCENTE") return "Professor(a)";
+  if (t === "COORDENADOR" || t === "COORDENACAO" || t === "COORDENA\u00c7\u00c3O")
+    return "Coordena\u00e7\u00e3o";
+  if (t === "ALUNO" || t === "ESTUDANTE" || t === "ALUNO(A)")
+    return "Aluno(a) veterano(a)";
+  if (t === "MENTOR") return "Mentor(a)";
+  return t ? (tipo as string) : "Mentor(a)";
 }
 
 export function MentorshipPage() {
@@ -70,7 +85,8 @@ export function MentorshipPage() {
           ? j.items.map((m: Record<string, unknown>) => ({
               id: (m.id as number | string) ?? (m.matricula as string) ?? (m.nome as string),
               nome: String(m.nome ?? ""),
-              curso: (m.curso as string) ?? (m.tipo as string) ?? undefined,
+              curso: (m.curso as string) ?? undefined,
+              tipo: (m.tipo as string) ?? undefined,
               periodo: m.periodo != null ? String(m.periodo) : undefined,
               cra: typeof m.cra === "number" ? m.cra : undefined,
               especialidades: Array.isArray(m.especialidades)
@@ -260,7 +276,8 @@ export function MentorshipPage() {
                   Você já está cadastrado(a) como mentor(a).
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Outros estudantes já conseguem te encontrar na busca de mentoria.
+                  Outros estudantes já conseguem te encontrar na busca de mentoria
+                  {usuario?.tipo ? ` na condição de ${rotuloPapel(usuario.tipo)}` : ""}.
                 </p>
               </div>
             </div>
@@ -270,6 +287,14 @@ export function MentorshipPage() {
                 Ao se cadastrar como mentor(a), seu perfil passa a aparecer na busca de
                 outros estudantes. Requisitos institucionais: 5º período ou superior com CRA ≥ 7,0.
               </p>
+              {usuario?.tipo && (
+                <p className="text-sm text-muted-foreground mb-4">
+                  Você se cadastrará na condição de{" "}
+                  <span className="font-medium text-foreground">{rotuloPapel(usuario.tipo)}</span>.
+                  Esse papel ficará visível para quem buscar mentoria, evitando dúvidas
+                  sobre quem está orientando.
+                </p>
+              )}
               <button
                 type="button"
                 onClick={cadastrarComoMentor}
@@ -323,7 +348,7 @@ export function MentorshipPage() {
                 <option value="">Selecione um mentor</option>
                 {mentoresAgendaveis.map((m) => (
                   <option key={m.id} value={String(m.id)}>
-                    {m.nome}
+                    {m.nome} — {rotuloPapel(m.tipo)}
                   </option>
                 ))}
               </select>
@@ -392,7 +417,9 @@ export function MentorshipPage() {
               >
                 <div className="flex-1">
                   <h3 className="font-medium mb-1 text-foreground">{session.tema}</h3>
-                  <p className="text-sm text-muted-foreground">com {session.mentorNome}</p>
+                  <p className="text-sm text-muted-foreground">
+                    com {session.mentorNome} · {rotuloPapel(session.mentorTipo)}
+                  </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-sm">
@@ -469,6 +496,9 @@ export function MentorshipPage() {
               </div>
 
               <h3 className="font-medium mb-1 text-foreground">{mentor.nome}</h3>
+              <span className="inline-block px-2 py-0.5 mb-2 bg-primary/10 text-primary text-xs rounded-full">
+                {rotuloPapel(mentor.tipo)}
+              </span>
               {mentor.curso && <p className="text-sm text-muted-foreground mb-1">{mentor.curso}</p>}
               {(mentor.periodo || mentor.cra != null) && (
                 <p className="text-sm text-muted-foreground mb-3">

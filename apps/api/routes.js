@@ -481,7 +481,8 @@ apiRouter.get('/mentorias/sessoes', requireAuth, async (req, res) => {
         return res.json({ source: 'fallback', items: [] });
     }
     const rows = await query(
-        `SELECT m.id, m.mentor_id, m.objetivo, m.data_inicio, u.nome AS mentor_nome
+        `SELECT m.id, m.mentor_id, m.objetivo, m.data_inicio, u.nome AS mentor_nome,
+                u.tipo_usuario AS mentor_tipo
              FROM mentorias m
              JOIN usuarios u ON u.id = m.mentor_id
              WHERE m.mentorado_id = $1 AND m.status = 'agendada'
@@ -497,6 +498,7 @@ apiRouter.get('/mentorias/sessoes', requireAuth, async (req, res) => {
             id: r.id,
             mentorId: r.mentor_id,
             mentorNome: r.mentor_nome,
+            mentorTipo: r.mentor_tipo,
             tema: r.objetivo,
             dataInicio: r.data_inicio,
         })),

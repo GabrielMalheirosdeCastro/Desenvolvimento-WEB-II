@@ -9,6 +9,25 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.24.0] - 2026-06-16
+
+### Added
+- Identificação do papel do mentor na tela de Mentoria (RF12 / mentoria),
+  reaproveitando a coluna `usuarios.tipo_usuario` já existente (sem migração).
+  Cada card de mentor passou a exibir um selo legível — "Aluno(a) veterano(a)",
+  "Professor(a)" ou "Coordenação" — em vez do valor cru (ex.: "ALUNO"). O mesmo
+  rótulo aparece no seletor de mentor do agendamento e em cada sessão agendada
+  ("com Fulano · Professor(a)"). O endpoint `GET /api/mentorias/sessoes` passou
+  a devolver `mentorTipo` (via JOIN com `usuarios`).
+- No painel "Sou mentor(a)", a condição do usuário (papel) é informada antes e
+  depois do cadastro, deixando claro a quem se buscará orientação e evitando
+  ambiguidade entre aluno e professor.
+
+### Fixed
+- O subtítulo do card de mentor exibia o `tipo_usuario` cru dentro do campo de
+  curso (ex.: "ALUNO"), o que gerava conflito de entendimento. Agora o papel é
+  apresentado como selo dedicado e o campo de curso só mostra curso real.
+
 ## [1.23.0] - 2026-06-16
 
 ### Added
