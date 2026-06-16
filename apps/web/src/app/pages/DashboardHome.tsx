@@ -93,7 +93,7 @@ export function DashboardHome() {
             </div>
             <span className="text-2xl font-semibold text-foreground">85%</span>
           </div>
-          <h3 className="text-lg mb-1 text-foreground">{t("home.metasSemana")}</h3>
+          <h2 className="text-lg mb-1 text-foreground">{t("home.metasSemana")}</h2>
           <p className="text-sm text-muted-foreground">{t("home.metasConcluidas")}</p>
           <div className="mt-3 w-full bg-muted rounded-full h-2">
             <div className="bg-primary h-2 rounded-full" style={{ width: "85%" }}></div>
@@ -111,9 +111,9 @@ export function DashboardHome() {
             </div>
             <span className="text-2xl font-semibold text-foreground">25h</span>
           </div>
-          <h3 className="text-lg mb-1 text-foreground">{t("home.horasEstudo")}</h3>
+          <h2 className="text-lg mb-1 text-foreground">{t("home.horasEstudo")}</h2>
           <p className="text-sm text-muted-foreground">{t("home.estaSemana")}</p>
-          <p className="text-sm text-success mt-2">{t("home.variacaoSemana")}</p>
+          <p className="text-sm text-success-strong mt-2">{t("home.variacaoSemana")}</p>
         </button>
 
         <button
@@ -127,9 +127,9 @@ export function DashboardHome() {
             </div>
             <span className="text-2xl font-semibold text-foreground">{streak.atual}</span>
           </div>
-          <h3 className="text-lg mb-1 text-foreground">{t("home.sequenciaDias")}</h3>
+          <h2 className="text-lg mb-1 text-foreground">{t("home.sequenciaDias")}</h2>
           <p className="text-sm text-muted-foreground">{t("home.diasConsecutivos", { recorde: streak.recorde })}</p>
-          <p className="text-sm text-warning mt-2">{t("home.continueAssim")}</p>
+          <p className="text-sm text-warning-strong mt-2">{t("home.continueAssim")}</p>
         </button>
       </div>
 
@@ -172,7 +172,7 @@ export function DashboardHome() {
                 className="w-full text-left flex items-center gap-4 p-3 bg-muted rounded-lg border border-border transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div className="flex-1">
-                  <h4 className="font-medium text-foreground">{activity.title}</h4>
+                  <h3 className="font-medium text-foreground">{activity.title}</h3>
                   <p className="text-sm text-muted-foreground">
                     {activity.date} • {activity.type}
                   </p>
@@ -202,7 +202,7 @@ export function DashboardHome() {
               <div key={index} className="flex items-center gap-4 p-4 bg-gradient-to-r from-primary/10 to-success/10 rounded-lg border border-primary/20">
                 <div className="text-4xl">{badge.icon}</div>
                 <div>
-                  <h4 className="font-medium text-foreground">{badge.name}</h4>
+                  <h3 className="font-medium text-foreground">{badge.name}</h3>
                   <p className="text-sm text-muted-foreground">{t("home.desbloqueadoRecentemente")}</p>
                 </div>
               </div>

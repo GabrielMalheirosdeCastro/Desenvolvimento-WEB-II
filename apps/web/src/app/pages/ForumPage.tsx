@@ -281,7 +281,7 @@ export function ForumPage() {
         {/* Sidebar com Categorias */}
         <div className="lg:col-span-1">
           <div className="bg-card rounded-lg shadow-sm p-4">
-            <h3 className="font-medium mb-4 text-foreground">Categorias</h3>
+            <h2 className="font-medium mb-4 text-foreground">Categorias</h2>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
@@ -314,7 +314,7 @@ export function ForumPage() {
           </div>
 
           <div className="bg-card rounded-lg shadow-sm p-4 mt-4">
-            <h3 className="font-medium mb-4 text-foreground">Regras do Fórum</h3>
+            <h2 className="font-medium mb-4 text-foreground">Regras do Fórum</h2>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>• Seja respeitoso com todos</li>
               <li>• Não compartilhe informações pessoais</li>

@@ -330,7 +330,7 @@ export function ProfilePage() {
               <Trophy className="text-white" size={24} />
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Pontuação Total</h3>
+              <h2 className="text-lg font-semibold">Pontuação Total</h2>
               <p className="text-white/80 text-sm">Sistema de Gamificação</p>
             </div>
           </div>
@@ -424,11 +424,11 @@ export function ProfilePage() {
               </div>
             </div>
 
-            {erro && <p className="text-sm text-warning">{erro}</p>}
+            {erro && <p className="text-sm text-warning-strong">{erro}</p>}
             {feedback && (
               <p
                 className={`text-sm ${
-                  feedback.tipo === "ok" ? "text-success" : "text-destructive"
+                  feedback.tipo === "ok" ? "text-success-strong" : "text-destructive"
                 }`}
               >
                 {feedback.texto}
@@ -465,7 +465,7 @@ export function ProfilePage() {
         <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="text-primary" size={20} />
-            <h3 className="font-semibold text-foreground">Pontos Recentes</h3>
+            <h2 className="font-semibold text-foreground">Pontos Recentes</h2>
           </div>
           <div className="space-y-3">
             {pointsHistory.map((item, index) => (
@@ -474,7 +474,7 @@ export function ProfilePage() {
                   <div className="text-foreground">{item.action}</div>
                   <div className="text-xs text-muted-foreground">{item.date}</div>
                 </div>
-                <div className="font-semibold text-success">+{item.points}</div>
+                <div className="font-semibold text-success-strong">+{item.points}</div>
               </div>
             ))}
           </div>
@@ -546,7 +546,7 @@ export function ProfilePage() {
                     )}
                   </span>
                 </div>
-                <span className="font-semibold text-success">{item.pontos} pts</span>
+                <span className="font-semibold text-success-strong">{item.pontos} pts</span>
               </div>
             ))}
           </div>
@@ -639,7 +639,7 @@ export function ProfilePage() {
               role="status"
               aria-live="polite"
               className={`mb-4 text-sm ${
-                privacidadeFeedback.tipo === "ok" ? "text-success" : "text-destructive"
+                privacidadeFeedback.tipo === "ok" ? "text-success-strong" : "text-destructive"
               }`}
             >
               {privacidadeFeedback.texto}

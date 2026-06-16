@@ -9,15 +9,45 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-06-16
+
+Versão final de entrega acadêmica. Consolida os 16 requisitos funcionais e o
+endurecimento de acessibilidade (RNF), monitoramento de disponibilidade e
+evidências de qualidade reunidas para a banca.
+
+### Added
+- Tokens de cor `--success-strong` e `--warning-strong` (claro e escuro) em
+  `apps/web/src/styles/theme.css`, reservados a **texto pequeno**, garantindo
+  contraste WCAG 2.1 AA (≥ 4.5:1) sem descaracterizar as cores institucionais
+  FAESA usadas em ícones e selos.
+- Workflow de monitoramento de disponibilidade (`.github/workflows/uptime.yml`):
+  verificação periódica (cron */30) de `/healthz` e `/version` em produção (D4).
+- Evidência documental da jornada E2E (`docs/evidencia-e3-jornada-e2e.md`) e
+  spec Playwright `tests/e2e/jornada-principal.spec.ts` (E3).
+
 ### Changed
-- `README.md` reconciliado com a implementação real (v1.30.0): o diagrama de
-  arquitetura em 4 camadas e a tabela de Stack Tecnológica deixaram de descrever
-  a proposta inicial (Next.js/NestJS/Supabase Cloud/Redis/Socket.io/GraphQL/S3)
-  e passaram a refletir o monolito entregue (React 18 + Vite, Express 4, JWT
-  local com bcrypt, PostgreSQL 17.6 self-hosted via pool `pg`, deploy
-  single-stage no EasyPanel). Ajuste exclusivo de documentação, sem alteração de
-  código nem bump de versão. Parte do Bloco G (fechamento acadêmico) rumo à
-  v2.0.0.
+- **Acessibilidade (WCAG 2.1 AA)** — varredura e correção das telas auditadas via
+  Lighthouse:
+  - Ordem de títulos tornada sequencialmente decrescente em `DashboardHome`,
+    `StudyPlanPage`, `ForumPage` e `ProfilePage` (eliminados saltos `h1→h3`/`h4`
+    causados por seções e formulários condicionais).
+  - Texto pequeno colorido (`text-success`/`text-warning`) migrado para as
+    variantes `-strong` em `DashboardHome`, `StudyPlanPage`, `WellbeingPage` e
+    `ProfilePage`, atingindo o contraste mínimo AA.
+  - `--muted-foreground` (tema claro) escurecido de `#6C757D` para `#5C636A`.
+  - Lista de definição (`<dl>`) da tela de login reestruturada para conter apenas
+    `<dt>`/`<dd>` por grupo (ícones movidos para dentro do `<dt>` com
+    `aria-hidden`), corrigindo as regras axe *definition-list* e *dlitem*.
+  - Links da tela de login ("Ative sua conta" e repositório) passaram a usar
+    sublinhado permanente, deixando de depender exclusivamente da cor.
+- `README.md` reconciliado com a implementação real: o diagrama de arquitetura em
+  4 camadas e a tabela de Stack Tecnológica deixaram de descrever a proposta
+  inicial (Next.js/NestJS/Supabase Cloud/Redis/Socket.io/GraphQL/S3) e passaram a
+  refletir o monolito entregue (React 18 + Vite, Express 4, JWT local com bcrypt,
+  PostgreSQL 17.6 self-hosted via pool `pg`, deploy single-stage no EasyPanel).
+  Parte do Bloco G (fechamento acadêmico).
+- `deploy.yml` ganhou `.github/**` e `tests/**` em `paths-ignore` para evitar
+  redeploys desnecessários em mudanças de CI e testes.
 
 ## [1.30.0] - 2026-06-16
 

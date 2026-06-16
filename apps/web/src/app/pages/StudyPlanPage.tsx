@@ -229,7 +229,7 @@ export function StudyPlanPage() {
             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
               <Target className="text-primary" size={20} />
             </div>
-            <h3 className="text-lg text-foreground">{t("estudos.totalMetas")}</h3>
+            <h2 className="text-lg text-foreground">{t("estudos.totalMetas")}</h2>
           </div>
           <p className="text-3xl text-foreground">{totalGoals}</p>
           <p className="text-sm text-muted-foreground mt-1">{t("estudos.noSeuPlano")}</p>
@@ -240,7 +240,7 @@ export function StudyPlanPage() {
             <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
               <Target className="text-success" size={20} />
             </div>
-            <h3 className="text-lg text-foreground">{t("estudos.concluidas")}</h3>
+            <h2 className="text-lg text-foreground">{t("estudos.concluidas")}</h2>
           </div>
           <p className="text-3xl text-success">{completed}</p>
           <p className="text-sm text-muted-foreground mt-1">{t("estudos.percentualMetas", { percentual })}</p>
@@ -251,9 +251,9 @@ export function StudyPlanPage() {
             <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
               <Target className="text-warning" size={20} />
             </div>
-            <h3 className="text-lg text-foreground">{t("estudos.pendentes")}</h3>
+            <h2 className="text-lg text-foreground">{t("estudos.pendentes")}</h2>
           </div>
-          <p className="text-3xl text-warning">{pending}</p>
+          <p className="text-3xl text-warning-strong">{pending}</p>
           <p className="text-sm text-muted-foreground mt-1">{t("estudos.restantes")}</p>
         </div>
       </div>

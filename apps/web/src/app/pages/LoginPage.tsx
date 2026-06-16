@@ -97,59 +97,51 @@ export function LoginPage() {
           className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-6"
           data-testid="login-metadata"
         >
-          <div className="flex items-start gap-2">
-            <BookOpen size={18} className="text-primary mt-0.5 shrink-0" />
-            <div>
-              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
-                {t("login.disciplina")}
-              </dt>
-              <dd className="text-foreground" data-testid="meta-disciplina">
-                Desenvolvimento de Aplicações Web II (D001508)
-              </dd>
-            </div>
+          <div>
+            <dt className="flex items-center gap-2 text-muted-foreground text-xs uppercase tracking-wide">
+              <BookOpen size={16} className="text-primary shrink-0" aria-hidden="true" />
+              {t("login.disciplina")}
+            </dt>
+            <dd className="text-foreground pl-6" data-testid="meta-disciplina">
+              Desenvolvimento de Aplicações Web II (D001508)
+            </dd>
           </div>
-          <div className="flex items-start gap-2">
-            <GraduationCap size={18} className="text-primary mt-0.5 shrink-0" />
-            <div>
-              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
-                {t("login.docente")}
-              </dt>
-              <dd className="text-foreground" data-testid="meta-docente">
-                Otávio Lube dos Santos
-              </dd>
-            </div>
+          <div>
+            <dt className="flex items-center gap-2 text-muted-foreground text-xs uppercase tracking-wide">
+              <GraduationCap size={16} className="text-primary shrink-0" aria-hidden="true" />
+              {t("login.docente")}
+            </dt>
+            <dd className="text-foreground pl-6" data-testid="meta-docente">
+              Otávio Lube dos Santos
+            </dd>
           </div>
-          <div className="flex items-start gap-2">
-            <User size={18} className="text-primary mt-0.5 shrink-0" />
-            <div>
-              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
-                {t("login.aluno")}
-              </dt>
-              <dd className="text-foreground" data-testid="meta-aluno">
-                Gabriel Malheiros de Castro · 23110145
-              </dd>
-            </div>
+          <div>
+            <dt className="flex items-center gap-2 text-muted-foreground text-xs uppercase tracking-wide">
+              <User size={16} className="text-primary shrink-0" aria-hidden="true" />
+              {t("login.aluno")}
+            </dt>
+            <dd className="text-foreground pl-6" data-testid="meta-aluno">
+              Gabriel Malheiros de Castro · 23110145
+            </dd>
           </div>
-          <div className="flex items-start gap-2">
-            <Github size={18} className="text-primary mt-0.5 shrink-0" />
-            <div>
-              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
-                {t("login.repositorio")}
-              </dt>
-              <dd
-                className="text-foreground break-all"
-                data-testid="meta-repositorio"
+          <div>
+            <dt className="flex items-center gap-2 text-muted-foreground text-xs uppercase tracking-wide">
+              <Github size={16} className="text-primary shrink-0" aria-hidden="true" />
+              {t("login.repositorio")}
+            </dt>
+            <dd
+              className="text-foreground break-all pl-6"
+              data-testid="meta-repositorio"
+            >
+              <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-primary underline"
               >
-                <a
-                  href={REPO_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="text-primary hover:underline"
-                >
-                  GabrielMalheirosdeCastro/Desenvolvimento-WEB-II
-                </a>
-              </dd>
-            </div>
+                GabrielMalheirosdeCastro/Desenvolvimento-WEB-II
+              </a>
+            </dd>
           </div>
         </dl>
 
@@ -235,7 +227,7 @@ export function LoginPage() {
             {t("login.primeiroAcesso")}{" "}
             <Link
               to="/ativar"
-              className="text-primary hover:underline"
+              className="text-primary underline"
               data-testid="login-link-ativar"
             >
               {t("login.ativeConta")}

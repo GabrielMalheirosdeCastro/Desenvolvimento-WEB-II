@@ -23,8 +23,8 @@ const RESULTADO_INFO: Record<
   NonNullable<Avaliacao["resultado"]>,
   { rotulo: string; classe: string }
 > = {
-  positivo: { rotulo: "Positivo", classe: "bg-success/15 text-success" },
-  atencao: { rotulo: "Atenção", classe: "bg-warning/15 text-warning" },
+  positivo: { rotulo: "Positivo", classe: "bg-success/15 text-success-strong" },
+  atencao: { rotulo: "Atenção", classe: "bg-warning/15 text-warning-strong" },
   critico: { rotulo: "Crítico", classe: "bg-destructive/15 text-destructive" },
 };
 

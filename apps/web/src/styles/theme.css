@@ -24,7 +24,7 @@
   --secondary: #0066CC;
   --secondary-foreground: #FFFFFF;
   --muted: #F5F7FA;
-  --muted-foreground: #6C757D;
+  --muted-foreground: #5C636A;
   --accent: #0066CC;
   --accent-foreground: #FFFFFF;
   --destructive: #dc2626;
@@ -62,12 +62,17 @@
   --warning: #FF8C00;
   --warning-foreground: #FFFFFF;
 
+  /* Variantes escuras para TEXTO pequeno (contraste WCAG AA >= 4.5:1 sobre fundo claro) */
+  --success-strong: #15803D;
+  --warning-strong: #B45309;
+
   /* Medalhas de gamificação (ranking) */
   --medal-gold: #B8860B;
   --medal-silver: #6C757D;
   --medal-bronze: #A0522D;
   --medal-foreground: #FFFFFF;
 }
+
 
 .dark {
   --background: #0a1628;
@@ -111,6 +116,10 @@
   --medal-silver: #C0C0C0;
   --medal-bronze: #CD7F32;
   --medal-foreground: #1a2942;
+
+  /* Variantes de texto — tons mais claros para contraste no fundo escuro */
+  --success-strong: #4ADE80;
+  --warning-strong: #FBBF24;
 }
 
 @theme inline {
@@ -151,8 +160,10 @@
   --color-faesa-bg: var(--faesa-bg);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-success-strong: var(--success-strong);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-strong: var(--warning-strong);
   --color-medal-gold: var(--medal-gold);
   --color-medal-silver: var(--medal-silver);
   --color-medal-bronze: var(--medal-bronze);
