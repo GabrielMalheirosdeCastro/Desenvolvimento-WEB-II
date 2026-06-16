@@ -9,6 +9,27 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.22.0] - 2026-06-16
+
+### Added
+- Solicitação de mentoria funcional (RF12 / mentoria). Três novos endpoints
+  escopados ao próprio usuário (`mentorado_id = req.usuario.sub`, anti-IDOR),
+  persistindo na tabela `mentorias` já existente com `status = 'solicitada'`:
+  `GET /api/mentorias/minhas` (hidrata o estado dos botões),
+  `POST /api/mentorias/:mentorId/solicitar` (idempotente; valida que o mentor
+  existe, é `e_mentor` e é diferente do solicitante) e
+  `DELETE /api/mentorias/:mentorId/solicitar` (cancela, idempotente).
+- Na tela de Mentoria, o botão do card de mentor passou a ser reversível:
+  "Solicitar Mentoria" → após o envio exibe "Solicitação enviada" (verde) e,
+  ao passar o mouse/focar, troca para "Cancelar solicitação" (vermelho), com
+  `aria-label` para leitores de tela e estados "Enviando..."/"Cancelando...".
+
+### Fixed
+- Botão "Solicitar Mentoria (em breve)" estava permanentemente desabilitado
+  por ausência de back-end: não havia rota para registrar ou cancelar o pedido
+  de mentoria. Agora o fluxo é funcional e reversível, sem migração de schema
+  (reaproveita a tabela `mentorias` já presente em produção).
+
 ## [1.21.0] - 2026-06-16
 
 ### Added

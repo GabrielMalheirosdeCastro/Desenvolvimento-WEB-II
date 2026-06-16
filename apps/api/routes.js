@@ -364,6 +364,109 @@ apiRouter.post('/mentorias/cadastro-mentor', requireAuth, async (req, res) => {
     });
 });
 
+// --------------------------------------------------------------
+// SOLICITACAO DE MENTORIA (Sprint 8c — GP-1 / US04)
+// Persiste o pedido do aluno (mentorado) a um mentor na tabela
+// `mentorias` com status 'solicitada'. Escrita sempre escopada a
+// mentorado_id = req.usuario.sub (anti-IDOR): o aluno so cria/cancela
+// solicitacoes em que ele proprio e o mentorado. Idempotente.
+// --------------------------------------------------------------
+
+// GET /api/mentorias/minhas — mentores que o usuario ja solicitou.
+apiRouter.get('/mentorias/minhas', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', items: [] });
+    }
+    const rows = await query(
+        `SELECT mentor_id, status, data_inicio
+             FROM mentorias
+             WHERE mentorado_id = $1 AND status = 'solicitada'
+             ORDER BY data_inicio DESC NULLS LAST`,
+        [req.usuario.sub],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({
+        source: 'db',
+        items: rows.map((r) => ({
+            mentorId: r.mentor_id,
+            status: r.status,
+            dataInicio: r.data_inicio,
+        })),
+    });
+});
+
+// POST /api/mentorias/:mentorId/solicitar — solicita mentoria a um mentor.
+apiRouter.post('/mentorias/:mentorId/solicitar', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const mentorId = Number.parseInt(req.params.mentorId, 10);
+    if (Number.isNaN(mentorId) || mentorId <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    if (mentorId === Number(req.usuario.sub)) {
+        return res.status(400).json({ error: 'mentor_igual_solicitante' });
+    }
+
+    const mentor = await query(
+        `SELECT id FROM usuarios WHERE id = $1 AND e_mentor = TRUE LIMIT 1`,
+        [mentorId],
+    );
+    if (mentor === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (mentor.length === 0) {
+        return res.status(404).json({ error: 'mentor_nao_encontrado' });
+    }
+
+    // Idempotente: nao duplica solicitacao ativa do mesmo par mentor/mentorado.
+    const existe = await query(
+        `SELECT id FROM mentorias
+             WHERE mentor_id = $1 AND mentorado_id = $2 AND status = 'solicitada'
+             LIMIT 1`,
+        [mentorId, req.usuario.sub],
+    );
+    if (existe === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (existe.length === 0) {
+        const inserted = await query(
+            `INSERT INTO mentorias (mentor_id, mentorado_id, status, data_inicio)
+                 VALUES ($1, $2, 'solicitada', NOW())
+                 RETURNING id`,
+            [mentorId, req.usuario.sub],
+        );
+        if (inserted === null) {
+            return res.status(500).json({ error: 'falha_solicitacao' });
+        }
+    }
+    res.status(201).json({ source: 'db', mentorId, solicitado: true });
+});
+
+// DELETE /api/mentorias/:mentorId/solicitar — cancela a solicitacao.
+apiRouter.delete('/mentorias/:mentorId/solicitar', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const mentorId = Number.parseInt(req.params.mentorId, 10);
+    if (Number.isNaN(mentorId) || mentorId <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    const removed = await query(
+        `DELETE FROM mentorias
+             WHERE mentor_id = $1 AND mentorado_id = $2 AND status = 'solicitada'
+             RETURNING id`,
+        [mentorId, req.usuario.sub],
+    );
+    if (removed === null) {
+        return res.status(500).json({ error: 'falha_cancelamento' });
+    }
+    // removed.length === 0 => nao havia solicitacao (idempotente): sucesso.
+    res.json({ source: 'db', mentorId, solicitado: false });
+});
+
 // ==============================================================
 // AUTENTICACAO LOCAL (Bloco A — plano 2026-06-13)
 // --------------------------------------------------------------

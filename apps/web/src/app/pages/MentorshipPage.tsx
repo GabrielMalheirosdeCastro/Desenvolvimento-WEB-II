@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, MessageCircle, Calendar, Star, Search, CheckCircle2 } from "lucide-react";
+import { Users, MessageCircle, Calendar, Star, Search, CheckCircle2, XCircle } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
@@ -24,6 +24,11 @@ export function MentorshipPage() {
   const [mentores, setMentores] = useState<Mentor[]>([]);
   const [carregandoMentores, setCarregandoMentores] = useState(true);
   const [busca, setBusca] = useState("");
+
+  // Solicitacoes de mentoria do usuario logado (mentor_id ja solicitados).
+  const [solicitados, setSolicitados] = useState<Set<number>>(new Set());
+  const [enviandoSolic, setEnviandoSolic] = useState<number | null>(null);
+  const [avisoSolic, setAvisoSolic] = useState<string | null>(null);
 
   // Hidrata o estado inicial a partir da sessao (e_mentor do JWT).
   useEffect(() => {
@@ -66,6 +71,91 @@ export function MentorshipPage() {
       ativo = false;
     };
   }, []);
+
+  // Hidrata os botoes com as solicitacoes ja registradas pelo usuario.
+  useEffect(() => {
+    let ativo = true;
+    (async () => {
+      try {
+        const r = await fetch("/api/mentorias/minhas", {
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        });
+        if (!r.ok) return;
+        const j = await r.json();
+        if (!ativo) return;
+        const ids: number[] = Array.isArray(j?.items)
+          ? j.items
+              .map((i: { mentorId: number }) => Number(i.mentorId))
+              .filter((n: number) => Number.isFinite(n))
+          : [];
+        setSolicitados(new Set(ids));
+      } catch {
+        // Sem sessao ou banco indisponivel: mantem estado vazio.
+      }
+    })();
+    return () => {
+      ativo = false;
+    };
+  }, [usuario]);
+
+  async function solicitarMentoria(mentor: Mentor) {
+    const mid = Number(mentor.id);
+    if (!Number.isFinite(mid) || solicitados.has(mid) || enviandoSolic != null) return;
+    setEnviandoSolic(mid);
+    setAvisoSolic(null);
+    try {
+      const r = await fetch(`/api/mentorias/${mid}/solicitar`, {
+        method: "POST",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      });
+      if (r.status === 401) {
+        setAvisoSolic("Entre na sua conta para solicitar mentoria.");
+        return;
+      }
+      if (!r.ok) {
+        setAvisoSolic("Nao foi possivel enviar a solicitacao. Tente novamente.");
+        return;
+      }
+      setSolicitados((atual) => new Set(atual).add(mid));
+    } catch {
+      setAvisoSolic("Falha de conexao ao solicitar mentoria.");
+    } finally {
+      setEnviandoSolic(null);
+    }
+  }
+
+  async function cancelarSolicitacao(mentor: Mentor) {
+    const mid = Number(mentor.id);
+    if (!Number.isFinite(mid) || !solicitados.has(mid) || enviandoSolic != null) return;
+    setEnviandoSolic(mid);
+    setAvisoSolic(null);
+    try {
+      const r = await fetch(`/api/mentorias/${mid}/solicitar`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      });
+      if (r.status === 401) {
+        setAvisoSolic("Entre na sua conta para gerenciar suas solicitacoes.");
+        return;
+      }
+      if (!r.ok) {
+        setAvisoSolic("Nao foi possivel cancelar a solicitacao. Tente novamente.");
+        return;
+      }
+      setSolicitados((atual) => {
+        const novo = new Set(atual);
+        novo.delete(mid);
+        return novo;
+      });
+    } catch {
+      setAvisoSolic("Falha de conexao ao cancelar a solicitacao.");
+    } finally {
+      setEnviandoSolic(null);
+    }
+  }
 
   async function cadastrarComoMentor() {
     setEnviandoCadastro(true);
@@ -242,6 +332,12 @@ export function MentorshipPage() {
           </div>
         </div>
 
+        {avisoSolic && (
+          <p className="mb-4 text-sm text-destructive" role="alert">
+            {avisoSolic}
+          </p>
+        )}
+
         {carregandoMentores ? (
           <p className="text-muted-foreground">Carregando mentores...</p>
         ) : mentoresFiltrados.length === 0 ? (
@@ -284,14 +380,47 @@ export function MentorshipPage() {
                 </div>
               )}
 
-              <button
-                type="button"
-                disabled
-                title="Solicitacao de mentoria em breve"
-                className="w-full bg-muted text-muted-foreground py-2 rounded-lg cursor-not-allowed"
-              >
-                Solicitar Mentoria (em breve)
-              </button>
+              {(() => {
+                const mid = Number(mentor.id);
+                const solicitado = Number.isFinite(mid) && solicitados.has(mid);
+                const enviando = enviandoSolic === mid;
+                return (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      solicitado ? cancelarSolicitacao(mentor) : solicitarMentoria(mentor)
+                    }
+                    disabled={enviando}
+                    aria-label={
+                      solicitado
+                        ? `Cancelar solicitacao de mentoria com ${mentor.nome}`
+                        : `Solicitar mentoria com ${mentor.nome}`
+                    }
+                    className={`group w-full py-2 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-60 ${
+                      solicitado
+                        ? "bg-success/10 text-success border border-success/30 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                        : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                    }`}
+                  >
+                    {enviando ? (
+                      solicitado ? (
+                        "Cancelando..."
+                      ) : (
+                        "Enviando..."
+                      )
+                    ) : solicitado ? (
+                      <>
+                        <CheckCircle2 size={16} className="group-hover:hidden" />
+                        <span className="group-hover:hidden">Solicitacao enviada</span>
+                        <XCircle size={16} className="hidden group-hover:inline" />
+                        <span className="hidden group-hover:inline">Cancelar solicitacao</span>
+                      </>
+                    ) : (
+                      "Solicitar Mentoria"
+                    )}
+                  </button>
+                );
+              })()}
             </div>
           ))}
         </div>
