@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
+  PlayCircle,
 } from "lucide-react";
 
 type Recurso = {
@@ -44,6 +45,21 @@ function estiloRecurso(tipo?: string | null): { icon: typeof FileText; color: st
   return ICONE_POR_TIPO[chave] ?? { icon: FileText, color: "blue" };
 }
 
+// Chave de persistencia local das trilhas iniciadas pelo usuario. Como ainda
+// nao ha backend de progresso de trilha, o estado "iniciada" e mantido no
+// localStorage e e totalmente reversivel (cancelar inscricao).
+const STORAGE_TRILHAS = "biblioteca:trilhas-iniciadas";
+
+function carregarTrilhasIniciadas(): Set<number> {
+  try {
+    const bruto = localStorage.getItem(STORAGE_TRILHAS);
+    const lista = bruto ? JSON.parse(bruto) : [];
+    return new Set(Array.isArray(lista) ? lista.filter((n) => typeof n === "number") : []);
+  } catch {
+    return new Set();
+  }
+}
+
 export function LibraryPage() {
   const [recursos, setRecursos] = useState<Recurso[]>([]);
   const [trilhas, setTrilhas] = useState<Trilha[]>([]);
@@ -53,6 +69,12 @@ export function LibraryPage() {
   const [confirmandoId, setConfirmandoId] = useState<number | null>(null);
   // Id do recurso cujo acesso esta sendo registrado (evita clique duplo).
   const [acessandoId, setAcessandoId] = useState<number | null>(null);
+  // Id da trilha aguardando confirmacao de inicio (fluxo reversivel).
+  const [confirmandoTrilhaId, setConfirmandoTrilhaId] = useState<number | null>(null);
+  // Trilhas ja iniciadas pelo usuario (persistidas localmente).
+  const [trilhasIniciadas, setTrilhasIniciadas] = useState<Set<number>>(
+    () => carregarTrilhasIniciadas(),
+  );
 
   useEffect(() => {
     fetch("/api/recursos")
@@ -64,6 +86,34 @@ export function LibraryPage() {
       .then((j) => setTrilhas(Array.isArray(j?.items) ? j.items : []))
       .catch(() => setTrilhas([]));
   }, []);
+
+  // Persiste as trilhas iniciadas a cada mudanca (reversivel).
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_TRILHAS, JSON.stringify([...trilhasIniciadas]));
+    } catch {
+      // armazenamento indisponivel: estado segue apenas em memoria.
+    }
+  }, [trilhasIniciadas]);
+
+  function confirmarInicioTrilha(trilha: Trilha) {
+    setTrilhasIniciadas((atual) => {
+      const proximo = new Set(atual);
+      proximo.add(trilha.id);
+      return proximo;
+    });
+    setConfirmandoTrilhaId(null);
+    setAviso(`Trilha "${trilha.nome}" iniciada. Acompanhe os recursos abaixo.`);
+  }
+
+  function cancelarInscricaoTrilha(trilha: Trilha) {
+    setTrilhasIniciadas((atual) => {
+      const proximo = new Set(atual);
+      proximo.delete(trilha.id);
+      return proximo;
+    });
+    setAviso(`Inscricao na trilha "${trilha.nome}" cancelada.`);
+  }
 
   async function acessarRecurso(recurso: Recurso) {
     setAviso(null);
@@ -166,14 +216,56 @@ export function LibraryPage() {
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p>{trilha.totalRecursos} recursos</p>
                 </div>
-                <button
-                  type="button"
-                  disabled
-                  title="Acompanhamento de trilha em breve"
-                  className="mt-4 w-full bg-muted text-muted-foreground py-2 rounded-lg cursor-not-allowed"
-                >
-                  Iniciar Trilha (em breve)
-                </button>
+                {trilhasIniciadas.has(trilha.id) ? (
+                  <div className="mt-4 space-y-2">
+                    <p className="flex items-center justify-center gap-2 text-sm text-success">
+                      <CheckCircle2 size={16} />
+                      Trilha iniciada
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => cancelarInscricaoTrilha(trilha)}
+                      className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-destructive/40 text-destructive hover:bg-destructive/5 transition-colors"
+                      aria-label={`Cancelar inscrição na trilha ${trilha.nome}`}
+                    >
+                      <XCircle size={18} />
+                      Cancelar inscrição
+                    </button>
+                  </div>
+                ) : confirmandoTrilhaId === trilha.id ? (
+                  <div className="mt-4 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => confirmarInicioTrilha(trilha)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                      aria-label={`Confirmar início da trilha ${trilha.nome}`}
+                    >
+                      <CheckCircle2 size={18} />
+                      Confirmar início
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmandoTrilhaId(null)}
+                      className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-destructive/40 text-destructive hover:bg-destructive/5 transition-colors"
+                      aria-label={`Cancelar início da trilha ${trilha.nome}`}
+                    >
+                      <XCircle size={18} />
+                      Cancelar
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAviso(null);
+                      setConfirmandoTrilhaId(trilha.id);
+                    }}
+                    className="mt-4 w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary/90 transition-colors"
+                  >
+                    <PlayCircle size={18} />
+                    Iniciar Trilha
+                  </button>
+                )}
               </div>
             ))}
           </div>

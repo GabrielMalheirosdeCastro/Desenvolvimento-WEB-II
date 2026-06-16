@@ -9,6 +9,20 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.28.0] - 2026-06-16
+
+### Changed
+- Botões das "Trilhas de Aprendizagem" na Biblioteca ganharam confirmação
+  reversível, alinhados ao padrão dos recursos. O botão antes desabilitado
+  "Iniciar Trilha (em breve)" virou "Iniciar Trilha": ao clicar, o card exibe
+  "Confirmar início" e "Cancelar". Após confirmar, a trilha mostra o selo
+  "Trilha iniciada" e um botão "Cancelar inscrição" que reverte o início.
+
+### Added
+- Estado de trilha iniciada persistido localmente (`localStorage`), totalmente
+  reversível. Como ainda não há backend de progresso de trilha, o início fica
+  registrado apenas no navegador do usuário, sem nova rota nem migração.
+
 ## [1.27.0] - 2026-06-16
 
 ### Changed
