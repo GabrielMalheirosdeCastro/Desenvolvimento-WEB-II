@@ -4,8 +4,8 @@
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
 **Data:** 2026-06-14
-**Versão atual em produção:** v1.17.0 (Chat com o NAP — RF15/B3 · polling HTTP · encerra o último RF em aberto; todos os 16 RFs concluídos)
-**Próximas versões planejadas:** Bloco D restante (D2 acessibilidade · D5 performance · D7 LGPD) · Bloco G (documentação/entrega)
+**Versão atual em produção:** v1.30.0 (todos os 16 RFs concluídos · refinamentos de UX, modo escuro completo, i18n incremental e interatividade total das telas — Mentoria, Eventos, Biblioteca, Trilhas, Acolhimento/chatbot e Fórum)
+**Próximas versões planejadas:** Bloco D restante (D2 auditoria WCAG AA · D4 monitoria · D6 escalabilidade) · Bloco G (documentação/entrega acadêmica)
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -126,6 +126,45 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > Lucas · Beatriz). Com isso o **Bloco B** fica reduzido a **um único item em aberto: B3 / RF15**
 > (chat com suporte psicopedagógico).
 
+> **Atualização 2026-06-15/16 — fechamento dos RFs e ciclo de refinamento (v1.13.0 → v1.30.0).**
+> Após os 16 RFs concluídos, o trabalho passou para **endurecimento (Bloco D/E)** e **refinamento de
+> UX** com uma série de MINORs atômicos, todos publicados e validados em produção (`/version` +
+> `/healthz`):
+>
+> - **v1.13.0** — Segurança (D1): `helmet` + CSP, `express-rate-limit`, `trust proxy`; Playwright
+>   (E3/E4) e gate de CI (E5).
+> - **v1.14.0** — Performance (D5, code-splitting), LGPD (D7, exportação/exclusão) e baseline de
+>   acessibilidade (D2: `lang`, skip-link, landmark, `aria-label`).
+> - **v1.15.0** — Testes formais Vitest + supertest (D3/E1/E2); cobertura ~97% da lógica de API.
+> - **v1.16.0** — Núcleo i18n PT-BR/EN-US + seletor de idioma (D8/H10) — **encerra o Bloco H**.
+> - **v1.17.0** — Chat com o NAP (B3/RF15) — **encerra o Bloco B e todos os 16 RFs**.
+> - **v1.18.0** — **Modo escuro completo + design tokens semânticos** (H9/D2): encerrado o débito
+>   visual do dark mode; todas as telas passam a responder ao tema. Suíte sobe para **71 testes**.
+> - **v1.19.0 / v1.20.0** — Extração i18n incremental do `DashboardHome` e do `StudyPlanPage`
+>   (namespaces `home` e `estudos`, paridade de chaves validada por teste).
+> - **v1.20.1** — Correção visual: logo "F" das telas de Login/Ativar deixa de ser texto selecionável.
+> - **v1.21.0** — Cancelamento de inscrição em eventos (`DELETE /api/eventos/:id/inscrever`), botão
+>   reversível.
+> - **v1.22.0** — Solicitação de mentoria funcional e reversível (`/api/mentorias/*/solicitar`).
+> - **v1.23.0** — Agendamento real de sessões de mentoria (`/api/mentorias/sessoes`), substituindo o
+>   mock fixo.
+> - **v1.24.0** — Identificação legível do papel do mentor (selo Aluno(a)/Professor(a)/Coordenação).
+> - **v1.25.0** — Opção de deixar de ser mentor (`DELETE /api/mentorias/cadastro-mentor`).
+> - **v1.26.0** — Reconhecimento do nome na ativação de conta (`POST /api/auth/ativar` retorna o
+>   `nome`).
+> - **v1.27.0** — Botões da Biblioteca com confirmação reversível ("Confirmar acesso"/"Cancelar").
+> - **v1.28.0** — Mesmo padrão reversível nas "Trilhas de Aprendizagem" (estado em `localStorage`).
+> - **v1.29.0** — Acolhimento (chatbot): **nova conversa** + **histórico de conversas**
+>   (`GET /api/chatbot/conversas`, `?conversaId=` em `/historico`).
+> - **v1.30.0** — Fórum interativo: botão **"Entrar"** no tópico, **"Pedir informações sobre a
+>   matéria"** com confirmação reversível e **categorias como filtro funcional**
+>   (`GET/POST /api/forum/:id/posts`).
+>
+> Todas as entregas acima reutilizam tabelas já existentes (**sem migração**), seguem o padrão
+> anti-IDOR (escopo por `req.usuario.sub`) e mantêm a suíte de testes verde (**71 testes**, cobertura
+> 97,5%). O foco remanescente é **qualidade (D2 auditoria AA, D4 monitoria, D6 escalabilidade)** e o
+> **fechamento acadêmico (Bloco G)**.
+
 ### Legenda
 
 | Marcador | Significado |
@@ -218,7 +257,7 @@ nome correto. **✅ Atingido.**
 | # | Pendência | RNF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
 | D1 | **Segurança** — proteção XSS/CSRF, headers de segurança, TLS 1.3, rate limiting. **Entregue na v1.13.0:** `helmet` (headers + CSP compatível com a SPA) + `express-rate-limit` (auth 20/min, geral 200/min, `429` JSON) + `trust proxy` para IP real atrás do Traefik | RNF03 | 🔴 | M | ✅ |
-| D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado). **Baseline na v1.14.0:** `lang="pt-BR"`, skip-link, landmark `<main>`, `aria-label` nas navegações e fallback de `Suspense` acessível. **Falta:** auditoria de contraste AA + dark mode por tokens (axe/Lighthouse via Playwright MCP na estação) | RNF04 | 🟡 | M | 🟨 |
+| D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado). **Baseline na v1.14.0:** `lang="pt-BR"`, skip-link, landmark `<main>`, `aria-label` nas navegações e fallback de `Suspense` acessível. **Dark mode por tokens concluído na v1.18.0:** todas as telas migradas para design tokens semânticos, tema claro/escuro/automático aplicado por completo. **Falta:** auditoria formal de contraste AA (axe/Lighthouse via Playwright MCP na estação) | RNF04 | 🟡 | M | 🟨 |
 | D3 | **Cobertura de testes ≥ 80%** — suíte automatizada. **Entregue na v1.14.0... v1.15.0:** Vitest (unit auth/chatbot) + supertest (integração do `apiRouter` em fallback). Cobertura **97,46%** em `auth.js`+`chatbot.js`; gate de 80% no CI. **Falta:** cobrir handlers de `routes.js` que dependem do banco (exige Postgres de teste efêmero) | RNF08 | 🟡 | G | 🟨 |
 | D4 | **Disponibilidade / monitoria 24/7** — uptime ≥ 99,5% com alertas | RNF05 | 🟡 | M | ⬜ |
 | D5 | **Performance** — carregamento ≤ 3s em 3G (otimização de bundle, lazy loading). **Entregue na v1.14.0:** `React.lazy` por rota do dashboard + `manualChunks` (recharts/d3 e radix isolados). Bundle inicial 741,62 kB → **132,34 kB** (gzip 210→41 kB) | RNF02 | 🟡 | M | ✅ |
@@ -333,24 +372,27 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 
 ---
 
-## 11. Checkpoint de Encerramento — 2026-06-15 (v1.17.0)
+## 11. Checkpoint de Encerramento — 2026-06-16 (v1.30.0)
 
 | Item | Estado |
 |---|---|
-| Versão em produção | **v1.17.0** (`/version` e `/healthz` confirmados) |
+| Versão em produção | **v1.30.0** (`/version` e `/healthz` confirmados) |
 | `git HEAD` | atualizado em `origin/master`, working tree limpo |
-| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida (1.17.0) |
+| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida (1.30.0) |
 | Segurança ativa em prod | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy |
-| Testes | `npm test` verde (65 testes, cobertura 97,5% auth+chatbot); Playwright só na estação |
+| Testes | `npm test` verde (71 testes, cobertura 97,5% auth+chatbot); Playwright só na estação |
 | Chat NAP (RF15) | tela `/dashboard/chat-nap` + endpoints `/api/chat/*` (polling HTTP, anti-IDOR, crise → CVV 188) |
+| Refinamentos pós-RF (v1.18.0→v1.30.0) | dark mode completo (D2), i18n incremental (D8), interatividade total: Eventos, Mentoria, Biblioteca, Trilhas, Acolhimento/chatbot e Fórum — tudo sem migração e anti-IDOR |
 
 **Requisitos funcionais:** **todos os 16 RFs concluídos** — o último em aberto (B3/RF15, chat com o
 NAP) foi entregue na v1.17.0.
 
-**RNFs em aberto:** D2 (acessibilidade — baseline na v1.14.0; falta auditoria AA + dark mode),
-D4 (monitoria 24/7), D6 (escalabilidade). **Concluído na v1.16.0:** D8 (i18n) + H10 (idioma) —
-infra i18n + seletor PT-BR/EN-US funcional; resta apenas extrair os textos internos de cada tela
-(fallback pt-BR). Com H10, o **Bloco H** está 100% encerrado.
+**RNFs em aberto:** D2 (acessibilidade — baseline na v1.14.0 + **dark mode por tokens concluído na
+v1.18.0**; falta apenas a auditoria formal de contraste AA), D4 (monitoria 24/7), D6 (escalabilidade).
+**Concluído na v1.16.0 e estendido (v1.19.0/v1.20.0):** D8 (i18n) + H10 (idioma) — infra i18n +
+seletor PT-BR/EN-US funcional, com extração incremental já aplicada ao `DashboardHome` e ao
+`StudyPlanPage`; resta extrair os textos internos das demais telas (fallback pt-BR). Com H10, o
+**Bloco H** está 100% encerrado.
 **Concluído/parcial na v1.15.0:** D3/E1/E2 (testes Vitest+supertest, cobertura 97% da lógica de API;
 falta integração com banco real).
 **Concluídos na v1.14.0:** D5 (performance — code-splitting) e D7 (LGPD — exportação/exclusão).

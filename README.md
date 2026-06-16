@@ -30,7 +30,7 @@ O **Site de Acolhimento FAESA** é uma plataforma web responsiva que centraliza 
 
 | ID | Funcionalidade | Prioridade |
 |---|---|---|
-| RF01 | Cadastro e Login (SSO institucional) | Alta |
+| RF01 | Cadastro e Login (autenticação local: e-mail + senha, `bcrypt`/`JWT` — SSO institucional descartado por falta de autorização) | Alta |
 | RF02 | Plano de Estudos Personalizado | Alta |
 | RF03 | Cronograma Interativo (drag-and-drop) | Alta |
 | RF04 | Exercícios de Concentração (Pomodoro, mindfulness) | Alta |
@@ -118,7 +118,7 @@ A plataforma segue uma arquitetura em 4 camadas:
 | **Orquestrador** | Docker 29.4.1 + Swarm + EasyPanel |
 | **Reverse proxy** | Traefik 3.6.7 (gerenciado pelo EasyPanel) com Let's Encrypt automático |
 | **Banco de dados** | Supabase self-hosted (PostgreSQL 17.6) — **mesma VPS** |
-| **Build** | Dockerfile (multi-stage, `node:20-alpine`, usuário não-root) |
+| **Build** | Dockerfile (single-stage, `node:20-alpine`, usuário não-root; `apps/web/dist/` pré-buildado e versionado) |
 | **Gatilho de deploy** | Webhook do EasyPanel (segredo `EASYPANEL_DEPLOY_WEBHOOK`) |
 | **GitHub Action** | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) — dispara em `push` para `master` |
 
@@ -126,9 +126,10 @@ A plataforma segue uma arquitetura em 4 camadas:
 > estação de trabalho Windows 11). O acesso de desenvolvimento ocorre via **túnel SSH** —
 > ver [docs/setup-desenvolvimento-windows.md](docs/setup-desenvolvimento-windows.md).
 >
-> **Status (2026-06-13):** banco de produção populado com a persona real (Gabriel,
+> **Status (2026-06-16):** banco de produção populado com a persona real (Gabriel,
 > matrícula `23110145`). Todos os endpoints `/api/*` respondem `"source": "db"` — o fallback
-> estático deixou de ser exercido em produção. Versão publicada: **v1.3.2**.
+> estático deixou de ser exercido em produção. Versão publicada: **v1.30.0** (todos os 16 RFs
+> concluídos; ciclo de refinamento de UX, modo escuro completo e i18n incremental).
 
 ---
 
@@ -183,12 +184,15 @@ EasyPanel. Existem **cinco formas** de disparar o redeploy (todas levam ao mesmo
 
 ### Estado atual do deploy
 
-> A versão atual (`v1.3.0`) é um **monorepo** composto por uma **SPA React** (`apps/web`)
+> A versão atual (**v1.30.0**) é um **monorepo** composto por uma **SPA React** (`apps/web`)
 > servida por um **backend Express** (`apps/api`) que expõe uma **API REST** documentada na
-> seção [🔌 API REST](#-api-rest). O backend é **resiliente**: quando a variável `DATABASE_URL`
-> está ausente (ex.: estação de desenvolvimento Windows sem Postgres local), os endpoints
-> respondem com dados estáticos de fallback, permitindo demonstrar a aplicação sem o banco.
-> O pipeline GitHub → EasyPanel → Traefik → HTTPS permanece validado por `/healthz` e `/version`.
+> seção [🔌 API REST](#-api-rest). Todos os **16 RFs estão concluídos** (autenticação local real,
+> Plano de Estudos, Bem-estar, Mentoria, Fórum, Biblioteca, Trilhas, Eventos, Notificações,
+> Gamificação, Chatbot de Acolhimento, Chat com o NAP e Painel de Coordenação). O backend é
+> **resiliente**: quando a variável `DATABASE_URL` está ausente (ex.: estação de desenvolvimento
+> Windows sem Postgres local), os endpoints respondem com dados estáticos de fallback, permitindo
+> demonstrar a aplicação sem o banco. O pipeline GitHub → EasyPanel → Traefik → HTTPS permanece
+> validado por `/healthz` e `/version`.
 
 ---
 
