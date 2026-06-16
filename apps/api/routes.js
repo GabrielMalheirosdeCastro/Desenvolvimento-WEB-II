@@ -1689,13 +1689,24 @@ apiRouter.get('/chatbot/historico', requireAuth, async (req, res) => {
     }
     const usuarioId = req.usuario.sub;
 
-    const conversa = await query(
-        `SELECT id FROM chatbot_conversas
-             WHERE usuario_id = $1
-             ORDER BY iniciou_em DESC NULLS LAST, id DESC
-             LIMIT 1`,
-        [usuarioId],
-    );
+    // conversaId opcional: carrega uma conversa especifica do proprio usuario
+    // (anti-IDOR via usuario_id = $2). Sem ele, retorna a conversa mais recente.
+    const idSolicitado = Number.parseInt(req.query?.conversaId, 10);
+    const conversa =
+        Number.isInteger(idSolicitado) && idSolicitado > 0
+            ? await query(
+                  `SELECT id FROM chatbot_conversas
+                       WHERE id = $1 AND usuario_id = $2
+                       LIMIT 1`,
+                  [idSolicitado, usuarioId],
+              )
+            : await query(
+                  `SELECT id FROM chatbot_conversas
+                       WHERE usuario_id = $1
+                       ORDER BY iniciou_em DESC NULLS LAST, id DESC
+                       LIMIT 1`,
+                  [usuarioId],
+              );
     if (!conversa || conversa.length === 0) {
         return res.json({ source: 'db', conversaId: null, mensagens: [] });
     }
@@ -1713,6 +1724,43 @@ apiRouter.get('/chatbot/historico', requireAuth, async (req, res) => {
         return res.status(500).json({ error: 'falha_consulta' });
     }
     res.json({ source: 'db', conversaId, mensagens: rows.map(mapChatbotMensagem) });
+});
+
+// --------------------------------------------------------------
+// GET /api/chatbot/conversas — lista as conversas do usuario logado
+// (escopado a usuario_id = sub), com previa da primeira mensagem e total.
+// --------------------------------------------------------------
+apiRouter.get('/chatbot/conversas', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', items: [] });
+    }
+    const usuarioId = req.usuario.sub;
+    const rows = await query(
+        `SELECT c.id, c.iniciou_em, c.status,
+                (SELECT m.conteudo FROM chatbot_mensagens m
+                     WHERE m.conversa_id = c.id AND m.origem = 'usuario'
+                     ORDER BY m.id ASC LIMIT 1) AS previa,
+                (SELECT COUNT(*) FROM chatbot_mensagens m
+                     WHERE m.conversa_id = c.id) AS total
+             FROM chatbot_conversas c
+             WHERE c.usuario_id = $1
+             ORDER BY c.iniciou_em DESC NULLS LAST, c.id DESC
+             LIMIT 30`,
+        [usuarioId],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({
+        source: 'db',
+        items: rows.map((r) => ({
+            id: r.id,
+            iniciouEm: r.iniciou_em,
+            status: r.status,
+            previa: r.previa ?? null,
+            totalMensagens: Number(r.total) || 0,
+        })),
+    });
 });
 
 // ==============================================================

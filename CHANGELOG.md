@@ -9,6 +9,22 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.29.0] - 2026-06-16
+
+### Added
+- Tela "Acolhimento" (chatbot) agora permite **iniciar uma nova conversa** e
+  consultar o **histórico de conversas**. Botão "Nova conversa" limpa a janela e
+  zera o `conversaId` — a próxima mensagem cria automaticamente uma nova conversa
+  no backend. Botão "Histórico" abre um painel com as conversas anteriores
+  (prévia da primeira mensagem, data e total de mensagens); ao selecionar uma, a
+  janela é hidratada com aquele histórico.
+- Endpoint `GET /api/chatbot/conversas` (`requireAuth`, escopado a
+  `usuario_id = sub`, anti-IDOR) que lista as conversas do usuário com prévia e
+  contagem. O `GET /api/chatbot/historico` passou a aceitar o parâmetro opcional
+  `?conversaId=` para carregar uma conversa específica do próprio usuário
+  (retrocompatível: sem o parâmetro, retorna a conversa mais recente). Ambos
+  reutilizam `chatbot_conversas`/`chatbot_mensagens`, sem migração.
+
 ## [1.28.0] - 2026-06-16
 
 ### Changed

@@ -1,4 +1,13 @@
-import { Bot, Loader2, Send, ShieldAlert, User as UserIcon } from "lucide-react";
+import {
+  Bot,
+  Loader2,
+  Send,
+  ShieldAlert,
+  User as UserIcon,
+  Plus,
+  History,
+  MessageSquare,
+} from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
 // --------------------------------------------------------------
@@ -19,6 +28,14 @@ type Mensagem = {
   crise?: boolean;
 };
 
+type Conversa = {
+  id: number;
+  iniciouEm?: string | null;
+  status?: string | null;
+  previa?: string | null;
+  totalMensagens: number;
+};
+
 const FAIXAS: { valor: string; rotulo: string }[] = [
   { valor: "", rotulo: "Automática (pelo cadastro)" },
   { valor: "17-20", rotulo: "17 a 20 anos" },
@@ -35,6 +52,19 @@ const MENSAGEM_BOAS_VINDAS: Mensagem = {
     "sentindo hoje?",
 };
 
+/** Formata a data de inicio da conversa de forma compacta (pt-BR). */
+function formatarData(valor?: string | null): string {
+  if (!valor) return "Conversa";
+  const d = new Date(valor);
+  if (Number.isNaN(d.getTime())) return "Conversa";
+  return d.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function ChatbotPage() {
   const [mensagens, setMensagens] = useState<Mensagem[]>([MENSAGEM_BOAS_VINDAS]);
   const [entrada, setEntrada] = useState("");
@@ -43,6 +73,9 @@ export function ChatbotPage() {
   const [enviando, setEnviando] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [conversas, setConversas] = useState<Conversa[]>([]);
+  const [mostrarHistorico, setMostrarHistorico] = useState(false);
+  const [carregandoConversas, setCarregandoConversas] = useState(false);
 
   const fimRef = useRef<HTMLDivElement | null>(null);
 
@@ -88,7 +121,6 @@ export function ChatbotPage() {
     e.preventDefault();
     const texto = entrada.trim();
     if (!texto || enviando) return;
-
     setErro(null);
     setEnviando(true);
     const minhaMsg: Mensagem = {
@@ -128,22 +160,158 @@ export function ChatbotPage() {
     }
   }
 
+  // Inicia uma conversa nova: limpa a janela e zera o conversaId. A proxima
+  // mensagem cria automaticamente uma nova conversa no backend.
+  function novaConversa() {
+    if (enviando) return;
+    setMensagens([MENSAGEM_BOAS_VINDAS]);
+    setConversaId(null);
+    setEntrada("");
+    setErro(null);
+    setMostrarHistorico(false);
+  }
+
+  // Carrega a lista de conversas anteriores do usuario (GET /conversas).
+  async function carregarConversas() {
+    setCarregandoConversas(true);
+    try {
+      const res = await fetch("/api/chatbot/conversas", { credentials: "include" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setConversas(Array.isArray(json.items) ? json.items : []);
+    } catch {
+      setConversas([]);
+    } finally {
+      setCarregandoConversas(false);
+    }
+  }
+
+  // Alterna o painel de historico, recarregando a lista ao abrir.
+  function alternarHistorico() {
+    const abrindo = !mostrarHistorico;
+    setMostrarHistorico(abrindo);
+    if (abrindo) void carregarConversas();
+  }
+
+  // Abre uma conversa anterior, hidratando suas mensagens.
+  async function abrirConversa(id: number) {
+    if (enviando) return;
+    setErro(null);
+    setCarregando(true);
+    setMostrarHistorico(false);
+    try {
+      const res = await fetch(`/api/chatbot/historico?conversaId=${id}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      const itens: Mensagem[] = Array.isArray(json.mensagens)
+        ? json.mensagens.map((m: Record<string, unknown>) => ({
+            id: m.id as number,
+            origem: (m.origem as Origem) ?? "bot",
+            conteudo: String(m.conteudo ?? ""),
+            intencao: (m.intencao as string) ?? null,
+            crise: m.sentimento === "critico",
+          }))
+        : [];
+      setMensagens(itens.length > 0 ? itens : [MENSAGEM_BOAS_VINDAS]);
+      setConversaId(typeof json.conversaId === "number" ? json.conversaId : id);
+    } catch {
+      setErro("Não foi possível abrir esta conversa. Tente novamente.");
+    } finally {
+      setCarregando(false);
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-8rem)]">
       {/* Cabeçalho */}
       <div className="mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-            <Bot size={22} />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+              <Bot size={22} />
+            </div>
+            <div>
+              <h1 className="text-2xl text-foreground">Acolhimento FAESA</h1>
+              <p className="text-sm text-muted-foreground">
+                Assistente de apoio estudantil — respostas adaptadas à sua faixa etária
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl text-foreground">Acolhimento FAESA</h1>
-            <p className="text-sm text-muted-foreground">
-              Assistente de apoio estudantil — respostas adaptadas à sua faixa etária
-            </p>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={alternarHistorico}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                mostrarHistorico
+                  ? "border-primary bg-primary/5 text-primary"
+                  : "border-border text-foreground hover:bg-muted"
+              }`}
+              aria-pressed={mostrarHistorico}
+              aria-label="Histórico de conversas"
+            >
+              <History size={18} />
+              <span className="hidden sm:inline">Histórico</span>
+            </button>
+            <button
+              type="button"
+              onClick={novaConversa}
+              disabled={enviando}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+              aria-label="Iniciar nova conversa"
+            >
+              <Plus size={18} />
+              <span className="hidden sm:inline">Nova conversa</span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Painel de histórico de conversas */}
+      {mostrarHistorico && (
+        <div className="mb-3 bg-card rounded-xl border border-border p-3">
+          <div className="flex items-center gap-2 mb-2 text-sm text-muted-foreground">
+            <History size={16} />
+            Conversas anteriores
+          </div>
+          {carregandoConversas ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+              <Loader2 className="animate-spin" size={16} /> Carregando conversas...
+            </div>
+          ) : conversas.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-2">
+              Você ainda não tem conversas anteriores. Comece a conversar abaixo.
+            </p>
+          ) : (
+            <ul className="space-y-1 max-h-60 overflow-y-auto">
+              {conversas.map((c) => (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    onClick={() => abrirConversa(c.id)}
+                    className={`w-full text-left flex items-start gap-3 px-3 py-2 rounded-lg border transition-colors ${
+                      c.id === conversaId
+                        ? "border-primary bg-primary/5"
+                        : "border-transparent hover:bg-muted"
+                    }`}
+                  >
+                    <MessageSquare size={16} className="text-primary mt-0.5 shrink-0" />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm text-foreground truncate">
+                        {c.previa?.trim() || "Conversa sem mensagens"}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {formatarData(c.iniciouEm)} · {c.totalMensagens} mensagens
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       {/* Seletor de faixa etária */}
       <div className="mb-3 flex items-center gap-2 text-sm">
