@@ -1,6 +1,6 @@
 {
   "name": "site-acolhimento-faesa",
-  "version": "1.20.1",
+  "version": "1.21.0",
   "private": true,
   "type": "module",
   "description": "Site de Acolhimento FAESA — monorepo (apps/web SPA + apps/api Express + packages/db Prisma).",

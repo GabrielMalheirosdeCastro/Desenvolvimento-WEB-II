@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Calendar, MapPin, Users, CheckCircle2 } from "lucide-react";
+import { Calendar, MapPin, Users, CheckCircle2, XCircle } from "lucide-react";
 
 // Tela dedicada de Eventos (RF12 / B6). Antes os eventos ficavam misturados
 // numa aba da Biblioteca; agora tem pagina propria com inscricao real.
@@ -85,6 +85,35 @@ export function EventsPage() {
     }
   }
 
+  async function cancelar(evento: Evento) {
+    if (!inscritos.has(evento.id) || enviando != null) return;
+    setEnviando(evento.id);
+    setAviso(null);
+    try {
+      const res = await fetch(`/api/eventos/${evento.id}/inscrever`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (res.status === 401) {
+        setAviso("Entre na sua conta para gerenciar suas inscrições.");
+        return;
+      }
+      if (!res.ok) {
+        setAviso("Não foi possível cancelar a inscrição. Tente novamente.");
+        return;
+      }
+      setInscritos((atual) => {
+        const novo = new Set(atual);
+        novo.delete(evento.id);
+        return novo;
+      });
+    } catch {
+      setAviso("Falha de conexão ao cancelar a inscrição.");
+    } finally {
+      setEnviando(null);
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
@@ -147,20 +176,34 @@ export function EventsPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => inscrever(ev)}
-                    disabled={inscrito || enviando === ev.id}
-                    className={`mt-auto w-full py-2 rounded-lg transition-colors ${
+                    onClick={() => (inscrito ? cancelar(ev) : inscrever(ev))}
+                    disabled={enviando === ev.id}
+                    aria-label={
                       inscrito
-                        ? "bg-success/10 text-success border border-success/30 cursor-default flex items-center justify-center gap-2"
-                        : "bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-60"
+                        ? `Cancelar inscrição em ${ev.titulo}`
+                        : `Inscrever-se em ${ev.titulo}`
+                    }
+                    className={`group mt-auto w-full py-2 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-60 ${
+                      inscrito
+                        ? "bg-success/10 text-success border border-success/30 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                        : "bg-primary hover:bg-primary/90 text-primary-foreground"
                     }`}
                   >
-                    {inscrito ? (
+                    {enviando === ev.id ? (
+                      inscrito ? (
+                        "Cancelando..."
+                      ) : (
+                        "Inscrevendo..."
+                      )
+                    ) : inscrito ? (
                       <>
-                        <CheckCircle2 size={16} /> Inscrito
+                        <CheckCircle2 size={16} className="group-hover:hidden" />
+                        <span className="group-hover:hidden">Inscrito</span>
+                        <XCircle size={16} className="hidden group-hover:inline" />
+                        <span className="hidden group-hover:inline">
+                          Cancelar inscrição
+                        </span>
                       </>
-                    ) : enviando === ev.id ? (
-                      "Inscrevendo..."
                     ) : (
                       "Inscrever-se"
                     )}

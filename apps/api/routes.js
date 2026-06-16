@@ -1629,6 +1629,33 @@ apiRouter.post('/eventos/:id/inscrever', requireAuth, async (req, res) => {
     res.status(201).json({ source: 'db', eventoId, inscrito: true });
 });
 
+// --------------------------------------------------------------
+// DELETE /api/eventos/:id/inscrever — cancela a inscricao do usuario.
+// Idempotente: remove a linha de usuario_eventos escopada a
+// req.usuario.sub (anti-IDOR). Cancelar algo ja ausente tambem e sucesso.
+// --------------------------------------------------------------
+apiRouter.delete('/eventos/:id/inscrever', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const eventoId = Number.parseInt(req.params.id, 10);
+    if (Number.isNaN(eventoId) || eventoId <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+
+    const removed = await query(
+        `DELETE FROM usuario_eventos
+             WHERE usuario_id = $1 AND evento_id = $2
+             RETURNING id`,
+        [req.usuario.sub, eventoId],
+    );
+    if (removed === null) {
+        return res.status(500).json({ error: 'falha_cancelamento' });
+    }
+    // removed.length === 0 => nao estava inscrito (idempotente): sucesso mesmo assim.
+    res.json({ source: 'db', eventoId, inscrito: false });
+});
+
 // ==============================================================
 // GAMIFICACAO (RF13 / Bloco B - B7)
 // --------------------------------------------------------------

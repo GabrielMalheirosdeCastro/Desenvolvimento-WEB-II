@@ -9,6 +9,21 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.21.0] - 2026-06-16
+
+### Added
+- Cancelamento de inscrição em eventos (RF12 / B6). Novo endpoint
+  `DELETE /api/eventos/:id/inscrever`, idempotente e escopado ao próprio
+  usuário (`req.usuario.sub`, anti-IDOR). Na tela de Eventos, o botão
+  "Inscrito" passou a ser reversível: exibe o estado verde por padrão e,
+  ao passar o mouse/focar, troca para "Cancelar inscrição" (vermelho), com
+  `aria-label` para leitores de tela.
+
+### Fixed
+- Botão de evento deixava o usuário sem ação após se inscrever: o estado
+  "Inscrito" ficava permanentemente desabilitado (`cursor-default`) e não
+  havia rota nem UI para desfazer a inscrição. Agora o fluxo é reversível.
+
 ## [1.20.1] - 2026-06-16
 
 ### Fixed
