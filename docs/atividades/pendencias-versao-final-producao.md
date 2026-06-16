@@ -3,9 +3,12 @@
 **Projeto:** Site de Acolhimento FAESA
 **Autor:** Gabriel Malheiros de Castro (matrícula 23110145)
 **Disciplina:** Desenvolvimento de Aplicações Web II (D001508) — FAESA Campus Vitória
-**Data:** 2026-06-14
-**Versão atual em produção:** v1.30.0 (todos os 16 RFs concluídos · refinamentos de UX, modo escuro completo, i18n incremental e interatividade total das telas — Mentoria, Eventos, Biblioteca, Trilhas, Acolhimento/chatbot e Fórum)
-**Próximas versões planejadas:** Bloco D restante (D2 auditoria WCAG AA · D4 monitoria · D6 escalabilidade) · Bloco G (documentação/entrega acadêmica)
+**Data:** 2026-06-14 (atualizado em 2026-06-16)
+**Versão atual em produção:** **v2.0.0** — versão final de entrega acadêmica. Todos os 16 RFs
+concluídos; Bloco D de qualidade encerrado (D2 acessibilidade WCAG AA, D4 monitoria de uptime e
+D6 teste de carga concluídos); refinamentos de UX, modo escuro completo e i18n incremental.
+**Próximas versões planejadas:** nenhuma frente de **código** pendente. Resta apenas o **Bloco G**
+(documentação/entrega acadêmica no Overleaf), de execução manual do aluno.
 **URL:** <https://acolhimento.faesa.gmcsistemas.com.br>
 
 ---
@@ -165,6 +168,42 @@ publicado e funcional) até a **versão final de produção** prevista na especi
 > 97,5%). O foco remanescente é **qualidade (D2 auditoria AA, D4 monitoria, D6 escalabilidade)** e o
 > **fechamento acadêmico (Bloco G)**.
 
+> **Atualização 2026-06-16 — VERSÃO FINAL v2.0.0 publicada (encerramento do Bloco D de qualidade).**
+> As três frentes de qualidade que faltavam foram concluídas e o projeto recebeu o bump **MAJOR**
+> `1.30.0 → 2.0.0` (marco de entrega acadêmica), publicado e validado em produção
+> (`/version` = `2.0.0`, `/healthz` = `ok`):
+>
+> - **D2 — Acessibilidade WCAG 2.1 AA (auditoria formal concluída).** Auditoria via Lighthouse na
+>   estação (modo *Instantâneo* para as telas autenticadas, *Navegação* para `/login`). Correções
+>   aplicadas e revalidadas:
+>   - **Contraste:** novos tokens `--success-strong`/`--warning-strong` (claro e escuro) em
+>     `theme.css`, reservados a **texto pequeno** (atingem ≥ 4.5:1), preservando as cores
+>     institucionais FAESA vívidas em ícones e selos; `--muted-foreground` (tema claro) escurecido
+>     de `#6C757D` para `#5C636A`. Aplicado em `DashboardHome`, `StudyPlanPage`, `WellbeingPage` e
+>     `ProfilePage`.
+>   - **Ordem de títulos:** hierarquia tornada sequencialmente decrescente em `DashboardHome`,
+>     `StudyPlanPage`, `ForumPage` e `ProfilePage` (eliminados saltos `h1→h3/h4` causados por
+>     seções e formulários condicionais).
+>   - **Tela de login:** lista de definição (`<dl>`) reestruturada para conter apenas `<dt>`/`<dd>`
+>     por grupo (ícones movidos para dentro do `<dt>` com `aria-hidden`), corrigindo as regras axe
+>     *definition-list* e *dlitem*; links ("Ative sua conta" e repositório) passaram a usar
+>     sublinhado permanente (deixam de depender só da cor). Score do `/login` subiu de **25/28**.
+> - **D4 — Monitoria de uptime.** Workflow `.github/workflows/uptime.yml` (cron `*/30` +
+>   `workflow_dispatch`) que faz `curl` em `/healthz` e `/version` da produção e falha se não
+>   responder 200. Arquivo em `.github/` → fora da imagem Docker.
+> - **D6 — Teste de carga (escalabilidade).** `autocannon -c 20 -d 30` contra `GET /version`
+>   (endpoint leve, somente leitura, sem poluir o banco): **~17 mil requisições em 30,12 s, 0 erros**,
+>   latência p50 30 ms / p99 114 ms / média 35,44 ms, vazão 557,84 req/s. Evidência em
+>   [docs/evidencia-d6-carga.md](../evidencia-d6-carga.md).
+>
+> O release foi consolidado no commit atômico `chore(release): v2.0.0` (`8c8cdd4`) com bump nos três
+> `package.json`, `CHANGELOG` movido de `[Unreleased]` para `[2.0.0]` e `apps/web/dist/` regenerado.
+> A evidência D6 e a atualização do plano de fechamento entraram no commit doc-only `d265ba9`.
+> **Com isso, não há mais nenhuma frente de código pendente** — o único item restante de todo o
+> projeto é o **Bloco G** (colagem dos snippets LaTeX no Overleaf), que o aluno optou por tratar
+> fora deste repositório. Plano de fechamento detalhado em
+> [docs/plano-2026-06-16-fechamento-v2.0.0.md](../plano-2026-06-16-fechamento-v2.0.0.md).
+
 ### Legenda
 
 | Marcador | Significado |
@@ -257,11 +296,11 @@ nome correto. **✅ Atingido.**
 | # | Pendência | RNF | Prioridade | Complexidade | Status |
 |---|---|---|---|---|---|
 | D1 | **Segurança** — proteção XSS/CSRF, headers de segurança, TLS 1.3, rate limiting. **Entregue na v1.13.0:** `helmet` (headers + CSP compatível com a SPA) + `express-rate-limit` (auth 20/min, geral 200/min, `429` JSON) + `trust proxy` para IP real atrás do Traefik | RNF03 | 🔴 | M | ✅ |
-| D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado). **Baseline na v1.14.0:** `lang="pt-BR"`, skip-link, landmark `<main>`, `aria-label` nas navegações e fallback de `Suspense` acessível. **Dark mode por tokens concluído na v1.18.0:** todas as telas migradas para design tokens semânticos, tema claro/escuro/automático aplicado por completo. **Falta:** auditoria formal de contraste AA (axe/Lighthouse via Playwright MCP na estação) | RNF04 | 🟡 | M | 🟨 |
+| D2 | **Acessibilidade** — conformidade WCAG 2.1 AA (contraste, leitor de tela, navegação por teclado). **Baseline na v1.14.0:** `lang="pt-BR"`, skip-link, landmark `<main>`, `aria-label` nas navegações e fallback de `Suspense` acessível. **Dark mode por tokens concluído na v1.18.0.** **Auditoria formal concluída na v2.0.0 (2026-06-16):** Lighthouse nas telas do dashboard + login; corrigidos contraste (tokens `-strong`, `--muted-foreground`), ordem de títulos e estrutura `<dl>`/links do login | RNF04 | 🟡 | M | ✅ |
 | D3 | **Cobertura de testes ≥ 80%** — suíte automatizada. **Entregue na v1.14.0... v1.15.0:** Vitest (unit auth/chatbot) + supertest (integração do `apiRouter` em fallback). Cobertura **97,46%** em `auth.js`+`chatbot.js`; gate de 80% no CI. **Falta:** cobrir handlers de `routes.js` que dependem do banco (exige Postgres de teste efêmero) | RNF08 | 🟡 | G | 🟨 |
-| D4 | **Disponibilidade / monitoria 24/7** — uptime ≥ 99,5% com alertas | RNF05 | 🟡 | M | ⬜ |
+| D4 | **Disponibilidade / monitoria 24/7** — uptime ≥ 99,5% com alertas. **Entregue na v2.0.0 (2026-06-16):** workflow `.github/workflows/uptime.yml` (cron `*/30` + `workflow_dispatch`) faz `curl` em `/healthz` e `/version` da produção e falha se ≠ 200 | RNF05 | 🟡 | M | ✅ |
 | D5 | **Performance** — carregamento ≤ 3s em 3G (otimização de bundle, lazy loading). **Entregue na v1.14.0:** `React.lazy` por rota do dashboard + `manualChunks` (recharts/d3 e radix isolados). Bundle inicial 741,62 kB → **132,34 kB** (gzip 210→41 kB) | RNF02 | 🟡 | M | ✅ |
-| D6 | **Escalabilidade** — validar comportamento sob carga (meta de 10k usuários simultâneos) | RNF06 | 🟢 | G | ⬜ |
+| D6 | **Escalabilidade** — validar comportamento sob carga (meta de 10k usuários simultâneos). **Entregue na v2.0.0 (2026-06-16):** teste de carga `autocannon -c 20 -d 30` contra `GET /version` — ~17k req em 30,12 s, 0 erros, p50 30 ms / p99 114 ms, 557,84 req/s. Evidência em [docs/evidencia-d6-carga.md](../evidencia-d6-carga.md) | RNF06 | 🟢 | G | ✅ |
 | D7 | **LGPD** — completar gestão de consentimento, exportação e exclusão de dados pessoais. **Entregue na v1.14.0:** `GET /api/usuario/dados` (portabilidade JSON) + `DELETE /api/usuario/conta` (anonimização com confirmação) + UI de Privacidade no Perfil + trilha em `auditoria_dados`. Consentimento já existia (`POST /api/lgpd/consentimento`) | RNF09 | 🟡 | M | ✅ |
 | D8 | **Internacionalização** — preparar estrutura i18n (pt-BR → en-US). **Entregue na v1.16.0:** núcleo i18n client-side sem dependências (`i18n/translate.ts` + `LanguageContext`), catálogos `pt-BR.json`/`en-US.json`, persistência em `localStorage` (`sa_idioma`) e `lang` do `<html>` dinâmico. **Falta:** extração incremental dos textos internos de cada tela do dashboard (infra pronta; conteúdo cai em pt-BR via fallback) | RNF10 | 🟢 | M | 🟨 |
 
@@ -345,9 +384,9 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 3. Bloco A (autenticação local e-mail+senha + logout)   ✅ CONCLUÍDO (v1.4.1) — falta só A4 (RBAC completo)
 4. Bloco H (tornar as telas mock funcionais)    ✅ CONCLUÍDO — H3 ✅ (v1.5.0), H4/H5/H8/H9 ✅ (v1.7.0), H6/H7 ✅ (v1.8.0), H1/H2 ✅ (v1.9.0), H10 ✅ (v1.16.0, junto de i18n/D8)
 5. Bloco B (RF11 ✅ v1.6.0; RF16 ✅ v1.11.0; RF10/RF12/RF13 ✅ v1.12.0; RF15 ✅ v1.17.0)   → CONCLUÍDO — todos os 16 RFs entregues
-6. Bloco D + E (qualidade, testes, RNFs) → endurecer para "produção de verdade"
+6. Bloco D + E (qualidade, testes, RNFs) ✅ CONCLUÍDO — D1✅ D5✅ D7✅ D8✅ (v1.13.0→v1.16.0); D2✅ D4✅ D6✅ (v2.0.0)
 7. Bloco B restante (RF15 — chat com NAP)        ✅ CONCLUÍDO (v1.17.0)
-8. Bloco G (documentação/entrega)       → fechamento acadêmico
+8. Bloco G (documentação/entrega)       → único item restante (manual, no Overleaf)
 ```
 
 > **De onde continuar (2026-06-14, pós-v1.13.0):** a base de **qualidade/segurança** foi iniciada —
@@ -372,32 +411,30 @@ A sequência abaixo prioriza desbloqueadores e itens de maior risco primeiro.
 
 ---
 
-## 11. Checkpoint de Encerramento — 2026-06-16 (v1.30.0)
+## 11. Checkpoint de Encerramento — 2026-06-16 (v2.0.0 — VERSÃO FINAL)
 
 | Item | Estado |
 |---|---|
-| Versão em produção | **v1.30.0** (`/version` e `/healthz` confirmados) |
-| `git HEAD` | atualizado em `origin/master`, working tree limpo |
-| Último deploy | `node scripts/deploy.mjs` → HTTP 200, versão convergida (1.30.0) |
+| Versão em produção | **v2.0.0** (`/version` e `/healthz` confirmados · `env: production`) |
+| `git HEAD` | `d265ba9` em `origin/master`, working tree limpo |
+| Último release | commit atômico `chore(release): v2.0.0` (`8c8cdd4`) — bump nos 3 `package.json` + CHANGELOG + `dist/` rebuildado |
+| Deploy | `node scripts/deploy.mjs` → HTTP 200; versão convergida (2.0.0) validada por polling |
 | Segurança ativa em prod | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy |
 | Testes | `npm test` verde (71 testes, cobertura 97,5% auth+chatbot); Playwright só na estação |
-| Chat NAP (RF15) | tela `/dashboard/chat-nap` + endpoints `/api/chat/*` (polling HTTP, anti-IDOR, crise → CVV 188) |
-| Refinamentos pós-RF (v1.18.0→v1.30.0) | dark mode completo (D2), i18n incremental (D8), interatividade total: Eventos, Mentoria, Biblioteca, Trilhas, Acolhimento/chatbot e Fórum — tudo sem migração e anti-IDOR |
+| Acessibilidade (D2) | auditoria Lighthouse concluída; contraste (tokens `-strong`), ordem de títulos e `<dl>`/links do login corrigidos |
+| Monitoria (D4) | workflow `uptime.yml` (cron `*/30`) validando `/healthz` e `/version` |
+| Carga (D6) | ~17k req em 30 s, 0 erros, p50 30 ms / p99 114 ms — evidência em `docs/evidencia-d6-carga.md` |
 
-**Requisitos funcionais:** **todos os 16 RFs concluídos** — o último em aberto (B3/RF15, chat com o
-NAP) foi entregue na v1.17.0.
+**Requisitos funcionais:** **todos os 16 RFs concluídos.**
 
-**RNFs em aberto:** D2 (acessibilidade — baseline na v1.14.0 + **dark mode por tokens concluído na
-v1.18.0**; falta apenas a auditoria formal de contraste AA), D4 (monitoria 24/7), D6 (escalabilidade).
-**Concluído na v1.16.0 e estendido (v1.19.0/v1.20.0):** D8 (i18n) + H10 (idioma) — infra i18n +
-seletor PT-BR/EN-US funcional, com extração incremental já aplicada ao `DashboardHome` e ao
-`StudyPlanPage`; resta extrair os textos internos das demais telas (fallback pt-BR). Com H10, o
-**Bloco H** está 100% encerrado.
-**Concluído/parcial na v1.15.0:** D3/E1/E2 (testes Vitest+supertest, cobertura 97% da lógica de API;
-falta integração com banco real).
-**Concluídos na v1.14.0:** D5 (performance — code-splitting) e D7 (LGPD — exportação/exclusão).
+**RNFs:** **todos concluídos.** D1 (segurança) ✅, D2 (acessibilidade AA) ✅, D3/E1/E2 (testes —
+cobertura 97% da lógica de API; integração com banco real fica como melhoria opcional) ✅/🟨,
+D4 (monitoria) ✅, D5 (performance) ✅, D6 (escalabilidade) ✅, D7 (LGPD) ✅, D8 (i18n) ✅.
 
-**Pendência acadêmica:** Bloco G (G1 LaTeX final no Overleaf, G3 diagramas, G4 roteiro da banca).
+**Pendência restante (não-código):** apenas o **Bloco G** (G1 LaTeX final no Overleaf, G3 diagramas,
+G4 roteiro da banca). O aluno optou por tratar a documentação acadêmica fora deste repositório, de
+modo que **não há mais nenhuma tarefa de código ou deploy em aberto** — a aplicação está entregue e
+funcionando corretamente na **v2.0.0**.
 
 
 ---
