@@ -356,7 +356,7 @@ Ao abrir o workspace, o VS Code sugerirá automaticamente a instalação das ext
 | RNF01 | Responsividade | Mobile-First, todos os dispositivos |
 | RNF02 | Performance | Carregamento ≤ 3s em 3G |
 | RNF03 | Segurança | OAuth 2.0, TLS 1.3, proteção XSS/CSRF |
-| RNF04 | Acessibilidade | WCAG 2.1 nível AA |
+| RNF04 | Acessibilidade | WCAG 2.1 nível AA — modo escuro completo via design tokens semânticos (v1.18.0) |
 | RNF05 | Disponibilidade | Uptime mínimo 99,5% |
 | RNF06 | Escalabilidade | Até 10.000 usuários simultâneos |
 | RNF07 | Usabilidade | Interface intuitiva, Design System consistente, taxa de erro ≤2% |

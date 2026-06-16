@@ -9,6 +9,25 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.18.0] - 2026-06-16
+
+### Added
+
+- **Modo escuro completo + acessibilidade (Bloco H — item H9 / item D2 / RNF04)**: encerrado o débito visual do tema escuro. Antes da v1.18.0 a preferência de tema (claro/escuro/auto) era persistida pelo [ThemeContext](apps/web/src/app/theme/ThemeContext.tsx), mas a maioria das telas usava cores fixas (hex/`bg-white`/`text-gray-*`/`bg-blue-*`) sem variante `dark:`, então o efeito visual era parcial. Agora **todas as telas voltadas ao usuário** consomem **design tokens semânticos** (`bg-card`, `text-foreground`, `text-muted-foreground`, `bg-primary`, `border-border`, `bg-input-background`, `success`/`warning`/`destructive`), de modo que a interface inteira responde ao tema. Plano formal em [docs/plano-2026-06-16-v1.18.0-acessibilidade-darkmode.md](docs/plano-2026-06-16-v1.18.0-acessibilidade-darkmode.md).
+- **Tokens de medalha e ajustes de contraste no tema escuro** ([apps/web/src/styles/theme.css](apps/web/src/styles/theme.css)): novos tokens `--medal-gold/silver/bronze/foreground` (com `--medal-foreground` garantindo contraste do texto sobre a medalha em ambos os temas), `--input-background` agora definido no `.dark` (`#1a2942`, antes caía em branco) e `--destructive` clareado no escuro (`#f87171`) para legibilidade. Todos expostos como utilitários Tailwind via `@theme inline`.
+- **Lógica de tema testável** ([apps/web/src/app/theme/themeLogic.ts](apps/web/src/app/theme/themeLogic.ts)): extraídas as funções puras `normalizarTema` e `resolverEscuroAtivo` (mais `TEMAS_VALIDOS`), consumidas pelo `ThemeContext`. Novo [tests/unit/theme.test.ts](tests/unit/theme.test.ts) cobre normalização de valores inválidos e a decisão claro/escuro/auto seguindo a preferência do sistema. Suíte total: **71 testes** verdes.
+
+### Changed
+
+- **Refatoração para tokens semânticos** nas telas e componentes que ainda usavam cores fixas: [DashboardLayout](apps/web/src/app/layouts/DashboardLayout.tsx), [DashboardHome](apps/web/src/app/pages/DashboardHome.tsx) (cards + gráficos Recharts via variáveis CSS), [ProfilePage](apps/web/src/app/pages/ProfilePage.tsx), [ChatbotPage](apps/web/src/app/pages/ChatbotPage.tsx), [ChatNapPage](apps/web/src/app/pages/ChatNapPage.tsx), [CoordenacaoPage](apps/web/src/app/pages/CoordenacaoPage.tsx), [ForumPage](apps/web/src/app/pages/ForumPage.tsx), [LibraryPage](apps/web/src/app/pages/LibraryPage.tsx), [MentorshipPage](apps/web/src/app/pages/MentorshipPage.tsx), [EventsPage](apps/web/src/app/pages/EventsPage.tsx), [ConcentrationPage](apps/web/src/app/pages/ConcentrationPage.tsx), [StudyPlanPage](apps/web/src/app/pages/StudyPlanPage.tsx), [WellbeingPage](apps/web/src/app/pages/WellbeingPage.tsx), [NotFound](apps/web/src/app/pages/NotFound.tsx), [LoginPage](apps/web/src/app/pages/LoginPage.tsx), [AtivarPage](apps/web/src/app/pages/AtivarPage.tsx), [NotificationBell](apps/web/src/app/components/NotificationBell.tsx), [LgpdModal](apps/web/src/app/components/LgpdModal.tsx) e os loaders de [RoleRoute](apps/web/src/app/auth/RoleRoute.tsx)/[ProtectedRoute](apps/web/src/app/auth/ProtectedRoute.tsx).
+- **Toaster (sonner) alinhado ao tema local** ([apps/web/src/app/components/ui/sonner.tsx](apps/web/src/app/components/ui/sonner.tsx)): deixou de depender do `next-themes` (não usado no projeto) e passou a ler o tema ativo do `ThemeContext` local, refletindo claro/escuro corretamente.
+- **Banners de marca preservados intencionalmente**: gradientes institucionais (fundo do Login/Ativar, banner de gamificação do Perfil, hero do Pomodoro em Concentração, banner "Seja um Mentor", faixa de contribuição da Biblioteca) foram mantidos por já renderizarem de forma acessível em ambos os temas. Todos os `data-testid` das telas de login/ativação foram preservados intactos.
+- Bump 1.17.0 -> **1.18.0** (MINOR — modo escuro completo + acessibilidade) nos três `package.json`.
+
+### Notas
+
+- Acentos de categoria dinâmicos da Biblioteca (`bg-${cor}-600`) e o acento azul do exercício de respiração 4-7-8 foram mantidos como identidade visual funcional, legível nos dois temas.
+
 ## [1.17.0] - 2026-06-15
 
 ### Added

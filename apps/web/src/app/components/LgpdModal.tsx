@@ -54,22 +54,22 @@ export function LgpdModal() {
       aria-labelledby="lgpd-titulo"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
     >
-      <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 space-y-4">
+      <div className="bg-card rounded-lg shadow-xl max-w-lg w-full p-6 space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <ShieldCheck className="text-blue-600" size={24} />
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+            <ShieldCheck className="text-primary" size={24} />
           </div>
-          <h2 id="lgpd-titulo" className="text-xl font-semibold">
+          <h2 id="lgpd-titulo" className="text-xl font-semibold text-foreground">
             Termo de Consentimento — LGPD
           </h2>
         </div>
-        <p className="text-sm text-gray-700">
+        <p className="text-sm text-foreground">
           O Site de Acolhimento FAESA coleta dados acadêmicos (matrícula, progresso de estudos,
           interações em fórum/mentoria) para personalizar a experiência e gerar relatórios
           institucionais <strong>anonimizados</strong>. Você pode revogar este consentimento a
           qualquer momento em &quot;Perfil &gt; Privacidade&quot;.
         </p>
-        <ul className="text-xs text-gray-600 list-disc pl-5 space-y-1">
+        <ul className="text-xs text-muted-foreground list-disc pl-5 space-y-1">
           <li>Base legal: consentimento (Art. 7º, I da Lei 13.709/2018).</li>
           <li>Finalidades: acolhimento, mentoria, gamificação e métricas agregadas.</li>
           <li>Compartilhamento com terceiros: nenhum.</li>
@@ -80,7 +80,7 @@ export function LgpdModal() {
             type="button"
             onClick={aceitar}
             disabled={enviando}
-            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground px-6 py-2 rounded-lg transition-colors"
           >
             {enviando ? "Registrando..." : "Li e concordo"}
           </button>

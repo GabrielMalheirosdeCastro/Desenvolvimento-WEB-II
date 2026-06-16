@@ -23,9 +23,9 @@ const RESULTADO_INFO: Record<
   NonNullable<Avaliacao["resultado"]>,
   { rotulo: string; classe: string }
 > = {
-  positivo: { rotulo: "Positivo", classe: "bg-green-100 text-green-700" },
-  atencao: { rotulo: "Atenção", classe: "bg-yellow-100 text-yellow-700" },
-  critico: { rotulo: "Crítico", classe: "bg-red-100 text-red-700" },
+  positivo: { rotulo: "Positivo", classe: "bg-success/15 text-success" },
+  atencao: { rotulo: "Atenção", classe: "bg-warning/15 text-warning" },
+  critico: { rotulo: "Crítico", classe: "bg-destructive/15 text-destructive" },
 };
 
 // Escalas do questionário (1 a 5).
@@ -106,14 +106,14 @@ export function WellbeingPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl mb-2">Avaliação de Bem-estar</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl mb-2 text-foreground">Avaliação de Bem-estar</h1>
+          <p className="text-muted-foreground">
             Faça uma autoavaliação periódica e acompanhe como você está
           </p>
         </div>
         <button
           onClick={() => setFormAberto((v) => !v)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg transition-colors"
         >
           {formAberto ? <X size={20} /> : <Plus size={20} />}
           {formAberto ? "Cancelar" : "Nova Avaliação"}
@@ -121,7 +121,7 @@ export function WellbeingPage() {
       </div>
 
       {erro && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3">
+        <div className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg px-4 py-3">
           {erro}
         </div>
       )}
@@ -130,13 +130,13 @@ export function WellbeingPage() {
       {formAberto && (
         <form
           onSubmit={enviarAvaliacao}
-          className="bg-white rounded-lg shadow-sm p-6 space-y-6"
+          className="bg-card rounded-lg shadow-sm p-6 space-y-6"
         >
-          <h2 className="text-xl">Como você está hoje?</h2>
+          <h2 className="text-xl text-foreground">Como você está hoje?</h2>
 
           <EscalaCampo
             id="humor"
-            icone={<Smile className="text-blue-600" size={20} />}
+            icone={<Smile className="text-primary" size={20} />}
             titulo="Humor"
             descricao="1 = muito baixo · 5 = ótimo"
             valor={humor}
@@ -144,7 +144,7 @@ export function WellbeingPage() {
           />
           <EscalaCampo
             id="estresse"
-            icone={<Activity className="text-blue-600" size={20} />}
+            icone={<Activity className="text-primary" size={20} />}
             titulo="Nível de estresse"
             descricao="1 = tranquilo · 5 = muito estressado"
             valor={estresse}
@@ -152,7 +152,7 @@ export function WellbeingPage() {
           />
           <EscalaCampo
             id="sono"
-            icone={<Moon className="text-blue-600" size={20} />}
+            icone={<Moon className="text-primary" size={20} />}
             titulo="Qualidade do sono"
             descricao="1 = muito ruim · 5 = excelente"
             valor={sono}
@@ -161,7 +161,7 @@ export function WellbeingPage() {
 
           <div>
             <label
-              className="block text-sm text-gray-600 mb-1"
+              className="block text-sm text-muted-foreground mb-1"
               htmlFor="bem-estar-obs"
             >
               Observações (opcional)
@@ -173,7 +173,7 @@ export function WellbeingPage() {
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
               placeholder="Algo que queira registrar sobre o seu dia..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-ring"
             />
           </div>
 
@@ -181,7 +181,7 @@ export function WellbeingPage() {
             <button
               type="submit"
               disabled={enviando}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               {enviando && <Loader2 size={18} className="animate-spin" />}
               Registrar Avaliação
@@ -192,23 +192,23 @@ export function WellbeingPage() {
 
       {/* Resumo */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-card rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <HeartPulse className="text-blue-600" size={20} />
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <HeartPulse className="text-primary" size={20} />
             </div>
-            <h3 className="text-lg">Avaliações Registradas</h3>
+            <h3 className="text-lg text-foreground">Avaliações Registradas</h3>
           </div>
-          <p className="text-3xl">{totalRegistros}</p>
-          <p className="text-sm text-gray-600 mt-1">No seu histórico</p>
+          <p className="text-3xl text-foreground">{totalRegistros}</p>
+          <p className="text-sm text-muted-foreground mt-1">No seu histórico</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-card rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Smile className="text-blue-600" size={20} />
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Smile className="text-primary" size={20} />
             </div>
-            <h3 className="text-lg">Última Avaliação</h3>
+            <h3 className="text-lg text-foreground">Última Avaliação</h3>
           </div>
           {ultimo && ultimo.resultado ? (
             <span
@@ -217,27 +217,27 @@ export function WellbeingPage() {
               {RESULTADO_INFO[ultimo.resultado].rotulo}
             </span>
           ) : (
-            <p className="text-sm text-gray-500">Nenhuma ainda</p>
+            <p className="text-sm text-muted-foreground">Nenhuma ainda</p>
           )}
         </div>
       </div>
 
       {/* Histórico */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl mb-6">Histórico</h2>
+      <div className="bg-card rounded-lg shadow-sm p-6">
+        <h2 className="text-xl mb-6 text-foreground">Histórico</h2>
 
         {carregando ? (
-          <div className="flex items-center justify-center gap-2 text-gray-500 py-12">
+          <div className="flex items-center justify-center gap-2 text-muted-foreground py-12">
             <Loader2 size={20} className="animate-spin" />
             Carregando histórico...
           </div>
         ) : registros.length === 0 ? (
-          <div className="text-center text-gray-500 py-12">
-            <HeartPulse className="mx-auto mb-4 text-gray-300" size={48} />
+          <div className="text-center text-muted-foreground py-12">
+            <HeartPulse className="mx-auto mb-4 text-muted-foreground/50" size={48} />
             <p className="mb-4">Você ainda não registrou nenhuma avaliação.</p>
             <button
               onClick={() => setFormAberto(true)}
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               <Plus size={18} />
               Fazer primeira avaliação
@@ -248,10 +248,10 @@ export function WellbeingPage() {
             {registros.map((registro) => (
               <div
                 key={registro.id}
-                className="p-4 rounded-lg border-2 border-gray-200"
+                className="p-4 rounded-lg border-2 border-border"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     {registro.dataAplicacao
                       ? new Date(registro.dataAplicacao).toLocaleDateString(
                           "pt-BR",
@@ -267,22 +267,22 @@ export function WellbeingPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-3 text-sm text-gray-700">
+                <div className="flex flex-wrap gap-3 text-sm text-foreground">
                   <span className="flex items-center gap-1">
-                    <Smile size={14} className="text-gray-400" />
+                    <Smile size={14} className="text-muted-foreground" />
                     Humor: {registro.humor ?? "—"}/5
                   </span>
                   <span className="flex items-center gap-1">
-                    <Activity size={14} className="text-gray-400" />
+                    <Activity size={14} className="text-muted-foreground" />
                     Estresse: {registro.estresse ?? "—"}/5
                   </span>
                   <span className="flex items-center gap-1">
-                    <Moon size={14} className="text-gray-400" />
+                    <Moon size={14} className="text-muted-foreground" />
                     Sono: {registro.sono ?? "—"}/5
                   </span>
                 </div>
                 {registro.observacoes && (
-                  <p className="mt-2 text-sm text-gray-600">
+                  <p className="mt-2 text-sm text-muted-foreground">
                     {registro.observacoes}
                   </p>
                 )}
@@ -315,9 +315,9 @@ function EscalaCampo({
     <fieldset>
       <legend className="flex items-center gap-2 mb-1">
         {icone}
-        <span className="font-medium">{titulo}</span>
+        <span className="font-medium text-foreground">{titulo}</span>
       </legend>
-      <p className="text-sm text-gray-500 mb-2">{descricao}</p>
+      <p className="text-sm text-muted-foreground mb-2">{descricao}</p>
       <div className="flex gap-2" role="radiogroup" aria-label={titulo}>
         {ESCALA.map((n) => (
           <button
@@ -329,8 +329,8 @@ function EscalaCampo({
             onClick={() => onChange(n)}
             className={`w-12 h-12 rounded-lg border-2 transition-colors ${
               valor === n
-                ? "bg-blue-600 border-blue-600 text-white"
-                : "bg-white border-gray-300 text-gray-700 hover:border-blue-300"
+                ? "bg-primary border-primary text-primary-foreground"
+                : "bg-card border-border text-foreground hover:border-primary/40"
             }`}
             id={`${id}-${n}`}
           >

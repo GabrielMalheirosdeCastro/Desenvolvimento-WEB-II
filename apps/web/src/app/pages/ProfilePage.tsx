@@ -318,8 +318,8 @@ export function ProfilePage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2 text-[#003366]">Meu Perfil</h1>
-        <p className="text-[#6C757D]">Gerencie suas informações e preferências</p>
+        <h1 className="text-3xl mb-2 text-foreground">Meu Perfil</h1>
+        <p className="text-muted-foreground">Gerencie suas informações e preferências</p>
       </div>
 
       {/* Card de Pontuação */}
@@ -356,79 +356,79 @@ export function ProfilePage() {
       {/* Informações do Perfil */}
       <form
         onSubmit={salvarPerfil}
-        className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10"
+        className="bg-card rounded-lg shadow-sm p-6 border border-border"
       >
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-shrink-0">
-            <div className="w-32 h-32 bg-[#003366] rounded-full flex items-center justify-center text-white text-4xl">
+            <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-4xl">
               {iniciais}
             </div>
           </div>
           <div className="flex-1 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-[#6C757D] mb-1">Nome Completo</label>
+                <label className="block text-sm text-muted-foreground mb-1">Nome Completo</label>
                 <input
                   type="text"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   disabled={carregando || salvando}
-                  className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-input-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm text-[#6C757D] mb-1">Matrícula</label>
+                <label className="block text-sm text-muted-foreground mb-1">Matrícula</label>
                 <input
                   type="text"
                   value={perfil?.matricula ?? usuario?.matricula ?? "—"}
-                  className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-muted text-foreground"
                   readOnly
                 />
               </div>
               <div>
-                <label className="block text-sm text-[#6C757D] mb-1">E-mail Institucional</label>
+                <label className="block text-sm text-muted-foreground mb-1">E-mail Institucional</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={carregando || salvando}
-                  className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-input-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm text-[#6C757D] mb-1">Curso</label>
+                <label className="block text-sm text-muted-foreground mb-1">Curso</label>
                 <input
                   type="text"
                   value={perfil?.curso ?? "—"}
-                  className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-muted text-foreground"
                   readOnly
                 />
               </div>
               <div>
-                <label className="block text-sm text-[#6C757D] mb-1">Período</label>
+                <label className="block text-sm text-muted-foreground mb-1">Período</label>
                 <input
                   type="text"
                   value={periodoLabel}
-                  className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-muted text-foreground"
                   readOnly
                 />
               </div>
               <div>
-                <label className="block text-sm text-[#6C757D] mb-1">CRA</label>
+                <label className="block text-sm text-muted-foreground mb-1">CRA</label>
                 <input
                   type="text"
                   value={craLabel}
-                  className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg bg-[#F5F7FA]"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-muted text-foreground"
                   readOnly
                 />
               </div>
             </div>
 
-            {erro && <p className="text-sm text-[#FF8C00]">{erro}</p>}
+            {erro && <p className="text-sm text-warning">{erro}</p>}
             {feedback && (
               <p
                 className={`text-sm ${
-                  feedback.tipo === "ok" ? "text-[#28A745]" : "text-[#dc2626]"
+                  feedback.tipo === "ok" ? "text-success" : "text-destructive"
                 }`}
               >
                 {feedback.texto}
@@ -438,7 +438,7 @@ export function ProfilePage() {
             <button
               type="submit"
               disabled={!alterado || salvando || carregando}
-              className="bg-[#003366] hover:bg-[#004080] disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               {salvando ? "Salvando..." : "Salvar Alterações"}
             </button>
@@ -451,30 +451,30 @@ export function ProfilePage() {
         {/* Estatísticas */}
         <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-sm p-4 border border-[#003366]/10 text-center">
-              <div className="w-10 h-10 bg-[#0066CC]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <stat.icon className="text-[#0066CC]" size={20} />
+            <div key={index} className="bg-card rounded-lg shadow-sm p-4 border border-border text-center">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <stat.icon className="text-primary" size={20} />
               </div>
-              <div className="text-2xl font-semibold text-[#003366] mb-1">{stat.value}</div>
-              <div className="text-xs text-[#6C757D]">{stat.label}</div>
+              <div className="text-2xl font-semibold text-foreground mb-1">{stat.value}</div>
+              <div className="text-xs text-muted-foreground">{stat.label}</div>
             </div>
           ))}
         </div>
 
         {/* Histórico de Pontos Recentes */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="text-[#0066CC]" size={20} />
-            <h3 className="font-semibold text-[#003366]">Pontos Recentes</h3>
+            <TrendingUp className="text-primary" size={20} />
+            <h3 className="font-semibold text-foreground">Pontos Recentes</h3>
           </div>
           <div className="space-y-3">
             {pointsHistory.map((item, index) => (
               <div key={index} className="flex items-center justify-between text-sm">
                 <div>
-                  <div className="text-[#003366]">{item.action}</div>
-                  <div className="text-xs text-[#6C757D]">{item.date}</div>
+                  <div className="text-foreground">{item.action}</div>
+                  <div className="text-xs text-muted-foreground">{item.date}</div>
                 </div>
-                <div className="font-semibold text-[#28A745]">+{item.points}</div>
+                <div className="font-semibold text-success">+{item.points}</div>
               </div>
             ))}
           </div>
@@ -482,10 +482,10 @@ export function ProfilePage() {
       </div>
 
       {/* Conquistas */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+      <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
         <div className="flex items-center gap-2 mb-6">
-          <Award className="text-[#0066CC]" size={24} />
-          <h2 className="text-xl text-[#003366]">Minhas Conquistas</h2>
+          <Award className="text-primary" size={24} />
+          <h2 className="text-xl text-foreground">Minhas Conquistas</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {badges.map((badge, index) => (
@@ -493,25 +493,25 @@ export function ProfilePage() {
               key={index}
               className={`p-4 rounded-lg text-center transition-all ${
                 badge.earned
-                  ? "bg-gradient-to-br from-[#FFD700]/20 to-[#FF8C00]/20 border-2 border-[#FFD700]/50"
-                  : "bg-[#F5F7FA] opacity-50"
+                  ? "bg-gradient-to-br from-medal-gold/20 to-warning/20 border-2 border-medal-gold/50"
+                  : "bg-muted opacity-50"
               }`}
             >
               <div className="text-4xl mb-2">{badge.icon}</div>
-              <div className="text-sm font-medium text-[#003366]">{badge.name}</div>
+              <div className="text-sm font-medium text-foreground">{badge.name}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Ranking entre alunos (RF13) */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+      <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
         <div className="flex items-center gap-2 mb-6">
-          <Trophy className="text-[#0066CC]" size={24} />
-          <h2 className="text-xl text-[#003366]">Ranking entre Alunos</h2>
+          <Trophy className="text-primary" size={24} />
+          <h2 className="text-xl text-foreground">Ranking entre Alunos</h2>
         </div>
         {ranking.length === 0 ? (
-          <p className="text-sm text-[#6C757D]">
+          <p className="text-sm text-muted-foreground">
             O ranking ficará disponível assim que houver pontuação registrada.
           </p>
         ) : (
@@ -521,32 +521,32 @@ export function ProfilePage() {
                 key={item.posicao}
                 className={`flex items-center justify-between rounded-lg px-4 py-3 ${
                   item.eu
-                    ? "bg-gradient-to-r from-[#003366]/10 to-[#0066CC]/10 border border-[#0066CC]/30"
-                    : "bg-[#F5F7FA]"
+                    ? "bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/30"
+                    : "bg-muted"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                       item.posicao === 1
-                        ? "bg-[#FFD700] text-white"
+                        ? "bg-medal-gold text-medal-foreground"
                         : item.posicao === 2
-                          ? "bg-[#C0C0C0] text-white"
+                          ? "bg-medal-silver text-medal-foreground"
                           : item.posicao === 3
-                            ? "bg-[#CD7F32] text-white"
-                            : "bg-[#003366]/10 text-[#003366]"
+                            ? "bg-medal-bronze text-medal-foreground"
+                            : "bg-primary/10 text-foreground"
                     }`}
                   >
                     {item.posicao}
                   </div>
-                  <span className="text-[#003366] font-medium">
+                  <span className="text-foreground font-medium">
                     {item.nome}
                     {item.eu && (
-                      <span className="ml-2 text-xs text-[#0066CC]">(você)</span>
+                      <span className="ml-2 text-xs text-primary">(você)</span>
                     )}
                   </span>
                 </div>
-                <span className="font-semibold text-[#28A745]">{item.pontos} pts</span>
+                <span className="font-semibold text-success">{item.pontos} pts</span>
               </div>
             ))}
           </div>
@@ -555,81 +555,81 @@ export function ProfilePage() {
 
       {/* Configurações */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-6">
-            <Bell className="text-[#0066CC]" size={24} />
-            <h2 className="text-xl text-[#003366]">Notificações</h2>
+            <Bell className="text-primary" size={24} />
+            <h2 className="text-xl text-foreground">Notificações</h2>
           </div>
           <div className="space-y-4">
             <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-[#003366]">Notificações por e-mail</span>
-              <input type="checkbox" defaultChecked className="w-5 h-5 text-[#0066CC] rounded" />
+              <span className="text-foreground">Notificações por e-mail</span>
+              <input type="checkbox" defaultChecked className="w-5 h-5 accent-primary rounded" />
             </label>
             <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-[#003366]">Lembretes de metas</span>
-              <input type="checkbox" defaultChecked className="w-5 h-5 text-[#0066CC] rounded" />
+              <span className="text-foreground">Lembretes de metas</span>
+              <input type="checkbox" defaultChecked className="w-5 h-5 accent-primary rounded" />
             </label>
             <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-[#003366]">Atualizações do fórum</span>
-              <input type="checkbox" className="w-5 h-5 text-[#0066CC] rounded" />
+              <span className="text-foreground">Atualizações do fórum</span>
+              <input type="checkbox" className="w-5 h-5 accent-primary rounded" />
             </label>
             <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-[#003366]">Sessões de mentoria</span>
-              <input type="checkbox" defaultChecked className="w-5 h-5 text-[#0066CC] rounded" />
+              <span className="text-foreground">Sessões de mentoria</span>
+              <input type="checkbox" defaultChecked className="w-5 h-5 accent-primary rounded" />
             </label>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-6">
-            <Settings className="text-[#0066CC]" size={24} />
-            <h2 className="text-xl text-[#003366]">{t("perfil.preferencias")}</h2>
+            <Settings className="text-primary" size={24} />
+            <h2 className="text-xl text-foreground">{t("perfil.preferencias")}</h2>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-[#6C757D] mb-2">{t("perfil.tema")}</label>
+              <label className="block text-sm text-muted-foreground mb-2">{t("perfil.tema")}</label>
               <select
                 value={tema}
                 onChange={(e) => definirTema(e.target.value as Tema)}
-                className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-input-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
               >
                 <option value="claro">{t("perfil.temaClaro")}</option>
                 <option value="escuro">{t("perfil.temaEscuro")}</option>
                 <option value="auto">{t("perfil.temaAuto")}</option>
               </select>
-              <p className="mt-1 text-xs text-[#6C757D]">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {t("comum.salvarPreferencia")}
               </p>
             </div>
             <div>
-              <label className="block text-sm text-[#6C757D] mb-2">{t("perfil.idioma")}</label>
+              <label className="block text-sm text-muted-foreground mb-2">{t("perfil.idioma")}</label>
               <select
                 value={idioma}
                 onChange={(e) => definirIdioma(e.target.value as Idioma)}
-                className="w-full px-4 py-2 border border-[#003366]/20 rounded-lg focus:ring-2 focus:ring-[#0066CC] focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-input-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
                 data-testid="perfil-idioma"
               >
                 <option value="pt-BR">{t("perfil.idiomaPtBr")}</option>
                 <option value="en-US">{t("perfil.idiomaEnUs")}</option>
               </select>
-              <p className="mt-1 text-xs text-[#6C757D]">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {t("comum.salvarPreferencia")}
               </p>
             </div>
             <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-[#003366]">{t("perfil.perfilPublico")}</span>
-              <input type="checkbox" defaultChecked className="w-5 h-5 text-[#0066CC] rounded" />
+              <span className="text-foreground">{t("perfil.perfilPublico")}</span>
+              <input type="checkbox" defaultChecked className="w-5 h-5 accent-primary rounded" />
             </label>
           </div>
         </div>
 
         {/* Privacidade / LGPD (D7 / RNF09) */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-2">
-            <ShieldCheck className="text-[#0066CC]" size={24} />
-            <h2 className="text-xl text-[#003366]">Privacidade</h2>
+            <ShieldCheck className="text-primary" size={24} />
+            <h2 className="text-xl text-foreground">Privacidade</h2>
           </div>
-          <p className="text-sm text-[#6C757D] mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             Exerça seus direitos previstos na LGPD (Lei 13.709/2018): exporte uma cópia dos seus
             dados pessoais ou solicite a exclusão definitiva da sua conta.
           </p>
@@ -639,7 +639,7 @@ export function ProfilePage() {
               role="status"
               aria-live="polite"
               className={`mb-4 text-sm ${
-                privacidadeFeedback.tipo === "ok" ? "text-green-700" : "text-red-700"
+                privacidadeFeedback.tipo === "ok" ? "text-success" : "text-destructive"
               }`}
             >
               {privacidadeFeedback.texto}
@@ -651,7 +651,7 @@ export function ProfilePage() {
               type="button"
               onClick={exportarDados}
               disabled={exportando}
-              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC]/5 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border border-primary text-primary hover:bg-primary/5 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <Download size={18} aria-hidden="true" />
               <span>{exportando ? "Exportando…" : "Exportar meus dados (JSON)"}</span>
@@ -661,14 +661,14 @@ export function ProfilePage() {
               <button
                 type="button"
                 onClick={() => setConfirmandoExclusao(true)}
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border border-red-600 text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border border-destructive text-destructive hover:bg-destructive/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
               >
                 <Trash2 size={18} aria-hidden="true" />
                 <span>Excluir minha conta</span>
               </button>
             ) : (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-4 space-y-3">
-                <p className="text-sm text-red-800">
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 space-y-3">
+                <p className="text-sm text-destructive">
                   Esta ação é <strong>irreversível</strong>. Seus dados pessoais serão anonimizados
                   e você perderá o acesso. Deseja confirmar?
                 </p>
@@ -677,7 +677,7 @@ export function ProfilePage() {
                     type="button"
                     onClick={excluirConta}
                     disabled={excluindo}
-                    className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-700"
+                    className="flex-1 px-4 py-2 rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                   >
                     {excluindo ? "Excluindo…" : "Confirmar exclusão"}
                   </button>
@@ -685,7 +685,7 @@ export function ProfilePage() {
                     type="button"
                     onClick={() => setConfirmandoExclusao(false)}
                     disabled={excluindo}
-                    className="flex-1 px-4 py-2 rounded-lg border border-[#003366]/20 text-[#003366] hover:bg-[#003366]/5 disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+                    className="flex-1 px-4 py-2 rounded-lg border border-border text-foreground hover:bg-accent disabled:opacity-60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     Cancelar
                   </button>

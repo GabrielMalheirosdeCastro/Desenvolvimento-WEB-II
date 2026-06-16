@@ -86,72 +86,72 @@ export function LibraryPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2">Biblioteca de Recursos</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl mb-2 text-foreground">Biblioteca de Recursos</h1>
+        <p className="text-muted-foreground">
           Materiais curados para apoiar seu desenvolvimento acadêmico
         </p>
       </div>
 
       {/* Busca e Filtros */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-card rounded-lg shadow-sm p-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
             <input
               type="text"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar recursos..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-3 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
             />
           </div>
           <button
             type="button"
             disabled
             title="Filtros avançados em breve"
-            className="flex items-center gap-2 px-6 py-3 border border-gray-200 text-gray-400 rounded-lg cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 border border-border text-muted-foreground rounded-lg cursor-not-allowed"
           >
             <Filter size={20} />
             Filtros
           </button>
         </div>
-        {aviso && <p className="mt-3 text-sm text-blue-700">{aviso}</p>}
+        {aviso && <p className="mt-3 text-sm text-primary">{aviso}</p>}
       </div>
 
       {/* Trilhas de Aprendizagem */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl mb-6">Trilhas de Aprendizagem</h2>
+      <div className="bg-card rounded-lg shadow-sm p-6">
+        <h2 className="text-xl mb-6 text-foreground">Trilhas de Aprendizagem</h2>
         {trilhas.length === 0 ? (
-          <p className="text-gray-500">Nenhuma trilha disponível no momento.</p>
+          <p className="text-muted-foreground">Nenhuma trilha disponível no momento.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {trilhas.map((trilha) => (
               <div
                 key={trilha.id}
-                className="border-2 border-blue-200 rounded-lg p-6 hover:border-blue-400 hover:shadow-md transition-all"
+                className="border-2 border-primary/20 rounded-lg p-6 hover:border-primary/50 hover:shadow-md transition-all"
               >
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <BookOpen className="text-blue-600" size={20} />
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <BookOpen className="text-primary" size={20} />
                   </div>
                   {trilha.publicoAlvo && (
-                    <span className="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+                    <span className="px-2 py-1 text-xs rounded bg-success/15 text-success">
                       {trilha.publicoAlvo}
                     </span>
                   )}
                 </div>
-                <h3 className="font-medium mb-2">{trilha.nome}</h3>
+                <h3 className="font-medium mb-2 text-foreground">{trilha.nome}</h3>
                 {trilha.descricao && (
-                  <p className="text-sm text-gray-600 mb-2">{trilha.descricao}</p>
+                  <p className="text-sm text-muted-foreground mb-2">{trilha.descricao}</p>
                 )}
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm text-muted-foreground space-y-1">
                   <p>{trilha.totalRecursos} recursos</p>
                 </div>
                 <button
                   type="button"
                   disabled
                   title="Acompanhamento de trilha em breve"
-                  className="mt-4 w-full bg-gray-200 text-gray-500 py-2 rounded-lg cursor-not-allowed"
+                  className="mt-4 w-full bg-muted text-muted-foreground py-2 rounded-lg cursor-not-allowed"
                 >
                   Iniciar Trilha (em breve)
                 </button>
@@ -163,7 +163,7 @@ export function LibraryPage() {
 
       {/* Grid de Recursos */}
       {recursosFiltrados.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm p-6 text-gray-500">
+        <div className="bg-card rounded-lg shadow-sm p-6 text-muted-foreground">
           Nenhum recurso encontrado para a busca atual.
         </div>
       ) : (
@@ -174,7 +174,7 @@ export function LibraryPage() {
             return (
               <div
                 key={recurso.id}
-                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                className="bg-card rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className={`h-2 bg-${estilo.color}-600`}></div>
                 <div className="p-6">
@@ -183,23 +183,23 @@ export function LibraryPage() {
                       <Icone className={`text-${estilo.color}-600`} size={24} />
                     </div>
                     {typeof recurso.visualizacoes === "number" && (
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-muted-foreground">
                         {recurso.visualizacoes} acessos
                       </span>
                     )}
                   </div>
-                  <h3 className="font-medium mb-2">{recurso.titulo}</h3>
+                  <h3 className="font-medium mb-2 text-foreground">{recurso.titulo}</h3>
                   {recurso.descricao && (
-                    <p className="text-sm text-gray-600 mb-4">{recurso.descricao}</p>
+                    <p className="text-sm text-muted-foreground mb-4">{recurso.descricao}</p>
                   )}
                   <div className="flex items-center gap-2 mb-4">
                     {recurso.tipo && (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                      <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded">
                         {recurso.tipo}
                       </span>
                     )}
                     {recurso.categoria && (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                      <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded">
                         {recurso.categoria}
                       </span>
                     )}
@@ -207,7 +207,7 @@ export function LibraryPage() {
                   <button
                     type="button"
                     onClick={() => acessarRecurso(recurso)}
-                    className="w-full text-blue-600 hover:text-blue-700 py-2 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+                    className="w-full text-primary hover:text-primary/80 py-2 border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors"
                   >
                     Acessar Recurso
                   </button>

@@ -72,8 +72,8 @@ export function DashboardHome() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2 text-[#003366]">Bem-vindo de volta, {saudacaoNome}! 👋</h1>
-        <p className="text-[#6C757D]">
+        <h1 className="text-3xl mb-2 text-foreground">Bem-vindo de volta, {saudacaoNome}! 👋</h1>
+        <p className="text-muted-foreground">
           Aqui está um resumo do seu progresso acadêmico
         </p>
       </div>
@@ -83,77 +83,83 @@ export function DashboardHome() {
         <button
           type="button"
           onClick={() => navigate("/dashboard/plano-estudos")}
-          className="text-left bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+          className="text-left bg-card rounded-lg shadow-sm p-6 border border-border transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-[#0066CC]/10 rounded-lg flex items-center justify-center">
-              <Target className="text-[#0066CC]" size={24} />
+            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Target className="text-primary" size={24} />
             </div>
-            <span className="text-2xl font-semibold text-[#003366]">85%</span>
+            <span className="text-2xl font-semibold text-foreground">85%</span>
           </div>
-          <h3 className="text-lg mb-1 text-[#003366]">Metas da Semana</h3>
-          <p className="text-sm text-[#6C757D]">6 de 7 concluídas</p>
-          <div className="mt-3 w-full bg-[#F5F7FA] rounded-full h-2">
-            <div className="bg-[#0066CC] h-2 rounded-full" style={{ width: "85%" }}></div>
+          <h3 className="text-lg mb-1 text-foreground">Metas da Semana</h3>
+          <p className="text-sm text-muted-foreground">6 de 7 concluídas</p>
+          <div className="mt-3 w-full bg-muted rounded-full h-2">
+            <div className="bg-primary h-2 rounded-full" style={{ width: "85%" }}></div>
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => navigate("/dashboard/plano-estudos")}
-          className="text-left bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+          className="text-left bg-card rounded-lg shadow-sm p-6 border border-border transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-[#28A745]/10 rounded-lg flex items-center justify-center">
-              <Clock className="text-[#28A745]" size={24} />
+            <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+              <Clock className="text-success" size={24} />
             </div>
-            <span className="text-2xl font-semibold text-[#003366]">25h</span>
+            <span className="text-2xl font-semibold text-foreground">25h</span>
           </div>
-          <h3 className="text-lg mb-1 text-[#003366]">Horas de Estudo</h3>
-          <p className="text-sm text-[#6C757D]">Esta semana</p>
-          <p className="text-sm text-[#28A745] mt-2">↑ 15% vs. semana anterior</p>
+          <h3 className="text-lg mb-1 text-foreground">Horas de Estudo</h3>
+          <p className="text-sm text-muted-foreground">Esta semana</p>
+          <p className="text-sm text-success mt-2">↑ 15% vs. semana anterior</p>
         </button>
 
         <button
           type="button"
           onClick={() => navigate("/dashboard/bem-estar")}
-          className="text-left bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+          className="text-left bg-card rounded-lg shadow-sm p-6 border border-border transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-[#FF8C00]/10 rounded-lg flex items-center justify-center">
-              <Flame className="text-[#FF8C00]" size={24} />
+            <div className="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+              <Flame className="text-warning" size={24} />
             </div>
-            <span className="text-2xl font-semibold text-[#003366]">{streak.atual}</span>
+            <span className="text-2xl font-semibold text-foreground">{streak.atual}</span>
           </div>
-          <h3 className="text-lg mb-1 text-[#003366]">Sequência de Dias</h3>
-          <p className="text-sm text-[#6C757D]">Dias consecutivos (recorde: {streak.recorde})</p>
-          <p className="text-sm text-[#FF8C00] mt-2">🔥 Continue assim!</p>
+          <h3 className="text-lg mb-1 text-foreground">Sequência de Dias</h3>
+          <p className="text-sm text-muted-foreground">Dias consecutivos (recorde: {streak.recorde})</p>
+          <p className="text-sm text-warning mt-2">🔥 Continue assim!</p>
         </button>
       </div>
 
       {/* Gráfico de Horas de Estudo */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+      <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
         <div className="flex items-center gap-2 mb-6">
-          <TrendingUp className="text-[#0066CC]" size={24} />
-          <h2 className="text-xl text-[#003366]">Horas de Estudo Semanal</h2>
+          <TrendingUp className="text-primary" size={24} />
+          <h2 className="text-xl text-foreground">Horas de Estudo Semanal</h2>
         </div>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={weekData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#F5F7FA" />
-            <XAxis dataKey="day" stroke="#6C757D" />
-            <YAxis stroke="#6C757D" />
-            <Tooltip />
-            <Bar dataKey="hours" fill="#003366" radius={[8, 8, 0, 0]} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis dataKey="day" stroke="var(--muted-foreground)" />
+            <YAxis stroke="var(--muted-foreground)" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
+              }}
+            />
+            <Bar dataKey="hours" fill="var(--primary)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Próximas Atividades */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-6">
-            <Calendar className="text-[#0066CC]" size={24} />
-            <h2 className="text-xl text-[#003366]">Próximas Atividades</h2>
+            <Calendar className="text-primary" size={24} />
+            <h2 className="text-xl text-foreground">Próximas Atividades</h2>
           </div>
           <div className="space-y-4">
             {upcomingActivities.map((activity, index) => (
@@ -161,19 +167,19 @@ export function DashboardHome() {
                 key={index}
                 type="button"
                 onClick={() => navigate(destinoPorTipo(activity.type))}
-                className="w-full text-left flex items-center gap-4 p-3 bg-[#F5F7FA] rounded-lg border border-[#003366]/5 transition-colors hover:bg-[#0066CC]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+                className="w-full text-left flex items-center gap-4 p-3 bg-muted rounded-lg border border-border transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div className="flex-1">
-                  <h4 className="font-medium text-[#003366]">{activity.title}</h4>
-                  <p className="text-sm text-[#6C757D]">
+                  <h4 className="font-medium text-foreground">{activity.title}</h4>
+                  <p className="text-sm text-muted-foreground">
                     {activity.date} • {activity.type}
                   </p>
                 </div>
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
                     activity.status === "scheduled"
-                      ? "bg-[#28A745]/10 text-[#28A745]"
-                      : "bg-[#FF8C00]/10 text-[#FF8C00]"
+                      ? "bg-success/10 text-success"
+                      : "bg-warning/10 text-warning"
                   }`}
                 >
                   {activity.status === "scheduled" ? "Agendado" : "Pendente"}
@@ -184,18 +190,18 @@ export function DashboardHome() {
         </div>
 
         {/* Badges Recentes */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-[#003366]/10">
+        <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-6">
-            <Award className="text-[#0066CC]" size={24} />
-            <h2 className="text-xl text-[#003366]">Conquistas Recentes</h2>
+            <Award className="text-primary" size={24} />
+            <h2 className="text-xl text-foreground">Conquistas Recentes</h2>
           </div>
           <div className="space-y-4">
             {recentBadges.map((badge, index) => (
-              <div key={index} className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#0066CC]/10 to-[#28A745]/10 rounded-lg border border-[#0066CC]/20">
+              <div key={index} className="flex items-center gap-4 p-4 bg-gradient-to-r from-primary/10 to-success/10 rounded-lg border border-primary/20">
                 <div className="text-4xl">{badge.icon}</div>
                 <div>
-                  <h4 className="font-medium text-[#003366]">{badge.name}</h4>
-                  <p className="text-sm text-[#6C757D]">Desbloqueado recentemente</p>
+                  <h4 className="font-medium text-foreground">{badge.name}</h4>
+                  <p className="text-sm text-muted-foreground">Desbloqueado recentemente</p>
                 </div>
               </div>
             ))}
@@ -203,7 +209,7 @@ export function DashboardHome() {
           <button
             type="button"
             onClick={() => navigate("/dashboard/perfil")}
-            className="mt-4 w-full text-center text-[#0066CC] hover:text-[#003366] py-2 border border-[#0066CC] rounded-lg hover:bg-[#0066CC]/5 transition-colors font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+            className="mt-4 w-full text-center text-primary hover:text-foreground py-2 border border-primary rounded-lg hover:bg-primary/5 transition-colors font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Ver Todas as Conquistas
           </button>

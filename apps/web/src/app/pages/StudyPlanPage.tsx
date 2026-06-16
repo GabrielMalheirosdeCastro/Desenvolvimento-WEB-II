@@ -137,14 +137,14 @@ export function StudyPlanPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl mb-2">Plano de Estudos</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl mb-2 text-foreground">Plano de Estudos</h1>
+          <p className="text-muted-foreground">
             Organize suas metas e acompanhe seu progresso
           </p>
         </div>
         <button
           onClick={() => setFormAberto((v) => !v)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg transition-colors"
         >
           {formAberto ? <X size={20} /> : <Plus size={20} />}
           {formAberto ? "Cancelar" : "Nova Meta"}
@@ -152,7 +152,7 @@ export function StudyPlanPage() {
       </div>
 
       {erro && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3">
+        <div className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg px-4 py-3">
           {erro}
         </div>
       )}
@@ -161,13 +161,13 @@ export function StudyPlanPage() {
       {formAberto && (
         <form
           onSubmit={adicionarMeta}
-          className="bg-white rounded-lg shadow-sm p-6 space-y-4"
+          className="bg-card rounded-lg shadow-sm p-6 space-y-4"
         >
-          <h2 className="text-xl">Nova Meta</h2>
+          <h2 className="text-xl text-foreground">Nova Meta</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-3">
-              <label className="block text-sm text-gray-600 mb-1" htmlFor="meta-titulo">
-                Título <span className="text-red-600">*</span>
+              <label className="block text-sm text-muted-foreground mb-1" htmlFor="meta-titulo">
+                Título <span className="text-destructive">*</span>
               </label>
               <input
                 id="meta-titulo"
@@ -177,11 +177,11 @@ export function StudyPlanPage() {
                 value={novoTitulo}
                 onChange={(e) => setNovoTitulo(e.target.value)}
                 placeholder="Ex.: Revisar Capítulo 3 de Cálculo"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-ring"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm text-gray-600 mb-1" htmlFor="meta-materia">
+              <label className="block text-sm text-muted-foreground mb-1" htmlFor="meta-materia">
                 Matéria
               </label>
               <input
@@ -191,11 +191,11 @@ export function StudyPlanPage() {
                 value={novaMateria}
                 onChange={(e) => setNovaMateria(e.target.value)}
                 placeholder="Ex.: Cálculo I"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-ring"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1" htmlFor="meta-prazo">
+              <label className="block text-sm text-muted-foreground mb-1" htmlFor="meta-prazo">
                 Prazo
               </label>
               <input
@@ -203,7 +203,7 @@ export function StudyPlanPage() {
                 type="date"
                 value={novoPrazo}
                 onChange={(e) => setNovoPrazo(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-ring"
               />
             </div>
           </div>
@@ -211,7 +211,7 @@ export function StudyPlanPage() {
             <button
               type="submit"
               disabled={enviando || !novoTitulo.trim()}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               {enviando && <Loader2 size={18} className="animate-spin" />}
               Salvar Meta
@@ -222,56 +222,56 @@ export function StudyPlanPage() {
 
       {/* Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-card rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Target className="text-blue-600" size={20} />
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Target className="text-primary" size={20} />
             </div>
-            <h3 className="text-lg">Total de Metas</h3>
+            <h3 className="text-lg text-foreground">Total de Metas</h3>
           </div>
-          <p className="text-3xl">{totalGoals}</p>
-          <p className="text-sm text-gray-600 mt-1">No seu plano</p>
+          <p className="text-3xl text-foreground">{totalGoals}</p>
+          <p className="text-sm text-muted-foreground mt-1">No seu plano</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-card rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <Target className="text-green-600" size={20} />
+            <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+              <Target className="text-success" size={20} />
             </div>
-            <h3 className="text-lg">Concluídas</h3>
+            <h3 className="text-lg text-foreground">Concluídas</h3>
           </div>
-          <p className="text-3xl text-green-600">{completed}</p>
-          <p className="text-sm text-gray-600 mt-1">{percentual}% das metas</p>
+          <p className="text-3xl text-success">{completed}</p>
+          <p className="text-sm text-muted-foreground mt-1">{percentual}% das metas</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-card rounded-lg shadow-sm p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <Target className="text-yellow-600" size={20} />
+            <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+              <Target className="text-warning" size={20} />
             </div>
-            <h3 className="text-lg">Pendentes</h3>
+            <h3 className="text-lg text-foreground">Pendentes</h3>
           </div>
-          <p className="text-3xl text-yellow-600">{pending}</p>
-          <p className="text-sm text-gray-600 mt-1">Restantes</p>
+          <p className="text-3xl text-warning">{pending}</p>
+          <p className="text-sm text-muted-foreground mt-1">Restantes</p>
         </div>
       </div>
 
       {/* Lista de Metas */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl mb-6">Minhas Metas</h2>
+      <div className="bg-card rounded-lg shadow-sm p-6">
+        <h2 className="text-xl mb-6 text-foreground">Minhas Metas</h2>
 
         {carregando ? (
-          <div className="flex items-center justify-center gap-2 text-gray-500 py-12">
+          <div className="flex items-center justify-center gap-2 text-muted-foreground py-12">
             <Loader2 size={20} className="animate-spin" />
             Carregando metas...
           </div>
         ) : goals.length === 0 ? (
-          <div className="text-center text-gray-500 py-12">
-            <Target className="mx-auto mb-4 text-gray-300" size={48} />
+          <div className="text-center text-muted-foreground py-12">
+            <Target className="mx-auto mb-4 text-muted-foreground/50" size={48} />
             <p className="mb-4">Você ainda não tem metas cadastradas.</p>
             <button
               onClick={() => setFormAberto(true)}
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               <Plus size={18} />
               Criar primeira meta
@@ -284,8 +284,8 @@ export function StudyPlanPage() {
                 key={goal.id}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   goal.completed
-                    ? "bg-green-50 border-green-200"
-                    : "bg-white border-gray-200 hover:border-blue-300"
+                    ? "bg-success/10 border-success/30"
+                    : "bg-card border-border hover:border-primary/40"
                 }`}
               >
                 <div className="flex items-start gap-4">
@@ -294,19 +294,19 @@ export function StudyPlanPage() {
                     checked={goal.completed}
                     disabled={busyId === goal.id}
                     onChange={() => alternarMeta(goal)}
-                    className="mt-1 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+                    className="mt-1 w-5 h-5 rounded border-border text-primary focus:ring-ring disabled:opacity-50"
                   />
                   <div className="flex-1">
                     <h3
                       className={`font-medium mb-1 ${
-                        goal.completed ? "line-through text-gray-500" : ""
+                        goal.completed ? "line-through text-muted-foreground" : "text-foreground"
                       }`}
                     >
                       {goal.title}
                     </h3>
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                       {goal.subject && (
-                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                        <span className="px-2 py-1 bg-primary/10 text-primary rounded">
                           {goal.subject}
                         </span>
                       )}
@@ -323,12 +323,12 @@ export function StudyPlanPage() {
                       onClick={() => excluirMeta(goal.id)}
                       disabled={busyId === goal.id}
                       aria-label="Excluir meta"
-                      className="p-2 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                      className="p-2 hover:bg-destructive/10 rounded-lg transition-colors disabled:opacity-50"
                     >
                       {busyId === goal.id ? (
-                        <Loader2 size={18} className="text-red-600 animate-spin" />
+                        <Loader2 size={18} className="text-destructive animate-spin" />
                       ) : (
-                        <Trash2 size={18} className="text-red-600" />
+                        <Trash2 size={18} className="text-destructive" />
                       )}
                     </button>
                   </div>

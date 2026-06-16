@@ -114,8 +114,8 @@ export function ConcentrationPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2">Exercícios de Concentração</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl mb-2 text-foreground">Exercícios de Concentração</h1>
+        <p className="text-muted-foreground">
           Técnicas comprovadas para melhorar seu foco e produtividade
         </p>
       </div>
@@ -186,15 +186,15 @@ export function ConcentrationPage() {
       {/* Técnicas Disponíveis */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {techniques.map((technique, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+          <div key={index} className="bg-card rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
             <div
               className={`w-12 h-12 bg-${technique.color}-100 rounded-lg flex items-center justify-center mb-4`}
             >
               <technique.icon className={`text-${technique.color}-600`} size={24} />
             </div>
-            <h3 className="text-lg mb-2">{technique.title}</h3>
-            <p className="text-gray-600 mb-4">{technique.description}</p>
-            <button className="text-blue-600 hover:text-blue-700 transition-colors">
+            <h3 className="text-lg mb-2 text-foreground">{technique.title}</h3>
+            <p className="text-muted-foreground mb-4">{technique.description}</p>
+            <button className="text-primary hover:text-primary/80 transition-colors">
               Experimentar →
             </button>
           </div>
@@ -202,10 +202,10 @@ export function ConcentrationPage() {
       </div>
 
       {/* Seção de Mindfulness */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-card rounded-lg shadow-sm overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="p-8">
-            <h2 className="text-2xl mb-4">Exercício de Respiração 4-7-8</h2>
+            <h2 className="text-2xl mb-4 text-foreground">Exercício de Respiração 4-7-8</h2>
             {respirando ? (
               <div className="flex flex-col items-center text-center mb-6">
                 <div
@@ -216,8 +216,8 @@ export function ConcentrationPage() {
                     <div className="text-sm text-blue-600">{faseAtual.nome}</div>
                   </div>
                 </div>
-                <p className="mt-4 text-gray-700">{faseAtual.instrucao}</p>
-                <p className="mt-1 text-sm text-gray-500">Ciclos completos: {ciclos}</p>
+                <p className="mt-4 text-foreground">{faseAtual.instrucao}</p>
+                <p className="mt-1 text-sm text-muted-foreground">Ciclos completos: {ciclos}</p>
               </div>
             ) : (
               <div className="space-y-4 mb-6">
@@ -225,26 +225,26 @@ export function ConcentrationPage() {
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-blue-600">1</span>
                   </div>
-                  <p className="text-gray-700">Inspire pelo nariz contando até 4</p>
+                  <p className="text-foreground">Inspire pelo nariz contando até 4</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-blue-600">2</span>
                   </div>
-                  <p className="text-gray-700">Segure a respiração contando até 7</p>
+                  <p className="text-foreground">Segure a respiração contando até 7</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-blue-600">3</span>
                   </div>
-                  <p className="text-gray-700">Expire pela boca contando até 8</p>
+                  <p className="text-foreground">Expire pela boca contando até 8</p>
                 </div>
               </div>
             )}
             <button
               type="button"
               onClick={alternarRespiracao}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg transition-colors"
             >
               {respirando ? "Parar Exercício" : "Iniciar Exercício Guiado"}
             </button>

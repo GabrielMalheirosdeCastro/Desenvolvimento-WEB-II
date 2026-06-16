@@ -80,13 +80,13 @@ export function LoginPage() {
       className="min-h-screen bg-gradient-to-br from-[#003366] via-[#004080] to-[#0066CC] flex items-center justify-center p-4"
       data-testid="login-page"
     >
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-8">
+      <div className="bg-card rounded-lg shadow-xl w-full max-w-lg p-8">
         <div className="text-center mb-6">
-          <div className="w-20 h-20 bg-[#003366] rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl font-bold text-white">F</span>
+          <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl font-bold text-primary-foreground">F</span>
           </div>
-          <h1 className="text-3xl mb-1 text-[#003366]">{t("login.tituloApp")}</h1>
-          <p className="text-sm text-[#6C757D]">
+          <h1 className="text-3xl mb-1 text-foreground">{t("login.tituloApp")}</h1>
+          <p className="text-sm text-muted-foreground">
             {t("login.subtitulo")}
           </p>
         </div>
@@ -98,53 +98,53 @@ export function LoginPage() {
           data-testid="login-metadata"
         >
           <div className="flex items-start gap-2">
-            <BookOpen size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <BookOpen size={18} className="text-primary mt-0.5 shrink-0" />
             <div>
-              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
                 {t("login.disciplina")}
               </dt>
-              <dd className="text-[#003366]" data-testid="meta-disciplina">
+              <dd className="text-foreground" data-testid="meta-disciplina">
                 Desenvolvimento de Aplicações Web II (D001508)
               </dd>
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <GraduationCap size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <GraduationCap size={18} className="text-primary mt-0.5 shrink-0" />
             <div>
-              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
                 {t("login.docente")}
               </dt>
-              <dd className="text-[#003366]" data-testid="meta-docente">
+              <dd className="text-foreground" data-testid="meta-docente">
                 Otávio Lube dos Santos
               </dd>
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <User size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <User size={18} className="text-primary mt-0.5 shrink-0" />
             <div>
-              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
                 {t("login.aluno")}
               </dt>
-              <dd className="text-[#003366]" data-testid="meta-aluno">
+              <dd className="text-foreground" data-testid="meta-aluno">
                 Gabriel Malheiros de Castro · 23110145
               </dd>
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <Github size={18} className="text-[#0066CC] mt-0.5 shrink-0" />
+            <Github size={18} className="text-primary mt-0.5 shrink-0" />
             <div>
-              <dt className="text-[#6C757D] text-xs uppercase tracking-wide">
+              <dt className="text-muted-foreground text-xs uppercase tracking-wide">
                 {t("login.repositorio")}
               </dt>
               <dd
-                className="text-[#003366] break-all"
+                className="text-foreground break-all"
                 data-testid="meta-repositorio"
               >
                 <a
                   href={REPO_URL}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-[#0066CC] hover:underline"
+                  className="text-primary hover:underline"
                 >
                   GabrielMalheirosdeCastro/Desenvolvimento-WEB-II
                 </a>
@@ -157,14 +157,14 @@ export function LoginPage() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm text-[#003366] mb-1"
+              className="block text-sm text-foreground mb-1"
             >
               {t("login.emailLabel")}
             </label>
             <div className="relative">
               <Mail
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6C757D]"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
               <input
@@ -176,7 +176,7 @@ export function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("login.emailPlaceholder")}
-                className="w-full pl-10 pr-3 py-3 rounded-lg border border-[#003366]/20 focus:outline-none focus:ring-2 focus:ring-[#0066CC] text-[#003366]"
+                className="w-full pl-10 pr-3 py-3 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
                 data-testid="login-email"
               />
             </div>
@@ -185,14 +185,14 @@ export function LoginPage() {
           <div>
             <label
               htmlFor="senha"
-              className="block text-sm text-[#003366] mb-1"
+              className="block text-sm text-foreground mb-1"
             >
               {t("login.senhaLabel")}
             </label>
             <div className="relative">
               <Lock
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6C757D]"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
               <input
@@ -205,7 +205,7 @@ export function LoginPage() {
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-3 py-3 rounded-lg border border-[#003366]/20 focus:outline-none focus:ring-2 focus:ring-[#0066CC] text-[#003366]"
+                className="w-full pl-10 pr-3 py-3 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
                 data-testid="login-senha"
               />
             </div>
@@ -213,7 +213,7 @@ export function LoginPage() {
 
           {erro && (
             <p
-              className="text-sm text-[#DC3545] bg-[#DC3545]/5 border border-[#DC3545]/20 rounded-lg px-3 py-2"
+              className="text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-2"
               role="alert"
               data-testid="login-erro"
             >
@@ -224,18 +224,18 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={enviando}
-            className="w-full bg-[#003366] hover:bg-[#004080] disabled:opacity-60 disabled:cursor-not-allowed text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-primary hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed text-primary-foreground py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             data-testid="login-submit"
           >
             {enviando && <Loader2 size={18} className="animate-spin" />}
             {enviando ? t("login.entrando") : t("login.entrar")}
           </button>
 
-          <p className="text-center text-sm text-[#6C757D]">
+          <p className="text-center text-sm text-muted-foreground">
             {t("login.primeiroAcesso")}{" "}
             <Link
               to="/ativar"
-              className="text-[#0066CC] hover:underline"
+              className="text-primary hover:underline"
               data-testid="login-link-ativar"
             >
               {t("login.ativeConta")}
@@ -248,9 +248,9 @@ export function LoginPage() {
           className="mt-6 flex justify-center"
           data-testid="login-version-badge"
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#003366]/5 text-[#003366] text-xs font-mono border border-[#003366]/10">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-foreground text-xs font-mono border border-border">
             <span
-              className="w-2 h-2 rounded-full bg-[#28A745]"
+              className="w-2 h-2 rounded-full bg-success"
               aria-hidden="true"
             />
             {versionInfo.name} · v{versionInfo.version}

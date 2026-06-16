@@ -88,26 +88,26 @@ export function EventsPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2">Eventos Institucionais</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl mb-2 text-foreground">Eventos Institucionais</h1>
+        <p className="text-muted-foreground">
           Palestras, oficinas e encontros do programa de acolhimento da FAESA
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl mb-6 flex items-center gap-2">
-          <Calendar className="text-blue-600" size={20} />
+      <div className="bg-card rounded-lg shadow-sm p-6">
+        <h2 className="text-xl mb-6 flex items-center gap-2 text-foreground">
+          <Calendar className="text-primary" size={20} />
           Próximos Eventos
         </h2>
 
-        {aviso && <p className="mb-4 text-sm text-blue-700">{aviso}</p>}
+        {aviso && <p className="mb-4 text-sm text-primary">{aviso}</p>}
 
         {carregando ? (
-          <p className="text-gray-500">Carregando eventos...</p>
+          <p className="text-muted-foreground">Carregando eventos...</p>
         ) : erro ? (
-          <p className="text-[#FF8C00]">{erro}</p>
+          <p className="text-destructive">{erro}</p>
         ) : eventos.length === 0 ? (
-          <p className="text-gray-500">Nenhum evento agendado no momento.</p>
+          <p className="text-muted-foreground">Nenhum evento agendado no momento.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {eventos.map((ev) => {
@@ -115,32 +115,32 @@ export function EventsPage() {
               return (
                 <div
                   key={ev.id}
-                  className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow flex flex-col"
+                  className="border border-border rounded-lg p-5 hover:shadow-md transition-shadow flex flex-col"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">
+                    <span className="px-2 py-1 bg-accent text-accent-foreground text-xs rounded">
                       {ev.tipo || "Evento"}
                     </span>
                     {typeof ev.vagas === "number" && (
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Users size={12} /> {ev.vagas} vagas
                       </span>
                     )}
                   </div>
-                  <h3 className="font-medium mb-2">{ev.titulo}</h3>
+                  <h3 className="font-medium mb-2 text-foreground">{ev.titulo}</h3>
                   {ev.descricao && (
-                    <p className="text-sm text-gray-600 mb-3">{ev.descricao}</p>
+                    <p className="text-sm text-muted-foreground mb-3">{ev.descricao}</p>
                   )}
-                  <div className="text-sm text-gray-700 space-y-1 mb-4">
+                  <div className="text-sm text-foreground space-y-1 mb-4">
                     {ev.data && (
                       <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-gray-400" />
+                        <Calendar size={14} className="text-muted-foreground" />
                         <span>{new Date(ev.data).toLocaleString("pt-BR")}</span>
                       </div>
                     )}
                     {ev.local && (
                       <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-gray-400" />
+                        <MapPin size={14} className="text-muted-foreground" />
                         <span>{ev.local}</span>
                       </div>
                     )}
@@ -151,8 +151,8 @@ export function EventsPage() {
                     disabled={inscrito || enviando === ev.id}
                     className={`mt-auto w-full py-2 rounded-lg transition-colors ${
                       inscrito
-                        ? "bg-green-50 text-green-700 border border-green-200 cursor-default flex items-center justify-center gap-2"
-                        : "bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-60"
+                        ? "bg-success/10 text-success border border-success/30 cursor-default flex items-center justify-center gap-2"
+                        : "bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-60"
                     }`}
                   >
                     {inscrito ? (

@@ -100,8 +100,8 @@ export function ForumPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl mb-2">Fórum de Discussão</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl mb-2 text-foreground">Fórum de Discussão</h1>
+          <p className="text-muted-foreground">
             Compartilhe experiências e tire dúvidas com a comunidade
           </p>
         </div>
@@ -110,7 +110,7 @@ export function ForumPage() {
             setErroForm(null);
             setFormAberto((v) => !v);
           }}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg transition-colors"
         >
           <Plus size={20} />
           Novo Tópico
@@ -118,10 +118,10 @@ export function ForumPage() {
       </div>
 
       {formAberto && (
-        <form onSubmit={criarTopico} className="bg-white rounded-lg shadow-sm p-6 space-y-4">
-          <h2 className="text-xl">Criar novo tópico</h2>
+        <form onSubmit={criarTopico} className="bg-card rounded-lg shadow-sm p-6 space-y-4">
+          <h2 className="text-xl text-foreground">Criar novo tópico</h2>
           <div>
-            <label htmlFor="forum-titulo" className="block text-sm text-gray-600 mb-1">
+            <label htmlFor="forum-titulo" className="block text-sm text-muted-foreground mb-1">
               Título
             </label>
             <input
@@ -131,18 +131,18 @@ export function ForumPage() {
               onChange={(e) => setTitulo(e.target.value)}
               maxLength={160}
               placeholder="Sobre o que você quer conversar?"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-border bg-input-background text-foreground rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
           <div>
-            <label htmlFor="forum-categoria" className="block text-sm text-gray-600 mb-1">
+            <label htmlFor="forum-categoria" className="block text-sm text-muted-foreground mb-1">
               Categoria
             </label>
             <select
               id="forum-categoria"
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-border bg-input-background text-foreground rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
             >
               {CATEGORIAS_FORUM.map((c) => (
                 <option key={c} value={c}>
@@ -152,7 +152,7 @@ export function ForumPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="forum-descricao" className="block text-sm text-gray-600 mb-1">
+            <label htmlFor="forum-descricao" className="block text-sm text-muted-foreground mb-1">
               Descrição (opcional)
             </label>
             <textarea
@@ -162,22 +162,22 @@ export function ForumPage() {
               maxLength={2000}
               rows={3}
               placeholder="Detalhe sua dúvida ou experiência..."
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-border bg-input-background text-foreground rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          {erroForm && <p className="text-sm text-red-600">{erroForm}</p>}
+          {erroForm && <p className="text-sm text-destructive">{erroForm}</p>}
           <div className="flex items-center gap-3">
             <button
               type="submit"
               disabled={enviando}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground px-6 py-2 rounded-lg transition-colors"
             >
               {enviando ? "Publicando..." : "Publicar"}
             </button>
             <button
               type="button"
               onClick={() => setFormAberto(false)}
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 border border-border rounded-lg hover:bg-accent transition-colors text-foreground"
             >
               Cancelar
             </button>
@@ -188,13 +188,13 @@ export function ForumPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar com Categorias */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h3 className="font-medium mb-4">Categorias</h3>
+          <div className="bg-card rounded-lg shadow-sm p-4">
+            <h3 className="font-medium mb-4 text-foreground">Categorias</h3>
             <div className="flex flex-wrap gap-2">
               {CATEGORIAS_FORUM.map((c) => (
                 <span
                   key={c}
-                  className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full"
+                  className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full"
                 >
                   {c}
                 </span>
@@ -202,9 +202,9 @@ export function ForumPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-4 mt-4">
-            <h3 className="font-medium mb-4">Regras do Fórum</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
+          <div className="bg-card rounded-lg shadow-sm p-4 mt-4">
+            <h3 className="font-medium mb-4 text-foreground">Regras do Fórum</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
               <li>• Seja respeitoso com todos</li>
               <li>• Não compartilhe informações pessoais</li>
               <li>• Evite spam e conteúdo irrelevante</li>
@@ -216,17 +216,17 @@ export function ForumPage() {
         {/* Lista de Tópicos */}
         <div className="lg:col-span-3 space-y-4">
           {carregando && (
-            <div className="bg-white rounded-lg shadow-sm p-6 text-gray-500">
+            <div className="bg-card rounded-lg shadow-sm p-6 text-muted-foreground">
               Carregando tópicos...
             </div>
           )}
 
           {erro && !carregando && (
-            <div className="bg-white rounded-lg shadow-sm p-6 text-red-600">{erro}</div>
+            <div className="bg-card rounded-lg shadow-sm p-6 text-destructive">{erro}</div>
           )}
 
           {!carregando && !erro && topicos.length === 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-6 text-gray-500">
+            <div className="bg-card rounded-lg shadow-sm p-6 text-muted-foreground">
               Ainda não há tópicos. Seja o primeiro a iniciar uma conversa.
             </div>
           )}
@@ -235,27 +235,27 @@ export function ForumPage() {
             topicos.map((topico) => (
               <div
                 key={topico.id}
-                className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+                className="bg-card rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground">
                       {iniciais(topico.autor)}
                     </div>
                   </div>
                   <div className="flex-1">
                     <div className="flex items-start justify-between gap-4 mb-2">
-                      <h3 className="text-lg">{topico.titulo}</h3>
+                      <h3 className="text-lg text-foreground">{topico.titulo}</h3>
                       {topico.categoria && (
-                        <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full whitespace-nowrap">
+                        <span className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full whitespace-nowrap">
                           {topico.categoria}
                         </span>
                       )}
                     </div>
                     {topico.descricao && (
-                      <p className="text-gray-600 mb-3">{topico.descricao}</p>
+                      <p className="text-muted-foreground mb-3">{topico.descricao}</p>
                     )}
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
+                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
                       <span>{topico.autor || "Anônimo"}</span>
                       <span className="flex items-center gap-1">
                         <MessageCircle size={16} />

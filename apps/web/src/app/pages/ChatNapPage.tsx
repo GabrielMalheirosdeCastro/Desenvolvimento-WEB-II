@@ -224,12 +224,12 @@ export function ChatNapPage() {
       {/* Cabeçalho */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-[#003366] text-white flex items-center justify-center">
+          <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
             <HeartHandshake size={22} />
           </div>
           <div>
-            <h1 className="text-2xl text-[#003366]">Chat com o NAP</h1>
-            <p className="text-sm text-gray-600">
+            <h1 className="text-2xl text-foreground">Chat com o NAP</h1>
+            <p className="text-sm text-muted-foreground">
               {ehNap
                 ? "Atendimentos do Núcleo de Apoio Psicopedagógico"
                 : "Converse com o Núcleo de Apoio Psicopedagógico da FAESA"}
@@ -240,7 +240,7 @@ export function ChatNapPage() {
           <button
             type="button"
             onClick={() => setNovoAberto(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#003366] px-4 py-2.5 text-sm text-white hover:bg-[#00264d] transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <Plus size={18} /> Novo atendimento
           </button>
@@ -249,16 +249,16 @@ export function ChatNapPage() {
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[20rem_1fr] gap-4 min-h-0">
         {/* Lista de conversas */}
-        <aside className="bg-white rounded-xl border border-gray-200 overflow-y-auto">
-          <div className="px-4 py-3 border-b border-gray-100 text-sm font-medium text-[#003366]">
+        <aside className="bg-card rounded-xl border border-border overflow-y-auto">
+          <div className="px-4 py-3 border-b border-border text-sm font-medium text-foreground">
             {ehNap ? "Todos os atendimentos" : "Meus atendimentos"}
           </div>
           {carregandoTickets ? (
-            <div className="flex items-center justify-center py-10 text-gray-500">
+            <div className="flex items-center justify-center py-10 text-muted-foreground">
               <Loader2 className="animate-spin mr-2" size={18} /> Carregando...
             </div>
           ) : tickets.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-gray-500">
+            <p className="px-4 py-6 text-sm text-muted-foreground">
               {ehNap
                 ? "Nenhum atendimento aberto no momento."
                 : "Você ainda não iniciou nenhum atendimento."}
@@ -270,33 +270,33 @@ export function ChatNapPage() {
                   <button
                     type="button"
                     onClick={() => setSelecionado(t.id)}
-                    className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                      selecionado === t.id ? "bg-[#E6EEF5]" : ""
+                    className={`w-full text-left px-4 py-3 border-b border-border hover:bg-accent transition-colors ${
+                      selecionado === t.id ? "bg-accent" : ""
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-[#003366] truncate">
+                      <span className="text-sm font-medium text-foreground truncate">
                         {t.titulo || "Atendimento"}
                       </span>
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 ${
                           t.status === "fechado"
-                            ? "bg-gray-100 text-gray-500"
+                            ? "bg-muted text-muted-foreground"
                             : t.status === "em_atendimento"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-amber-100 text-amber-700"
+                              ? "bg-success/15 text-success"
+                              : "bg-warning/15 text-warning"
                         }`}
                       >
                         {rotuloStatus(t.status)}
                       </span>
                     </div>
                     {ehNap && (
-                      <p className="text-xs text-gray-500 mt-0.5 truncate">
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {t.usuarioNome || `Aluno #${t.usuarioId}`}
                       </p>
                     )}
                     {t.ultimaMensagem && (
-                      <p className="text-xs text-gray-500 mt-1 truncate">{t.ultimaMensagem}</p>
+                      <p className="text-xs text-muted-foreground mt-1 truncate">{t.ultimaMensagem}</p>
                     )}
                   </button>
                 </li>
@@ -306,19 +306,19 @@ export function ChatNapPage() {
         </aside>
 
         {/* Janela de conversa */}
-        <section className="bg-white rounded-xl border border-gray-200 flex flex-col min-h-0">
+        <section className="bg-card rounded-xl border border-border flex flex-col min-h-0">
           {ticketAtual === null ? (
-            <div className="flex-1 flex items-center justify-center text-gray-500 text-sm px-6 text-center">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm px-6 text-center">
               Selecione um atendimento ao lado para ver as mensagens.
             </div>
           ) : (
             <>
-              <header className="px-5 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
+              <header className="px-5 py-3 border-b border-border flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <h2 className="text-base font-medium text-[#003366] truncate">
+                  <h2 className="text-base font-medium text-foreground truncate">
                     {ticketAtual.titulo || "Atendimento"}
                   </h2>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {ehNap ? ticketAtual.usuarioNome || `Aluno #${ticketAtual.usuarioId}` : "NAP FAESA"}
                     {" · "}
                     {rotuloStatus(ticketAtual.status)}
@@ -328,7 +328,7 @@ export function ChatNapPage() {
                   <button
                     type="button"
                     onClick={fecharTicket}
-                    className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-red-600 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors"
                   >
                     <X size={14} /> Encerrar
                   </button>
@@ -343,7 +343,7 @@ export function ChatNapPage() {
                   >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                        m.autorEhNap ? "bg-[#003366] text-white" : "bg-[#0066CC] text-white"
+                        m.autorEhNap ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"
                       }`}
                     >
                       {m.autorEhNap ? <HeartHandshake size={16} /> : <UserIcon size={16} />}
@@ -351,8 +351,8 @@ export function ChatNapPage() {
                     <div
                       className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                         m.autorEhNap
-                          ? "bg-gray-100 text-gray-800 rounded-tl-sm"
-                          : "bg-[#0066CC] text-white rounded-tr-sm"
+                          ? "bg-muted text-foreground rounded-tl-sm"
+                          : "bg-secondary text-secondary-foreground rounded-tr-sm"
                       }`}
                     >
                       <p className="text-[11px] opacity-70 mb-0.5">
@@ -367,22 +367,22 @@ export function ChatNapPage() {
               </div>
 
               {avisoCrise && (
-                <div className="mx-4 mb-2 flex gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+                <div className="mx-4 mb-2 flex gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                   <ShieldAlert size={18} className="shrink-0 mt-0.5" />
                   <span>{avisoCrise}</span>
                 </div>
               )}
 
-              {erro && <p className="px-4 pb-1 text-sm text-red-600">{erro}</p>}
+              {erro && <p className="px-4 pb-1 text-sm text-destructive">{erro}</p>}
 
               {fechado ? (
-                <p className="px-5 py-4 text-sm text-gray-500 border-t border-gray-100">
+                <p className="px-5 py-4 text-sm text-muted-foreground border-t border-border">
                   Este atendimento foi encerrado.
                 </p>
               ) : (
                 <form
                   onSubmit={enviarMensagem}
-                  className="px-4 py-3 border-t border-gray-100 flex items-center gap-2"
+                  className="px-4 py-3 border-t border-border flex items-center gap-2"
                 >
                   <input
                     type="text"
@@ -390,12 +390,12 @@ export function ChatNapPage() {
                     onChange={(ev) => setEntrada(ev.target.value)}
                     placeholder="Escreva sua mensagem..."
                     maxLength={2000}
-                    className="flex-1 border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
+                    className="flex-1 border border-border rounded-full px-5 py-3 bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                   <button
                     type="submit"
                     disabled={enviando || !entrada.trim()}
-                    className="w-12 h-12 rounded-full bg-[#003366] text-white flex items-center justify-center hover:bg-[#00264d] transition-colors disabled:opacity-50"
+                    className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors disabled:opacity-50"
                     aria-label="Enviar mensagem"
                   >
                     {enviando ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
@@ -407,7 +407,7 @@ export function ChatNapPage() {
         </section>
       </div>
 
-      <p className="mt-2 text-xs text-gray-500">
+      <p className="mt-2 text-xs text-muted-foreground">
         O NAP oferece apoio psicopedagógico humano. Em caso de crise ou risco imediato, ligue para o
         CVV no <strong>188</strong> (24h, gratuito e sigiloso) ou para o SAMU <strong>192</strong>.
       </p>
@@ -415,13 +415,13 @@ export function ChatNapPage() {
       {/* Modal: abrir novo atendimento (apenas aluno) */}
       {novoAberto && !ehNap && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
+          <div className="w-full max-w-lg rounded-xl bg-card p-6 shadow-xl">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-[#003366]">Novo atendimento com o NAP</h2>
+              <h2 className="text-lg font-medium text-foreground">Novo atendimento com o NAP</h2>
               <button
                 type="button"
                 onClick={() => setNovoAberto(false)}
-                className="text-gray-400 hover:text-gray-700"
+                className="text-muted-foreground hover:text-foreground"
                 aria-label="Fechar"
               >
                 <X size={20} />
@@ -429,7 +429,7 @@ export function ChatNapPage() {
             </div>
             <form onSubmit={abrirTicket} className="space-y-4">
               <div>
-                <label htmlFor="novo-titulo" className="block text-sm text-gray-600 mb-1">
+                <label htmlFor="novo-titulo" className="block text-sm text-muted-foreground mb-1">
                   Assunto
                 </label>
                 <input
@@ -440,11 +440,11 @@ export function ChatNapPage() {
                   placeholder="Ex.: Ansiedade antes das provas"
                   maxLength={120}
                   required
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
+                  className="w-full border border-border rounded-lg px-4 py-2.5 bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
               <div>
-                <label htmlFor="nova-mensagem" className="block text-sm text-gray-600 mb-1">
+                <label htmlFor="nova-mensagem" className="block text-sm text-muted-foreground mb-1">
                   Como podemos ajudar?
                 </label>
                 <textarea
@@ -455,22 +455,22 @@ export function ChatNapPage() {
                   maxLength={2000}
                   rows={4}
                   required
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
+                  className="w-full border border-border rounded-lg px-4 py-2.5 bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
-              {erro && <p className="text-sm text-red-600">{erro}</p>}
+              {erro && <p className="text-sm text-destructive">{erro}</p>}
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setNovoAberto(false)}
-                  className="rounded-lg px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-100"
+                  className="rounded-lg px-4 py-2.5 text-sm text-muted-foreground hover:bg-accent"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={enviando || !novoTitulo.trim() || !novaMensagem.trim()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#003366] px-4 py-2.5 text-sm text-white hover:bg-[#00264d] transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
                 >
                   {enviando ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />}
                   Iniciar atendimento

@@ -71,7 +71,7 @@ export function CoordenacaoPage() {
 
   if (estado.status === "carregando") {
     return (
-      <div className="flex items-center justify-center py-20 text-[#003366]">
+      <div className="flex items-center justify-center py-20 text-foreground">
         <Loader2 className="animate-spin mr-2" size={20} />
         <span>Carregando indicadores…</span>
       </div>
@@ -80,12 +80,12 @@ export function CoordenacaoPage() {
 
   if (estado.status === "negado") {
     return (
-      <div className="max-w-md mx-auto mt-10 bg-white rounded-xl border border-amber-200 p-8 text-center">
-        <ShieldAlert className="mx-auto text-amber-500 mb-3" size={40} />
-        <h2 className="text-lg font-semibold text-[#003366] mb-1">
+      <div className="max-w-md mx-auto mt-10 bg-card rounded-xl border border-warning/30 p-8 text-center">
+        <ShieldAlert className="mx-auto text-warning mb-3" size={40} />
+        <h2 className="text-lg font-semibold text-foreground mb-1">
           Acesso restrito
         </h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Este painel é exclusivo para a Coordenação.
         </p>
       </div>
@@ -94,11 +94,11 @@ export function CoordenacaoPage() {
 
   if (estado.status === "erro") {
     return (
-      <div className="max-w-md mx-auto mt-10 bg-white rounded-xl border border-red-200 p-8 text-center">
-        <h2 className="text-lg font-semibold text-[#003366] mb-1">
+      <div className="max-w-md mx-auto mt-10 bg-card rounded-xl border border-destructive/30 p-8 text-center">
+        <h2 className="text-lg font-semibold text-foreground mb-1">
           Não foi possível carregar
         </h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Ocorreu um erro ao buscar os indicadores. Tente novamente mais tarde.
         </p>
       </div>
@@ -120,10 +120,10 @@ export function CoordenacaoPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-[#003366]">
+        <h1 className="text-2xl font-semibold text-foreground">
           Painel de Coordenação
         </h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Indicadores institucionais agregados do Site de Acolhimento.
         </p>
       </header>
@@ -132,21 +132,21 @@ export function CoordenacaoPage() {
         {cards.map((c) => (
           <div
             key={c.label}
-            className="bg-white rounded-xl border border-gray-100 p-5 flex items-center gap-4"
+            className="bg-card rounded-xl border border-border p-5 flex items-center gap-4"
           >
-            <div className="w-12 h-12 rounded-lg bg-[#003366]/5 flex items-center justify-center text-[#0066CC]">
+            <div className="w-12 h-12 rounded-lg bg-primary/5 flex items-center justify-center text-primary">
               <c.icon size={24} />
             </div>
             <div>
-              <p className="text-2xl font-semibold text-[#003366]">{c.valor}</p>
-              <p className="text-sm text-gray-600">{c.label}</p>
+              <p className="text-2xl font-semibold text-foreground">{c.valor}</p>
+              <p className="text-sm text-muted-foreground">{c.label}</p>
             </div>
           </div>
         ))}
       </div>
 
       {source === "fallback" && (
-        <p className="text-xs text-amber-600">
+        <p className="text-xs text-warning">
           Indicadores indisponíveis no momento — exibindo valores padrão.
         </p>
       )}

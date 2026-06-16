@@ -133,12 +133,12 @@ export function ChatbotPage() {
       {/* Cabeçalho */}
       <div className="mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-[#003366] text-white flex items-center justify-center">
+          <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
             <Bot size={22} />
           </div>
           <div>
-            <h1 className="text-2xl text-[#003366]">Acolhimento FAESA</h1>
-            <p className="text-sm text-gray-600">
+            <h1 className="text-2xl text-foreground">Acolhimento FAESA</h1>
+            <p className="text-sm text-muted-foreground">
               Assistente de apoio estudantil — respostas adaptadas à sua faixa etária
             </p>
           </div>
@@ -147,14 +147,14 @@ export function ChatbotPage() {
 
       {/* Seletor de faixa etária */}
       <div className="mb-3 flex items-center gap-2 text-sm">
-        <label htmlFor="faixa" className="text-gray-600">
+        <label htmlFor="faixa" className="text-muted-foreground">
           Faixa etária:
         </label>
         <select
           id="faixa"
           value={faixa}
           onChange={(ev) => setFaixa(ev.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
+          className="border border-border rounded-lg px-3 py-1.5 bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         >
           {FAIXAS.map((f) => (
             <option key={f.valor || "auto"} value={f.valor}>
@@ -165,9 +165,9 @@ export function ChatbotPage() {
       </div>
 
       {/* Janela de conversa */}
-      <div className="flex-1 overflow-y-auto bg-white rounded-xl border border-gray-200 p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto bg-card rounded-xl border border-border p-4 space-y-4">
         {carregando ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <div className="flex items-center justify-center h-full text-muted-foreground">
             <Loader2 className="animate-spin mr-2" size={20} /> Carregando conversa...
           </div>
         ) : (
@@ -181,10 +181,10 @@ export function ChatbotPage() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                   m.origem === "usuario"
-                    ? "bg-[#0066CC] text-white"
+                    ? "bg-secondary text-secondary-foreground"
                     : m.crise
-                      ? "bg-red-600 text-white"
-                      : "bg-[#003366] text-white"
+                      ? "bg-destructive text-destructive-foreground"
+                      : "bg-primary text-primary-foreground"
                 }`}
               >
                 {m.origem === "usuario" ? (
@@ -198,10 +198,10 @@ export function ChatbotPage() {
               <div
                 className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                   m.origem === "usuario"
-                    ? "bg-[#0066CC] text-white rounded-tr-sm"
+                    ? "bg-secondary text-secondary-foreground rounded-tr-sm"
                     : m.crise
-                      ? "bg-red-50 text-red-900 border border-red-200 rounded-tl-sm"
-                      : "bg-gray-100 text-gray-800 rounded-tl-sm"
+                      ? "bg-destructive/10 text-destructive border border-destructive/30 rounded-tl-sm"
+                      : "bg-muted text-foreground rounded-tl-sm"
                 }`}
               >
                 {m.conteudo}
@@ -210,14 +210,14 @@ export function ChatbotPage() {
           ))
         )}
         {enviando && (
-          <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <Loader2 className="animate-spin" size={16} /> O assistente está digitando...
           </div>
         )}
         <div ref={fimRef} />
       </div>
 
-      {erro && <p className="mt-2 text-sm text-red-600">{erro}</p>}
+      {erro && <p className="mt-2 text-sm text-destructive">{erro}</p>}
 
       {/* Campo de envio */}
       <form onSubmit={enviar} className="mt-3 flex items-center gap-2">
@@ -227,19 +227,19 @@ export function ChatbotPage() {
           onChange={(ev) => setEntrada(ev.target.value)}
           placeholder="Escreva como você está se sentindo..."
           maxLength={2000}
-          className="flex-1 border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
+          className="flex-1 border border-border rounded-full px-5 py-3 bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"
           disabled={enviando || !entrada.trim()}
-          className="w-12 h-12 rounded-full bg-[#003366] text-white flex items-center justify-center hover:bg-[#00264d] transition-colors disabled:opacity-50"
+          className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors disabled:opacity-50"
           aria-label="Enviar mensagem"
         >
           {enviando ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
         </button>
       </form>
 
-      <p className="mt-2 text-xs text-gray-500">
+      <p className="mt-2 text-xs text-muted-foreground">
         Este assistente oferece apoio e orientação, mas não substitui atendimento profissional.
         Em caso de crise, ligue para o CVV no <strong>188</strong> (24h, gratuito e sigiloso).
       </p>

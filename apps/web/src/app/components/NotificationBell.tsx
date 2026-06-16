@@ -86,12 +86,12 @@ export function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 hover:bg-[#F5F7FA] rounded-lg transition-colors"
+        className="relative p-2 hover:bg-accent rounded-lg transition-colors"
         aria-label="Notificações"
       >
-        <Bell size={20} className="text-[#003366]" />
+        <Bell size={20} className="text-foreground" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF8C00] text-white text-xs rounded-full flex items-center justify-center">
+          <span className="absolute top-1 right-1 w-4 h-4 bg-warning text-warning-foreground text-xs rounded-full flex items-center justify-center">
             {unreadCount}
           </span>
         )}
@@ -103,13 +103,13 @@ export function NotificationBell() {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           ></div>
-          <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-[#003366]/10 z-20">
-            <div className="p-4 border-b border-[#003366]/10 flex items-center justify-between">
-              <h3 className="font-semibold text-[#003366]">Notificações</h3>
+          <div className="absolute right-0 mt-2 w-80 bg-card rounded-lg shadow-lg border border-border z-20">
+            <div className="p-4 border-b border-border flex items-center justify-between">
+              <h3 className="font-semibold text-foreground">Notificações</h3>
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-xs text-[#0066CC] hover:underline"
+                  className="text-xs text-primary hover:underline"
                 >
                   Marcar todas como lidas
                 </button>
@@ -117,7 +117,7 @@ export function NotificationBell() {
             </div>
             <div className="max-h-96 overflow-y-auto">
               {notifications.length === 0 ? (
-                <div className="p-8 text-center text-[#6C757D]">
+                <div className="p-8 text-center text-muted-foreground">
                   Nenhuma notificação
                 </div>
               ) : (
@@ -125,34 +125,34 @@ export function NotificationBell() {
                   <div
                     key={notification.id}
                     onClick={() => markAsRead(notification.id)}
-                    className={`p-4 border-b border-[#003366]/5 hover:bg-[#F5F7FA] cursor-pointer transition-colors ${
-                      !notification.lida ? "bg-[#0066CC]/5" : ""
+                    className={`p-4 border-b border-border hover:bg-accent cursor-pointer transition-colors ${
+                      !notification.lida ? "bg-primary/5" : ""
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
                         className={`w-2 h-2 mt-2 rounded-full flex-shrink-0 ${
                           notification.tipo === "success"
-                            ? "bg-[#28A745]"
+                            ? "bg-success"
                             : notification.tipo === "warning"
-                            ? "bg-[#FF8C00]"
-                            : "bg-[#0066CC]"
+                            ? "bg-warning"
+                            : "bg-primary"
                         }`}
                       ></div>
                       <div className="flex-1">
                         <h4
                           className={`text-sm mb-1 ${
                             !notification.lida
-                              ? "font-semibold text-[#003366]"
-                              : "text-[#003366]"
+                              ? "font-semibold text-foreground"
+                              : "text-foreground"
                           }`}
                         >
                           {notification.titulo}
                         </h4>
-                        <p className="text-sm text-[#6C757D] mb-1">
+                        <p className="text-sm text-muted-foreground mb-1">
                           {notification.mensagem}
                         </p>
-                        <span className="text-xs text-[#6C757D]">
+                        <span className="text-xs text-muted-foreground">
                           {tempoRelativo(notification.dataCriacao)}
                         </span>
                       </div>
@@ -161,8 +161,8 @@ export function NotificationBell() {
                 ))
               )}
             </div>
-            <div className="p-3 border-t border-[#003366]/10">
-              <button className="w-full text-center text-sm text-[#0066CC] hover:text-[#003366] transition-colors">
+            <div className="p-3 border-t border-border">
+              <button className="w-full text-center text-sm text-primary hover:text-foreground transition-colors">
                 Ver todas as notificações
               </button>
             </div>

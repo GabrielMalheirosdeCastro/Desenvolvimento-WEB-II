@@ -28,12 +28,12 @@ function PageFallback() {
     <div
       role="status"
       aria-live="polite"
-      className="flex items-center justify-center py-16 text-[#6C757D]"
+      className="flex items-center justify-center py-16 text-muted-foreground"
     >
       <span className="sr-only">Carregando conteúdo…</span>
       <div
         aria-hidden="true"
-        className="h-8 w-8 animate-spin rounded-full border-4 border-[#003366]/20 border-t-[#003366]"
+        className="h-8 w-8 animate-spin rounded-full border-4 border-primary/20 border-t-primary"
       />
     </div>
   );
@@ -74,17 +74,17 @@ export function DashboardLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#F5F7FA]">
+    <div className="flex h-screen bg-background">
       {/* Skip-link (D2/RNF04): pula a navegacao para o conteudo principal. */}
       <a
         href="#conteudo-principal"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-[#003366] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-card focus:px-4 focus:py-2 focus:text-foreground focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
       >
         {t("nav.pularConteudo")}
       </a>
       {/* Sidebar Desktop */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-[#003366] text-white">
-        <div className="p-6 border-b border-white/10">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-sidebar text-sidebar-foreground">
+        <div className="p-6 border-b border-sidebar-border">
           <h1 className="text-xl font-semibold">{t("nav.marca")}</h1>
         </div>
 
@@ -97,8 +97,8 @@ export function DashboardLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                   isActive
-                    ? "bg-[#0066CC] text-white"
-                    : "text-white/80 hover:bg-white/10"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                    : "text-sidebar-foreground/80 hover:bg-white/10"
                 }`
               }
             >
@@ -108,10 +108,10 @@ export function DashboardLayout() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-sidebar-border">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors w-full"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground/80 hover:bg-white/10 transition-colors w-full"
           >
             <LogOut size={20} />
             <span>{t("nav.sair")}</span>
@@ -126,8 +126,8 @@ export function DashboardLayout() {
             className="fixed inset-0 bg-black/50"
             onClick={() => setIsSidebarOpen(false)}
           ></div>
-          <aside className="fixed top-0 left-0 bottom-0 w-64 bg-[#003366] text-white">
-            <div className="p-6 flex justify-between items-center border-b border-white/10">
+          <aside className="fixed top-0 left-0 bottom-0 w-64 bg-sidebar text-sidebar-foreground">
+            <div className="p-6 flex justify-between items-center border-b border-sidebar-border">
               <h1 className="text-lg font-semibold">{t("nav.marca")}</h1>
               <button onClick={() => setIsSidebarOpen(false)}>
                 <X size={24} />
@@ -144,8 +144,8 @@ export function DashboardLayout() {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                       isActive
-                        ? "bg-[#0066CC] text-white"
-                        : "text-white/80 hover:bg-white/10"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground/80 hover:bg-white/10"
                     }`
                   }
                 >
@@ -155,10 +155,10 @@ export function DashboardLayout() {
               ))}
             </nav>
 
-            <div className="p-4 border-t border-white/10 absolute bottom-0 left-0 right-0">
+            <div className="p-4 border-t border-sidebar-border absolute bottom-0 left-0 right-0">
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition-colors w-full"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground/80 hover:bg-white/10 transition-colors w-full"
               >
                 <LogOut size={20} />
                 <span>{t("nav.sair")}</span>
@@ -171,9 +171,9 @@ export function DashboardLayout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="bg-white shadow-sm p-4 flex items-center justify-between lg:justify-end border-b border-[#003366]/10">
+        <header className="bg-card shadow-sm p-4 flex items-center justify-between lg:justify-end border-b border-border">
           <button
-            className="lg:hidden text-[#003366]"
+            className="lg:hidden text-foreground"
             onClick={() => setIsSidebarOpen(true)}
             aria-label={t("nav.menu")}
           >
@@ -184,12 +184,12 @@ export function DashboardLayout() {
             <Link
               to="/dashboard/perfil"
               aria-label={t("nav.abrirPerfil")}
-              className="flex items-center gap-3 rounded-full px-1 py-1 transition-colors hover:bg-[#003366]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+              className="flex items-center gap-3 rounded-full px-1 py-1 transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <span className="text-sm text-[#6C757D] hidden sm:inline">
+              <span className="text-sm text-muted-foreground hidden sm:inline">
                 {rotuloUsuario}
               </span>
-              <div className="w-10 h-10 bg-[#003366] rounded-full flex items-center justify-center text-white font-medium">
+              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium">
                 {iniciais}
               </div>
             </Link>

@@ -117,21 +117,21 @@ export function MentorshipPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2">Sistema de Mentoria</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl mb-2 text-foreground">Sistema de Mentoria</h1>
+        <p className="text-muted-foreground">
           Conecte-se com veteranos experientes para orientação acadêmica
         </p>
       </div>
 
       {/* Toggle Buscar Mentor / Sou Mentor (Sprint 8c — GP-1 / US04) */}
-      <div className="bg-white rounded-lg shadow-sm p-2 inline-flex gap-2">
+      <div className="bg-card rounded-lg shadow-sm p-2 inline-flex gap-2">
         <button
           type="button"
           onClick={() => setModo("buscar")}
           className={`px-4 py-2 rounded-lg transition-colors ${
             modo === "buscar"
-              ? "bg-blue-600 text-white"
-              : "text-gray-700 hover:bg-gray-100"
+              ? "bg-primary text-primary-foreground"
+              : "text-foreground hover:bg-accent"
           }`}
         >
           Buscar mentor
@@ -141,8 +141,8 @@ export function MentorshipPage() {
           onClick={() => setModo("mentor")}
           className={`px-4 py-2 rounded-lg transition-colors ${
             modo === "mentor"
-              ? "bg-blue-600 text-white"
-              : "text-gray-700 hover:bg-gray-100"
+              ? "bg-primary text-primary-foreground"
+              : "text-foreground hover:bg-accent"
           }`}
         >
           Sou mentor(a)
@@ -150,26 +150,26 @@ export function MentorshipPage() {
       </div>
 
       {modo === "mentor" && (
-        <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-blue-100">
-          <h2 className="text-xl mb-4 flex items-center gap-2">
-            <Users className="text-blue-600" size={20} />
+        <div className="bg-card rounded-lg shadow-sm p-6 border-2 border-primary/10">
+          <h2 className="text-xl mb-4 flex items-center gap-2 text-foreground">
+            <Users className="text-primary" size={20} />
             Painel do(a) Mentor(a)
           </h2>
           {souMentor ? (
-            <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-lg p-4">
-              <CheckCircle2 className="text-green-600 mt-0.5" size={20} />
+            <div className="flex items-start gap-3 bg-success/10 border border-success/30 rounded-lg p-4">
+              <CheckCircle2 className="text-success mt-0.5" size={20} />
               <div>
-                <p className="font-medium text-green-900">
+                <p className="font-medium text-foreground">
                   Você já está cadastrado(a) como mentor(a).
                 </p>
-                <p className="text-sm text-green-800">
+                <p className="text-sm text-muted-foreground">
                   Outros estudantes já conseguem te encontrar na busca de mentoria.
                 </p>
               </div>
             </div>
           ) : (
             <>
-              <p className="text-sm text-gray-700 mb-4">
+              <p className="text-sm text-foreground mb-4">
                 Ao se cadastrar como mentor(a), seu perfil passa a aparecer na busca de
                 outros estudantes. Requisitos institucionais: 5º período ou superior com CRA ≥ 7,0.
               </p>
@@ -177,7 +177,7 @@ export function MentorshipPage() {
                 type="button"
                 onClick={cadastrarComoMentor}
                 disabled={enviandoCadastro}
-                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-6 py-2 rounded-lg transition-colors"
+                className="bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground px-6 py-2 rounded-lg transition-colors"
               >
                 {enviandoCadastro ? "Cadastrando..." : "Cadastrar-me como mentor(a)"}
               </button>
@@ -189,32 +189,32 @@ export function MentorshipPage() {
       {modo === "buscar" && (
         <>
       {/* Minhas Sessões */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-card rounded-lg shadow-sm p-6">
         <div className="flex items-center gap-2 mb-6">
-          <Calendar className="text-blue-600" size={24} />
-          <h2 className="text-xl">Minhas Sessões Agendadas</h2>
+          <Calendar className="text-primary" size={24} />
+          <h2 className="text-xl text-foreground">Minhas Sessões Agendadas</h2>
         </div>
         <div className="space-y-4">
           {myMentoringSessions.map((session, index) => (
-            <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
               <div className="flex-1">
-                <h3 className="font-medium mb-1">{session.topic}</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-medium mb-1 text-foreground">{session.topic}</h3>
+                <p className="text-sm text-muted-foreground">
                   com {session.mentor}
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-sm">
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground">
                     {new Date(session.date).toLocaleDateString("pt-BR")}
                   </p>
-                  <p className="text-gray-900">{session.time}</p>
+                  <p className="text-foreground">{session.time}</p>
                 </div>
                 <button
                   type="button"
                   disabled
                   title="Sala de sessao ao vivo em breve"
-                  className="flex items-center gap-2 bg-gray-300 text-gray-600 px-4 py-2 rounded-lg cursor-not-allowed"
+                  className="flex items-center gap-2 bg-muted text-muted-foreground px-4 py-2 rounded-lg cursor-not-allowed"
                 >
                   <MessageCircle size={18} />
                   Em breve
@@ -226,48 +226,48 @@ export function MentorshipPage() {
       </div>
 
       {/* Buscar Mentores */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl mb-6">Encontre um Mentor</h2>
+      <div className="bg-card rounded-lg shadow-sm p-6">
+        <h2 className="text-xl mb-6 text-foreground">Encontre um Mentor</h2>
         
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
             <input
               type="text"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar por especialidade, curso ou nome..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-3 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
             />
           </div>
         </div>
 
         {carregandoMentores ? (
-          <p className="text-gray-600">Carregando mentores...</p>
+          <p className="text-muted-foreground">Carregando mentores...</p>
         ) : mentoresFiltrados.length === 0 ? (
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Nenhum mentor cadastrado ainda. Seja o primeiro: use a aba “Sou mentor(a)”.
           </p>
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mentoresFiltrados.map((mentor) => (
-            <div key={mentor.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div key={mentor.id} className="border border-border rounded-lg p-6 hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl">
+                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-xl">
                   {mentor.nome.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                 </div>
                 {mentor.rating != null && (
-                  <div className="flex items-center gap-1 text-yellow-500">
+                  <div className="flex items-center gap-1 text-warning">
                     <Star size={16} fill="currentColor" />
-                    <span className="text-sm text-gray-900">{mentor.rating}</span>
+                    <span className="text-sm text-foreground">{mentor.rating}</span>
                   </div>
                 )}
               </div>
 
-              <h3 className="font-medium mb-1">{mentor.nome}</h3>
-              {mentor.curso && <p className="text-sm text-gray-600 mb-1">{mentor.curso}</p>}
+              <h3 className="font-medium mb-1 text-foreground">{mentor.nome}</h3>
+              {mentor.curso && <p className="text-sm text-muted-foreground mb-1">{mentor.curso}</p>}
               {(mentor.periodo || mentor.cra != null) && (
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-muted-foreground mb-3">
                   {mentor.periodo ? `${mentor.periodo}º Período` : ""}
                   {mentor.periodo && mentor.cra != null ? " • " : ""}
                   {mentor.cra != null ? `CRA: ${mentor.cra}` : ""}
@@ -277,7 +277,7 @@ export function MentorshipPage() {
               {mentor.especialidades && mentor.especialidades.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-4">
                   {mentor.especialidades.map((especialidade, i) => (
-                    <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
+                    <span key={i} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded">
                       {especialidade}
                     </span>
                   ))}
@@ -288,7 +288,7 @@ export function MentorshipPage() {
                 type="button"
                 disabled
                 title="Solicitacao de mentoria em breve"
-                className="w-full bg-gray-200 text-gray-600 py-2 rounded-lg cursor-not-allowed"
+                className="w-full bg-muted text-muted-foreground py-2 rounded-lg cursor-not-allowed"
               >
                 Solicitar Mentoria (em breve)
               </button>

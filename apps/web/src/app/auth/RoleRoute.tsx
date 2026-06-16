@@ -25,12 +25,12 @@ export function RoleRoute({
   if (carregando) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center bg-[#F5F7FA]"
+        className="min-h-screen flex items-center justify-center bg-background"
         data-testid="role-loading"
       >
-        <div className="flex flex-col items-center gap-3 text-[#003366]">
+        <div className="flex flex-col items-center gap-3 text-foreground">
           <div
-            className="w-8 h-8 rounded-full border-4 border-[#003366]/20 border-t-[#0066CC] animate-spin"
+            className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin"
             aria-hidden="true"
           />
           <p className="text-sm">Verificando permissão…</p>
