@@ -9,6 +9,24 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.25.0] - 2026-06-16
+
+### Added
+- Opção de deixar de ser mentor na tela de Mentoria (RF12). Novo endpoint
+  `DELETE /api/mentorias/cadastro-mentor` (`requireAuth`, escopado a
+  `req.usuario.sub`, anti-IDOR) que define `e_mentor = FALSE`. A operação é
+  idempotente e não destrutiva: as sessões e solicitações já registradas são
+  preservadas — o usuário apenas sai da busca de mentores. No "Painel do(a)
+  Mentor(a)", o mentor cadastrado vê o botão "Deixar de ser mentor(a)".
+
+### Changed
+- O banner de recrutamento "Seja um Mentor!" passou a ser exibido apenas para
+  quem ainda não é mentor. Antes, o botão "Candidatar-se como Mentor" do banner
+  e a aba "Sou mentor(a)" levavam ao mesmo lugar (`setModo("mentor")`),
+  duplicando o caminho mesmo para quem já era mentor. Agora a aba "Sou
+  mentor(a)" é o único ponto de gestão do papel, e o banner cumpre apenas o
+  papel de recrutamento. O texto "Seja um Mentor!" foi mantido.
+
 ## [1.24.0] - 2026-06-16
 
 ### Added

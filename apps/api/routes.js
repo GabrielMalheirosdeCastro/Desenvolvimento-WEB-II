@@ -365,6 +365,34 @@ apiRouter.post('/mentorias/cadastro-mentor', requireAuth, async (req, res) => {
 });
 
 // --------------------------------------------------------------
+// DELETE /api/mentorias/cadastro-mentor
+// Remove o papel de mentor do usuario logado (Usuario.e_mentor = FALSE).
+// Exige sessao valida (requireAuth) e escopa ao dono via req.usuario.sub
+// (anti-IDOR). Operacao idempotente e NAO destrutiva: nao apaga sessoes
+// nem solicitacoes ja registradas, apenas retira o perfil da busca.
+// --------------------------------------------------------------
+apiRouter.delete('/mentorias/cadastro-mentor', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const updated = await query(
+        `UPDATE usuarios SET e_mentor = FALSE
+             WHERE id = $1
+             RETURNING id, nome, e_mentor`,
+        [req.usuario.sub],
+    );
+    if (!updated || updated.length === 0) {
+        return res.status(404).json({ source: 'db', error: 'usuario_nao_encontrado' });
+    }
+    res.json({
+        source: 'db',
+        persisted: true,
+        eMentor: updated[0].e_mentor,
+        usuario: { id: updated[0].id, nome: updated[0].nome },
+    });
+});
+
+// --------------------------------------------------------------
 // SOLICITACAO DE MENTORIA (Sprint 8c — GP-1 / US04)
 // Persiste o pedido do aluno (mentorado) a um mentor na tabela
 // `mentorias` com status 'solicitada'. Escrita sempre escopada a

@@ -43,6 +43,7 @@ export function MentorshipPage() {
   const [modo, setModo] = useState<"buscar" | "mentor">("buscar");
   const [souMentor, setSouMentor] = useState(false);
   const [enviandoCadastro, setEnviandoCadastro] = useState(false);
+  const [removendoCadastro, setRemovendoCadastro] = useState(false);
 
   const [mentores, setMentores] = useState<Mentor[]>([]);
   const [carregandoMentores, setCarregandoMentores] = useState(true);
@@ -212,6 +213,27 @@ export function MentorshipPage() {
     }
   }
 
+  async function descadastrarComoMentor() {
+    setRemovendoCadastro(true);
+    try {
+      const r = await fetch("/api/mentorias/cadastro-mentor", {
+        method: "DELETE",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      });
+      const j = await r.json();
+      // eMentor === false confirma a remocao no banco antes de atualizar a UI.
+      if (r.ok && j?.eMentor === false) {
+        setSouMentor(false);
+        await recarregar();
+      }
+    } catch {
+      // Sem confirmacao do banco: mantem o estado atual.
+    } finally {
+      setRemovendoCadastro(false);
+    }
+  }
+
   const mentoresFiltrados = mentores.filter((m) => {
     const termo = busca.trim().toLowerCase();
     if (!termo) return true;
@@ -269,16 +291,33 @@ export function MentorshipPage() {
             Painel do(a) Mentor(a)
           </h2>
           {souMentor ? (
-            <div className="flex items-start gap-3 bg-success/10 border border-success/30 rounded-lg p-4">
-              <CheckCircle2 className="text-success mt-0.5" size={20} />
-              <div>
-                <p className="font-medium text-foreground">
-                  Você já está cadastrado(a) como mentor(a).
-                </p>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 bg-success/10 border border-success/30 rounded-lg p-4">
+                <CheckCircle2 className="text-success mt-0.5" size={20} />
+                <div>
+                  <p className="font-medium text-foreground">
+                    Você já está cadastrado(a) como mentor(a).
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Outros estudantes já conseguem te encontrar na busca de mentoria
+                    {usuario?.tipo ? ` na condição de ${rotuloPapel(usuario.tipo)}` : ""}.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">
-                  Outros estudantes já conseguem te encontrar na busca de mentoria
-                  {usuario?.tipo ? ` na condição de ${rotuloPapel(usuario.tipo)}` : ""}.
+                  Não quer mais oferecer mentoria? Você pode sair da busca a qualquer
+                  momento. Suas sessões e solicitações já registradas são preservadas.
                 </p>
+                <button
+                  type="button"
+                  onClick={descadastrarComoMentor}
+                  disabled={removendoCadastro}
+                  className="self-start flex items-center gap-2 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-60 px-4 py-2 rounded-lg transition-colors"
+                >
+                  <XCircle size={18} />
+                  {removendoCadastro ? "Removendo..." : "Deixar de ser mentor(a)"}
+                </button>
               </div>
             </div>
           ) : (
@@ -567,7 +606,10 @@ export function MentorshipPage() {
         </>
       )}
 
-      {/* Banner Torne-se Mentor */}
+      {/* Banner Torne-se Mentor — recrutamento, exibido apenas a quem ainda nao
+          e mentor. Quem ja e mentor gerencia o papel pela aba "Sou mentor(a)",
+          evitando dois caminhos redundantes para a mesma acao. */}
+      {!souMentor && (
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="p-8 text-white">
@@ -607,6 +649,7 @@ export function MentorshipPage() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
