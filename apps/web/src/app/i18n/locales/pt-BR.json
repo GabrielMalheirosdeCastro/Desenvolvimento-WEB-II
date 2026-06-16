@@ -58,5 +58,24 @@
     "idiomaPtBr": "Português (Brasil)",
     "idiomaEnUs": "English (US)",
     "perfilPublico": "Perfil público"
+  },
+  "home": {
+    "saudacao": "Bem-vindo de volta, {{nome}}! 👋",
+    "resumoProgresso": "Aqui está um resumo do seu progresso acadêmico",
+    "metasSemana": "Metas da Semana",
+    "metasConcluidas": "6 de 7 concluídas",
+    "horasEstudo": "Horas de Estudo",
+    "estaSemana": "Esta semana",
+    "variacaoSemana": "↑ 15% vs. semana anterior",
+    "sequenciaDias": "Sequência de Dias",
+    "diasConsecutivos": "Dias consecutivos (recorde: {{recorde}})",
+    "continueAssim": "🔥 Continue assim!",
+    "horasEstudoSemanal": "Horas de Estudo Semanal",
+    "proximasAtividades": "Próximas Atividades",
+    "statusAgendado": "Agendado",
+    "statusPendente": "Pendente",
+    "conquistasRecentes": "Conquistas Recentes",
+    "desbloqueadoRecentemente": "Desbloqueado recentemente",
+    "verTodasConquistas": "Ver Todas as Conquistas"
   }
 }

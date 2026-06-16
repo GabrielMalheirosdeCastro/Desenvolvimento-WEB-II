@@ -362,4 +362,4 @@ Ao abrir o workspace, o VS Code sugerirá automaticamente a instalação das ext
 | RNF07 | Usabilidade | Interface intuitiva, Design System consistente, taxa de erro ≤2% |
 | RNF08 | Manutenibilidade | Código documentado, arquitetura modular, cobertura de testes ≥80% |
 | RNF09 | LGPD | Conformidade total com Lei 13.709/2018 |
-| RNF10 | Internacionalização | pt-BR como idioma principal + seletor PT-BR/EN-US funcional (i18n client-side, v1.16.0) |
+| RNF10 | Internacionalização | pt-BR como idioma principal + seletor PT-BR/EN-US funcional (i18n client-side, v1.16.0); extração incremental dos textos das telas iniciada pela tela inicial do dashboard (v1.19.0) |

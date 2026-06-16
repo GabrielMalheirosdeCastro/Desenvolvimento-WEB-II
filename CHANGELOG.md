@@ -9,6 +9,28 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.19.0] - 2026-06-16
+
+### Added
+- Internacionalização (i18n) da tela inicial do dashboard (`DashboardHome`): saudação,
+  resumo de progresso, títulos dos cards (Metas/Horas/Sequência), gráfico semanal,
+  blocos "Próximas Atividades" e "Conquistas Recentes", rótulos de status
+  (Agendado/Pendente) e a ação "Ver Todas as Conquistas". Primeiro passo da extração
+  incremental de textos das telas do dashboard (D8/RNF10).
+- Namespace `home` adicionado aos catálogos `pt-BR.json` e `en-US.json`, com paridade
+  de chaves validada pelo teste `tests/unit/i18n.test.ts`.
+
+### Changed
+- `DashboardHome` passa a consumir `useI18n()`/`t()` no lugar de literais em português,
+  refletindo a troca de idioma (PT-BR ↔ EN-US) imediatamente, sem recarregar.
+
+### Notas
+- Dados de demonstração (dias da semana, nomes de conquistas e atividades vindos do
+  fallback/API) permanecem em pt-BR por serem conteúdo, não chrome de interface.
+- Extração das demais telas do dashboard segue incremental em versões futuras
+  (infra i18n já pronta desde a v1.16.0; fallback garante texto pt-BR onde a chave
+  ainda não existe).
+
 ## [1.18.0] - 2026-06-16
 
 ### Added

@@ -4,6 +4,7 @@ import { Target, Clock, Flame, Award, TrendingUp, Calendar } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useAuth } from "../auth/AuthContext";
 import { primeiroNome } from "../auth/nome";
+import { useI18n } from "../i18n/LanguageContext";
 
 type WeekPoint = { day: string; hours: number };
 type Badge = { name: string; icon: string };
@@ -45,6 +46,7 @@ function destinoPorTipo(tipo?: string): string {
 
 export function DashboardHome() {
   const { usuario } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const saudacaoNome = primeiroNome(usuario?.nome);
   const [weekData, setWeekData] = useState<WeekPoint[]>(FALLBACK_WEEK);
@@ -72,9 +74,9 @@ export function DashboardHome() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl mb-2 text-foreground">Bem-vindo de volta, {saudacaoNome}! 👋</h1>
+        <h1 className="text-3xl mb-2 text-foreground">{t("home.saudacao", { nome: saudacaoNome })}</h1>
         <p className="text-muted-foreground">
-          Aqui está um resumo do seu progresso acadêmico
+          {t("home.resumoProgresso")}
         </p>
       </div>
 
@@ -91,8 +93,8 @@ export function DashboardHome() {
             </div>
             <span className="text-2xl font-semibold text-foreground">85%</span>
           </div>
-          <h3 className="text-lg mb-1 text-foreground">Metas da Semana</h3>
-          <p className="text-sm text-muted-foreground">6 de 7 concluídas</p>
+          <h3 className="text-lg mb-1 text-foreground">{t("home.metasSemana")}</h3>
+          <p className="text-sm text-muted-foreground">{t("home.metasConcluidas")}</p>
           <div className="mt-3 w-full bg-muted rounded-full h-2">
             <div className="bg-primary h-2 rounded-full" style={{ width: "85%" }}></div>
           </div>
@@ -109,9 +111,9 @@ export function DashboardHome() {
             </div>
             <span className="text-2xl font-semibold text-foreground">25h</span>
           </div>
-          <h3 className="text-lg mb-1 text-foreground">Horas de Estudo</h3>
-          <p className="text-sm text-muted-foreground">Esta semana</p>
-          <p className="text-sm text-success mt-2">↑ 15% vs. semana anterior</p>
+          <h3 className="text-lg mb-1 text-foreground">{t("home.horasEstudo")}</h3>
+          <p className="text-sm text-muted-foreground">{t("home.estaSemana")}</p>
+          <p className="text-sm text-success mt-2">{t("home.variacaoSemana")}</p>
         </button>
 
         <button
@@ -125,9 +127,9 @@ export function DashboardHome() {
             </div>
             <span className="text-2xl font-semibold text-foreground">{streak.atual}</span>
           </div>
-          <h3 className="text-lg mb-1 text-foreground">Sequência de Dias</h3>
-          <p className="text-sm text-muted-foreground">Dias consecutivos (recorde: {streak.recorde})</p>
-          <p className="text-sm text-warning mt-2">🔥 Continue assim!</p>
+          <h3 className="text-lg mb-1 text-foreground">{t("home.sequenciaDias")}</h3>
+          <p className="text-sm text-muted-foreground">{t("home.diasConsecutivos", { recorde: streak.recorde })}</p>
+          <p className="text-sm text-warning mt-2">{t("home.continueAssim")}</p>
         </button>
       </div>
 
@@ -135,7 +137,7 @@ export function DashboardHome() {
       <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
         <div className="flex items-center gap-2 mb-6">
           <TrendingUp className="text-primary" size={24} />
-          <h2 className="text-xl text-foreground">Horas de Estudo Semanal</h2>
+          <h2 className="text-xl text-foreground">{t("home.horasEstudoSemanal")}</h2>
         </div>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={weekData}>
@@ -159,7 +161,7 @@ export function DashboardHome() {
         <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-6">
             <Calendar className="text-primary" size={24} />
-            <h2 className="text-xl text-foreground">Próximas Atividades</h2>
+            <h2 className="text-xl text-foreground">{t("home.proximasAtividades")}</h2>
           </div>
           <div className="space-y-4">
             {upcomingActivities.map((activity, index) => (
@@ -182,7 +184,7 @@ export function DashboardHome() {
                       : "bg-warning/10 text-warning"
                   }`}
                 >
-                  {activity.status === "scheduled" ? "Agendado" : "Pendente"}
+                  {activity.status === "scheduled" ? t("home.statusAgendado") : t("home.statusPendente")}
                 </span>
               </button>
             ))}
@@ -193,7 +195,7 @@ export function DashboardHome() {
         <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
           <div className="flex items-center gap-2 mb-6">
             <Award className="text-primary" size={24} />
-            <h2 className="text-xl text-foreground">Conquistas Recentes</h2>
+            <h2 className="text-xl text-foreground">{t("home.conquistasRecentes")}</h2>
           </div>
           <div className="space-y-4">
             {recentBadges.map((badge, index) => (
@@ -201,7 +203,7 @@ export function DashboardHome() {
                 <div className="text-4xl">{badge.icon}</div>
                 <div>
                   <h4 className="font-medium text-foreground">{badge.name}</h4>
-                  <p className="text-sm text-muted-foreground">Desbloqueado recentemente</p>
+                  <p className="text-sm text-muted-foreground">{t("home.desbloqueadoRecentemente")}</p>
                 </div>
               </div>
             ))}
@@ -211,7 +213,7 @@ export function DashboardHome() {
             onClick={() => navigate("/dashboard/perfil")}
             className="mt-4 w-full text-center text-primary hover:text-foreground py-2 border border-primary rounded-lg hover:bg-primary/5 transition-colors font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Ver Todas as Conquistas
+            {t("home.verTodasConquistas")}
           </button>
         </div>
       </div>

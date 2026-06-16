@@ -58,5 +58,24 @@
     "idiomaPtBr": "Português (Brasil)",
     "idiomaEnUs": "English (US)",
     "perfilPublico": "Public profile"
+  },
+  "home": {
+    "saudacao": "Welcome back, {{nome}}! 👋",
+    "resumoProgresso": "Here's a summary of your academic progress",
+    "metasSemana": "Weekly Goals",
+    "metasConcluidas": "6 of 7 completed",
+    "horasEstudo": "Study Hours",
+    "estaSemana": "This week",
+    "variacaoSemana": "↑ 15% vs. last week",
+    "sequenciaDias": "Day Streak",
+    "diasConsecutivos": "Consecutive days (record: {{recorde}})",
+    "continueAssim": "🔥 Keep it up!",
+    "horasEstudoSemanal": "Weekly Study Hours",
+    "proximasAtividades": "Upcoming Activities",
+    "statusAgendado": "Scheduled",
+    "statusPendente": "Pending",
+    "conquistasRecentes": "Recent Achievements",
+    "desbloqueadoRecentemente": "Recently unlocked",
+    "verTodasConquistas": "View All Achievements"
   }
 }
