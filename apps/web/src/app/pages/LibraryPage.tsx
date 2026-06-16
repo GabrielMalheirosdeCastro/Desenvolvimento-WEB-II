@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { BookOpen, Video, Headphones, FileText, Search, Filter } from "lucide-react";
+import {
+  BookOpen,
+  Video,
+  Headphones,
+  FileText,
+  Search,
+  Filter,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+} from "lucide-react";
 
 type Recurso = {
   id: number;
@@ -39,6 +49,10 @@ export function LibraryPage() {
   const [trilhas, setTrilhas] = useState<Trilha[]>([]);
   const [busca, setBusca] = useState("");
   const [aviso, setAviso] = useState<string | null>(null);
+  // Id do recurso aguardando confirmacao do usuario (fluxo reversivel).
+  const [confirmandoId, setConfirmandoId] = useState<number | null>(null);
+  // Id do recurso cujo acesso esta sendo registrado (evita clique duplo).
+  const [acessandoId, setAcessandoId] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/recursos")
@@ -53,6 +67,7 @@ export function LibraryPage() {
 
   async function acessarRecurso(recurso: Recurso) {
     setAviso(null);
+    setAcessandoId(recurso.id);
     try {
       const r = await fetch(`/api/recursos/${recurso.id}/acesso`, {
         method: "POST",
@@ -68,8 +83,12 @@ export function LibraryPage() {
       } else if (r.ok) {
         setAviso("Acesso registrado. Este recurso ainda não possui link disponível.");
       }
+      // Sucesso: fecha o modo de confirmacao deste recurso.
+      setConfirmandoId((atual) => (atual === recurso.id ? null : atual));
     } catch {
       setAviso("Não foi possível registrar o acesso agora. Tente novamente.");
+    } finally {
+      setAcessandoId((atual) => (atual === recurso.id ? null : atual));
     }
   }
 
@@ -204,13 +223,45 @@ export function LibraryPage() {
                       </span>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => acessarRecurso(recurso)}
-                    className="w-full text-primary hover:text-primary/80 py-2 border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors"
-                  >
-                    Acessar Recurso
-                  </button>
+                  {confirmandoId === recurso.id ? (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => acessarRecurso(recurso)}
+                        disabled={acessandoId === recurso.id}
+                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                        aria-label={`Confirmar acesso a ${recurso.titulo}`}
+                      >
+                        {acessandoId === recurso.id ? (
+                          <Loader2 size={18} className="animate-spin" />
+                        ) : (
+                          <CheckCircle2 size={18} />
+                        )}
+                        {acessandoId === recurso.id ? "Abrindo…" : "Confirmar acesso"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmandoId(null)}
+                        disabled={acessandoId === recurso.id}
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-destructive/40 text-destructive hover:bg-destructive/5 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                        aria-label={`Cancelar acesso a ${recurso.titulo}`}
+                      >
+                        <XCircle size={18} />
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAviso(null);
+                        setConfirmandoId(recurso.id);
+                      }}
+                      className="w-full text-primary hover:text-primary/80 py-2 border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors"
+                    >
+                      Acessar Recurso
+                    </button>
+                  )}
                 </div>
               </div>
             );

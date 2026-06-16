@@ -9,6 +9,18 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.27.0] - 2026-06-16
+
+### Changed
+- Botões dos itens da Biblioteca de Recursos agora têm confirmação reversível.
+  Ao clicar em "Acessar Recurso", o item passa a exibir "Confirmar acesso" e
+  "Cancelar", evitando a abertura acidental do link externo em nova aba. Só após
+  o "Confirmar acesso" o acesso é registrado (`POST /api/recursos/:id/acesso`) e
+  o link é aberto; durante o registro o botão mostra "Abrindo…" e fica
+  desabilitado (previne clique duplo). "Cancelar" retorna o item ao estado
+  inicial sem efeito colateral. Padrão alinhado ao fluxo reversível já usado na
+  tela de Mentoria.
+
 ## [1.26.0] - 2026-06-16
 
 ### Added
