@@ -35,22 +35,28 @@ executar o bump final v2.0.0 com redeploy validado, **sem nenhuma regressão** d
   `.github/workflows/uptime.yml`: job agendado (`cron`) que faz `curl` em `/healthz` e `/version`
   da produção e falha se não responder 200. Arquivo novo em `.github/` → fora da imagem Docker,
   sem bump, sem redeploy.
-- [ ] 2. **D2 — Auditoria WCAG AA** (execução do aluno + conserto do agente). Aluno roda Lighthouse
+- [x] 2. **D2 — Auditoria WCAG AA** (execução do aluno + conserto do agente). Aluno roda Lighthouse
   (aba *Accessibility*) nas telas `/login`, `/dashboard`, `/dashboard/plano-estudos`,
   `/dashboard/bem-estar`, `/dashboard/forum`, `/dashboard/perfil` e cola o relatório. Agente
   corrige **apenas** as violações apontadas (contraste/token, `aria-label`, foco), validando com
   `npm test` + `npm run build`. Se houver correção visível → entra no bump v2.0.0.
-- [ ] 3. **D6 — Teste de carga** (execução do aluno + registro do agente). Aluno roda
+  **Concluído em 2026-06-16:** corrigidos contraste (tokens `-strong`), ordem de títulos e estrutura
+  `<dl>`/links da tela de login. Publicado no bump v2.0.0 (commit `8c8cdd4`).
+- [x] 3. **D6 — Teste de carga** (execução do aluno + registro do agente). Aluno roda
   `npx autocannon -c 20 -d 30 https://acolhimento.faesa.gmcsistemas.com.br/version` (endpoint leve,
   sem escrita) e cola a saída. Agente registra a evidência em `docs/`. Sem código, sem bump.
+  **Concluído em 2026-06-16:** ~17k req em 30,12 s, latência média 35,44 ms (p50 30 ms / p99 114 ms),
+  557,84 req/s, 0 erros. Evidência em [evidencia-d6-carga.md](evidencia-d6-carga.md).
 - [ ] 4. **Bloco G no Overleaf** (execução do aluno). Colar os snippets LaTeX (stack, diagramas
   TikZ, correções RF/RNF, bloco de conclusão) gerados nas etapas anteriores. Não toca o repo local.
-- [ ] 5. **Bump v2.0.0** (agente, com confirmação). Aplicar correções de D2 (se houver) →
+- [x] 5. **Bump v2.0.0** (agente, com confirmação). Aplicar correções de D2 (se houver) →
   `npm run build` (regenera `apps/web/dist/`) → bump `1.30.0 → 2.0.0` nos três `package.json`
   (raiz, `apps/api`, `apps/web`) → mover `[Unreleased]` para `## [2.0.0] - <data>` no CHANGELOG →
   commit atômico `chore(release): v2.0.0` → push.
-- [ ] 6. **Redeploy + validação** (agente, Seção 12.1). `node scripts/deploy.mjs` → aguardar →
+  **Concluído em 2026-06-16:** commit `8c8cdd4`, push `fc453f5..8c8cdd4 master`.
+- [x] 6. **Redeploy + validação** (agente, Seção 12.1). `node scripts/deploy.mjs` → aguardar →
   `curl /version` deve retornar `2.0.0` e `/healthz` deve retornar `ok`. Comparar com `package.json`.
+  **Concluído em 2026-06-16:** webhook HTTP 200; `/version` publicado `2.0.0`; `/healthz` `status:ok`.
 
 ## Impacto Esperado
 
