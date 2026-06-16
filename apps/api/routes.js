@@ -467,6 +467,114 @@ apiRouter.delete('/mentorias/:mentorId/solicitar', requireAuth, async (req, res)
     res.json({ source: 'db', mentorId, solicitado: false });
 });
 
+// --------------------------------------------------------------
+// SESSOES DE MENTORIA AGENDADAS (RF12 — mentoria)
+// Persiste sessoes agendadas pelo aluno na tabela `mentorias` com
+// status 'agendada'. Reaproveita a tabela existente: mentorado_id =
+// req.usuario.sub (anti-IDOR), mentor_id = mentor escolhido,
+// objetivo = tema da sessao, data_inicio = data/hora marcada.
+// --------------------------------------------------------------
+
+// GET /api/mentorias/sessoes — sessoes agendadas do usuario logado.
+apiRouter.get('/mentorias/sessoes', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.json({ source: 'fallback', items: [] });
+    }
+    const rows = await query(
+        `SELECT m.id, m.mentor_id, m.objetivo, m.data_inicio, u.nome AS mentor_nome
+             FROM mentorias m
+             JOIN usuarios u ON u.id = m.mentor_id
+             WHERE m.mentorado_id = $1 AND m.status = 'agendada'
+             ORDER BY m.data_inicio ASC NULLS LAST`,
+        [req.usuario.sub],
+    );
+    if (rows === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    res.json({
+        source: 'db',
+        items: rows.map((r) => ({
+            id: r.id,
+            mentorId: r.mentor_id,
+            mentorNome: r.mentor_nome,
+            tema: r.objetivo,
+            dataInicio: r.data_inicio,
+        })),
+    });
+});
+
+// POST /api/mentorias/sessoes — agenda uma nova sessao.
+apiRouter.post('/mentorias/sessoes', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const mentorId = Number.parseInt(req.body?.mentorId, 10);
+    if (Number.isNaN(mentorId) || mentorId <= 0) {
+        return res.status(400).json({ error: 'mentor_invalido' });
+    }
+    if (mentorId === Number(req.usuario.sub)) {
+        return res.status(400).json({ error: 'mentor_igual_solicitante' });
+    }
+    const tema = typeof req.body?.tema === 'string' ? req.body.tema.trim() : '';
+    if (tema.length === 0 || tema.length > 200) {
+        return res.status(400).json({ error: 'tema_invalido' });
+    }
+    const dataInicio = new Date(req.body?.dataInicio);
+    if (Number.isNaN(dataInicio.getTime())) {
+        return res.status(400).json({ error: 'data_invalida' });
+    }
+
+    const mentor = await query(
+        `SELECT id FROM usuarios WHERE id = $1 AND e_mentor = TRUE LIMIT 1`,
+        [mentorId],
+    );
+    if (mentor === null) {
+        return res.status(500).json({ error: 'falha_consulta' });
+    }
+    if (mentor.length === 0) {
+        return res.status(404).json({ error: 'mentor_nao_encontrado' });
+    }
+
+    const inserted = await query(
+        `INSERT INTO mentorias (mentor_id, mentorado_id, status, data_inicio, objetivo)
+             VALUES ($1, $2, 'agendada', $3, $4)
+             RETURNING id, data_inicio`,
+        [mentorId, req.usuario.sub, dataInicio.toISOString(), tema],
+    );
+    if (inserted === null || inserted.length === 0) {
+        return res.status(500).json({ error: 'falha_agendamento' });
+    }
+    res.status(201).json({
+        source: 'db',
+        id: inserted[0].id,
+        mentorId,
+        tema,
+        dataInicio: inserted[0].data_inicio,
+    });
+});
+
+// DELETE /api/mentorias/sessoes/:id — cancela uma sessao agendada.
+apiRouter.delete('/mentorias/sessoes/:id', requireAuth, async (req, res) => {
+    if (!isConnected()) {
+        return res.status(503).json({ error: 'db_indisponivel' });
+    }
+    const sessaoId = Number.parseInt(req.params.id, 10);
+    if (Number.isNaN(sessaoId) || sessaoId <= 0) {
+        return res.status(400).json({ error: 'id_invalido' });
+    }
+    const removed = await query(
+        `DELETE FROM mentorias
+             WHERE id = $1 AND mentorado_id = $2 AND status = 'agendada'
+             RETURNING id`,
+        [sessaoId, req.usuario.sub],
+    );
+    if (removed === null) {
+        return res.status(500).json({ error: 'falha_cancelamento' });
+    }
+    // removed.length === 0 => nada a remover (idempotente): sucesso.
+    res.json({ source: 'db', id: sessaoId, cancelada: true });
+});
+
 // ==============================================================
 // AUTENTICACAO LOCAL (Bloco A — plano 2026-06-13)
 // --------------------------------------------------------------

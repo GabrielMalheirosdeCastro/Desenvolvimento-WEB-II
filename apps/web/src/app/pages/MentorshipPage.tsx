@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, MessageCircle, Calendar, Star, Search, CheckCircle2, XCircle } from "lucide-react";
+import { Users, Calendar, Star, Search, CheckCircle2, XCircle, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
@@ -13,6 +13,14 @@ interface Mentor {
   email?: string;
   rating?: number;
   sessoes?: number;
+}
+
+interface Sessao {
+  id: number;
+  mentorId: number;
+  mentorNome: string;
+  tema: string;
+  dataInicio: string;
 }
 
 export function MentorshipPage() {
@@ -29,6 +37,17 @@ export function MentorshipPage() {
   const [solicitados, setSolicitados] = useState<Set<number>>(new Set());
   const [enviandoSolic, setEnviandoSolic] = useState<number | null>(null);
   const [avisoSolic, setAvisoSolic] = useState<string | null>(null);
+
+  // Sessoes agendadas (status 'agendada' na tabela mentorias).
+  const [sessoes, setSessoes] = useState<Sessao[]>([]);
+  const [carregandoSessoes, setCarregandoSessoes] = useState(true);
+  const [mostrarForm, setMostrarForm] = useState(false);
+  const [formMentorId, setFormMentorId] = useState("");
+  const [formTema, setFormTema] = useState("");
+  const [formData, setFormData] = useState("");
+  const [salvandoSessao, setSalvandoSessao] = useState(false);
+  const [cancelandoSessao, setCancelandoSessao] = useState<number | null>(null);
+  const [avisoSessao, setAvisoSessao] = useState<string | null>(null);
 
   // Hidrata o estado inicial a partir da sessao (e_mentor do JWT).
   useEffect(() => {
@@ -187,22 +206,10 @@ export function MentorshipPage() {
     );
   });
 
-  const myMentoringSessions = [
-    {
-      mentor: "Ana Silva",
-      topic: "Estruturas de Dados Avançadas",
-      date: "2026-03-16",
-      time: "14:00",
-      status: "scheduled",
-    },
-    {
-      mentor: "Carlos Santos",
-      topic: "Projeto de Banco de Dados",
-      date: "2026-03-19",
-      time: "10:00",
-      status: "scheduled",
-    },
-  ];
+  // Apenas mentores com id numerico podem ser agendados (registros reais do banco).
+  const mentoresAgendaveis = mentores.filter(
+    (m) => Number.isFinite(Number(m.id)) && Number(m.id) > 0,
+  );
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -280,38 +287,139 @@ export function MentorshipPage() {
         <>
       {/* Minhas Sessões */}
       <div className="bg-card rounded-lg shadow-sm p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <Calendar className="text-primary" size={24} />
-          <h2 className="text-xl text-foreground">Minhas Sessões Agendadas</h2>
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Calendar className="text-primary" size={24} />
+            <h2 className="text-xl text-foreground">Minhas Sessões Agendadas</h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setMostrarForm((v) => !v);
+              setAvisoSessao(null);
+            }}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg transition-colors"
+          >
+            {mostrarForm ? <XCircle size={18} /> : <Plus size={18} />}
+            {mostrarForm ? "Fechar" : "Agendar sessão"}
+          </button>
         </div>
-        <div className="space-y-4">
-          {myMentoringSessions.map((session, index) => (
-            <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-              <div className="flex-1">
-                <h3 className="font-medium mb-1 text-foreground">{session.topic}</h3>
-                <p className="text-sm text-muted-foreground">
-                  com {session.mentor}
+
+        {mostrarForm && (
+          <form
+            onSubmit={agendarSessao}
+            className="mb-6 grid grid-cols-1 gap-4 p-4 bg-primary/5 border border-primary/20 rounded-lg"
+          >
+            <div>
+              <label htmlFor="sessao-mentor" className="block text-sm text-foreground mb-1">
+                Mentor
+              </label>
+              <select
+                id="sessao-mentor"
+                value={formMentorId}
+                onChange={(e) => setFormMentorId(e.target.value)}
+                className="w-full px-4 py-3 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+              >
+                <option value="">Selecione um mentor</option>
+                {mentoresAgendaveis.map((m) => (
+                  <option key={m.id} value={String(m.id)}>
+                    {m.nome}
+                  </option>
+                ))}
+              </select>
+              {mentoresAgendaveis.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Nenhum mentor disponível para agendamento no momento.
                 </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-sm">
-                  <p className="text-muted-foreground">
-                    {new Date(session.date).toLocaleDateString("pt-BR")}
-                  </p>
-                  <p className="text-foreground">{session.time}</p>
-                </div>
-                <button
-                  type="button"
-                  disabled
-                  title="Sala de sessao ao vivo em breve"
-                  className="flex items-center gap-2 bg-muted text-muted-foreground px-4 py-2 rounded-lg cursor-not-allowed"
-                >
-                  <MessageCircle size={18} />
-                  Em breve
-                </button>
-              </div>
+              )}
             </div>
-          ))}
+            <div>
+              <label htmlFor="sessao-tema" className="block text-sm text-foreground mb-1">
+                Tema da sessão
+              </label>
+              <input
+                id="sessao-tema"
+                type="text"
+                value={formTema}
+                onChange={(e) => setFormTema(e.target.value)}
+                maxLength={200}
+                placeholder="Ex: Estruturas de dados avançadas"
+                className="w-full px-4 py-3 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="sessao-data" className="block text-sm text-foreground mb-1">
+                Data e hora
+              </label>
+              <input
+                id="sessao-data"
+                type="datetime-local"
+                value={formData}
+                onChange={(e) => setFormData(e.target.value)}
+                className="w-full px-4 py-3 border border-border bg-input-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent outline-none"
+              />
+            </div>
+            <div>
+              <button
+                type="submit"
+                disabled={salvandoSessao || mentoresAgendaveis.length === 0}
+                className="bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground px-6 py-2 rounded-lg transition-colors"
+              >
+                {salvandoSessao ? "Agendando..." : "Confirmar agendamento"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {avisoSessao && (
+          <p className="mb-4 text-sm text-destructive" role="alert">
+            {avisoSessao}
+          </p>
+        )}
+
+        <div className="space-y-4">
+          {carregandoSessoes ? (
+            <p className="text-muted-foreground">Carregando sessões...</p>
+          ) : sessoes.length === 0 ? (
+            <p className="text-muted-foreground">
+              Você ainda não tem sessões agendadas. Use “Agendar sessão” para criar uma.
+            </p>
+          ) : (
+            sessoes.map((session) => (
+              <div
+                key={session.id}
+                className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-primary/5 border border-primary/20 rounded-lg"
+              >
+                <div className="flex-1">
+                  <h3 className="font-medium mb-1 text-foreground">{session.tema}</h3>
+                  <p className="text-sm text-muted-foreground">com {session.mentorNome}</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-sm">
+                    <p className="text-muted-foreground">
+                      {new Date(session.dataInicio).toLocaleDateString("pt-BR")}
+                    </p>
+                    <p className="text-foreground">
+                      {new Date(session.dataInicio).toLocaleTimeString("pt-BR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => cancelarSessao(session.id)}
+                    disabled={cancelandoSessao === session.id}
+                    aria-label={`Cancelar sessão ${session.tema}`}
+                    className="flex items-center gap-2 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-60 px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={18} />
+                    {cancelandoSessao === session.id ? "Cancelando..." : "Cancelar"}
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

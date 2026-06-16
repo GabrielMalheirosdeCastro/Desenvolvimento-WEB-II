@@ -9,6 +9,26 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.23.0] - 2026-06-16
+
+### Added
+- Agendamento real de sessões de mentoria (RF12 / mentoria). A seção "Minhas
+  Sessões Agendadas" deixou de exibir dados fixos (mock) e passou a listar as
+  sessões persistidas na tabela `mentorias` já existente, com `status =
+  'agendada'`. Três novos endpoints escopados ao próprio usuário
+  (`mentorado_id = req.usuario.sub`, anti-IDOR): `GET /api/mentorias/sessoes`
+  (lista as sessões com nome do mentor via JOIN), `POST /api/mentorias/sessoes`
+  (agenda; valida mentor existente/`e_mentor`/diferente do solicitante, tema
+  com 1–200 caracteres e data válida) e `DELETE /api/mentorias/sessoes/:id`
+  (cancela, idempotente, restrito ao dono).
+- Formulário "Agendar sessão" na tela de Mentoria: seleção de mentor real,
+  tema e data/hora (`datetime-local`), com validação e mensagens acessíveis.
+  Cada sessão listada ganhou botão "Cancelar" (vermelho, com `aria-label`).
+
+### Removed
+- Mock fixo `myMentoringSessions` (Ana Silva / Carlos Santos) e o botão
+  desabilitado "Em breve" das sessões agendadas, substituídos por dados reais.
+
 ## [1.22.0] - 2026-06-16
 
 ### Added
