@@ -9,6 +9,16 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.20.1] - 2026-06-16
+
+### Fixed
+- Logo "F" das telas de Login e Ativar conta deixa de ser texto selecionável:
+  o gesto de seleção (duplo-clique, arrastar, `Ctrl+A` ou restauração de seleção
+  após autofill) pintava o glifo com o realce de seleção azul (`::selection`),
+  dando a falsa impressão de um campo em edição. Aplicado `select-none` ao
+  contêiner do logo e `aria-hidden="true"` ao glifo (decorativo; o título da
+  tela já é o rótulo acessível).
+
 ## [1.20.0] - 2026-06-16
 
 ### Added

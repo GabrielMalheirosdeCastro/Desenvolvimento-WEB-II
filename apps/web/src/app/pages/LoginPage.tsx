@@ -82,8 +82,8 @@ export function LoginPage() {
     >
       <div className="bg-card rounded-lg shadow-xl w-full max-w-lg p-8">
         <div className="text-center mb-6">
-          <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl font-bold text-primary-foreground">F</span>
+          <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 select-none">
+            <span aria-hidden="true" className="text-3xl font-bold text-primary-foreground">F</span>
           </div>
           <h1 className="text-3xl mb-1 text-foreground">{t("login.tituloApp")}</h1>
           <p className="text-sm text-muted-foreground">
