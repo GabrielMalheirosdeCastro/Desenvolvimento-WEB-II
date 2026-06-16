@@ -9,6 +9,18 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [1.26.0] - 2026-06-16
+
+### Added
+- Reconhecimento do nome na ativação de conta. O endpoint
+  `POST /api/auth/ativar` passou a retornar o `nome` do cadastro casado por
+  matrícula + e-mail (`RETURNING id, nome`). Na tela de cadastro, a confirmação
+  de sucesso exibe "Conta ativada, {primeiroNome}! Redirecionando para o
+  login…", confirmando que a identidade reconhecida é a mesma que alimentará a
+  saudação do dashboard ("Bem-vindo de volta, {nome}!") após o login. Reutiliza
+  a coluna `usuarios.nome` existente, sem migração e sem expor o nome antes da
+  prova de identidade (a resposta só ocorre após a ativação bem-sucedida).
+
 ## [1.25.0] - 2026-06-16
 
 ### Added

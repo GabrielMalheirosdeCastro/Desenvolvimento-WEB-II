@@ -11,6 +11,7 @@ import {
   Loader2,
   CheckCircle2,
 } from "lucide-react";
+import { primeiroNome } from "../auth/nome";
 
 interface VersionInfo {
   name: string;
@@ -48,6 +49,7 @@ export function AtivarPage() {
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
+  const [nomeReconhecido, setNomeReconhecido] = useState<string | null>(null);
   const [versionInfo, setVersionInfo] = useState<VersionInfo>(FALLBACK_VERSION);
 
   useEffect(() => {
@@ -102,6 +104,16 @@ export function AtivarPage() {
         const codigo = await lerErro(res);
         setErro(MENSAGENS_ERRO[codigo] ?? MENSAGENS_ERRO.erro_desconhecido);
         return;
+      }
+      // Reconhece o nome do cadastro casado para confirmar a identidade na tela
+      // de sucesso (mesmo nome que aparecera na saudacao do dashboard).
+      try {
+        const j = await res.json();
+        if (typeof j?.nome === "string" && j.nome.trim()) {
+          setNomeReconhecido(j.nome.trim());
+        }
+      } catch {
+        // resposta sem corpo: segue com a mensagem generica.
       }
       setSucesso(true);
       setTimeout(() => navigate("/login", { replace: true }), 1800);
@@ -192,7 +204,9 @@ export function AtivarPage() {
           >
             <CheckCircle2 size={40} />
             <p className="text-foreground">
-              Conta ativada! Redirecionando para o login…
+              {nomeReconhecido
+                ? `Conta ativada, ${primeiroNome(nomeReconhecido)}! Redirecionando para o login…`
+                : "Conta ativada! Redirecionando para o login…"}
             </p>
           </div>
         ) : (

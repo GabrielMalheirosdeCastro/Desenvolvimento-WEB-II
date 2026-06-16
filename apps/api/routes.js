@@ -666,13 +666,16 @@ apiRouter.post('/auth/ativar', async (req, res) => {
 
     const hash = await hashPassword(cred.senha);
     const updated = await query(
-        `UPDATE usuarios SET password_hash = $1 WHERE id = $2 RETURNING id`,
+        `UPDATE usuarios SET password_hash = $1 WHERE id = $2 RETURNING id, nome`,
         [hash, rows[0].id],
     );
     if (!updated || updated.length === 0) {
         return res.status(500).json({ error: 'falha_ativacao' });
     }
-    res.status(201).json({ ativado: true });
+    // Devolve o nome reconhecido do cadastro casado (matricula + e-mail) para que
+    // a tela de sucesso confirme a identidade. E o mesmo `usuarios.nome` que
+    // alimenta a saudacao do dashboard apos o login.
+    res.status(201).json({ ativado: true, nome: updated[0].nome || null });
 });
 
 // --------------------------------------------------------------
