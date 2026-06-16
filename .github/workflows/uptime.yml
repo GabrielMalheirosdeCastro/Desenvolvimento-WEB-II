@@ -1,0 +1,90 @@
+name: Uptime monitor
+
+# ============================================================
+# D4 — Monitoramento de disponibilidade (RNF de uptime).
+# ------------------------------------------------------------
+# Verifica periodicamente a saude da producao batendo em /healthz e
+# /version. Roda nos runners do GitHub Actions (nao na VPS) e NAO entra
+# na imagem Docker (o Dockerfile so copia apps/api + apps/web/dist).
+# Portanto: sem bump de versao e sem redeploy associados a este arquivo.
+#
+# Evidencia academica: o historico de execucoes (aba Actions) serve como
+# prova de monitoramento de disponibilidade para a banca.
+# ============================================================
+
+on:
+  schedule:
+    # A cada 30 minutos (UTC). Carga desprezivel: 2 GETs idempotentes em
+    # endpoints publicos e leves, sem escrita no banco.
+    - cron: '*/30 * * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: uptime-monitor
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  BASE_URL: https://acolhimento.faesa.gmcsistemas.com.br
+
+jobs:
+  healthcheck:
+    name: Verifica /healthz e /version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: GET /healthz (espera 200 e status ok)
+        run: |
+          set -uo pipefail
+          echo "[uptime] verificando $BASE_URL/healthz ..."
+          HTTP_CODE=$(curl -fsS -o /tmp/healthz.txt -w '%{http_code}' \
+            --connect-timeout 15 --max-time 30 \
+            --retry 3 --retry-delay 5 --retry-connrefused \
+            -H 'User-Agent: gha-uptime-site-acolhimento-faesa/1.0' \
+            "$BASE_URL/healthz") || {
+              echo "::error::Falha ao acessar /healthz (curl rc=$?)."
+              exit 1
+            }
+          echo "[uptime] HTTP $HTTP_CODE — corpo: $(cat /tmp/healthz.txt)"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::/healthz retornou HTTP $HTTP_CODE (esperado 200)."
+            exit 1
+          fi
+          if ! grep -q '"status"[[:space:]]*:[[:space:]]*"ok"' /tmp/healthz.txt; then
+            echo "::error::/healthz nao retornou status ok."
+            exit 1
+          fi
+
+      - name: GET /version (espera 200 e campo version)
+        run: |
+          set -uo pipefail
+          echo "[uptime] verificando $BASE_URL/version ..."
+          HTTP_CODE=$(curl -fsS -o /tmp/version.txt -w '%{http_code}' \
+            --connect-timeout 15 --max-time 30 \
+            --retry 3 --retry-delay 5 --retry-connrefused \
+            -H 'User-Agent: gha-uptime-site-acolhimento-faesa/1.0' \
+            "$BASE_URL/version") || {
+              echo "::error::Falha ao acessar /version (curl rc=$?)."
+              exit 1
+            }
+          echo "[uptime] HTTP $HTTP_CODE — corpo: $(cat /tmp/version.txt)"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::/version retornou HTTP $HTTP_CODE (esperado 200)."
+            exit 1
+          fi
+          if ! grep -q '"version"' /tmp/version.txt; then
+            echo "::error::/version nao retornou o campo version."
+            exit 1
+          fi
+
+      - name: Resumo
+        if: always()
+        run: |
+          {
+            echo "## Uptime check — $BASE_URL"
+            echo ""
+            echo "- /healthz: $(cat /tmp/healthz.txt 2>/dev/null || echo 'sem resposta')"
+            echo "- /version: $(cat /tmp/version.txt 2>/dev/null || echo 'sem resposta')"
+          } >> "$GITHUB_STEP_SUMMARY"
