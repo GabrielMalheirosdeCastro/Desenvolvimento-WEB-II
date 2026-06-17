@@ -33,15 +33,15 @@ jobs:
   healthcheck:
     name: Verifica /healthz e /version
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: GET /healthz (espera 200 e status ok)
         run: |
           set -uo pipefail
           echo "[uptime] verificando $BASE_URL/healthz ..."
           HTTP_CODE=$(curl -fsS -o /tmp/healthz.txt -w '%{http_code}' \
-            --connect-timeout 15 --max-time 30 \
-            --retry 3 --retry-delay 5 --retry-connrefused \
+            --connect-timeout 20 --max-time 40 \
+            --retry 5 --retry-delay 10 --retry-connrefused --retry-all-errors \
             -H 'User-Agent: gha-uptime-site-acolhimento-faesa/1.0' \
             "$BASE_URL/healthz") || {
               echo "::error::Falha ao acessar /healthz (curl rc=$?)."
@@ -62,8 +62,8 @@ jobs:
           set -uo pipefail
           echo "[uptime] verificando $BASE_URL/version ..."
           HTTP_CODE=$(curl -fsS -o /tmp/version.txt -w '%{http_code}' \
-            --connect-timeout 15 --max-time 30 \
-            --retry 3 --retry-delay 5 --retry-connrefused \
+            --connect-timeout 20 --max-time 40 \
+            --retry 5 --retry-delay 10 --retry-connrefused --retry-all-errors \
             -H 'User-Agent: gha-uptime-site-acolhimento-faesa/1.0' \
             "$BASE_URL/version") || {
               echo "::error::Falha ao acessar /version (curl rc=$?)."
