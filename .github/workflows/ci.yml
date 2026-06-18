@@ -1,0 +1,53 @@
+name: CI
+
+# ============================================================
+# Gate geral de qualidade — fornece o check de status (✓ verde) em
+# cada push e pull request para master, rodando a suite Vitest
+# (unitarios auth/chatbot + integracao supertest do apiRouter em modo
+# fallback) com cobertura.
+#
+# Independente do deploy.yml: este e o gate GERAL (todo push em master
+# recebe status). O deploy.yml tem seu PROPRIO job de teste como gate
+# antes do webhook do EasyPanel — sao papeis distintos de proposito.
+#
+# NAO dispara deploy e NAO entra na imagem Docker (arquivo em .github/**,
+# que o deploy.yml ignora). Portanto: sem bump de versao e sem redeploy.
+#
+# Os specs E2E do Playwright exigem GUI e rodam so na estacao Windows
+# (Secao 2.5 das instrucoes do repositorio), fora deste gate.
+# ============================================================
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Testes core (vitest + cobertura)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install (npm ci)
+        run: npm ci
+
+      - name: npm test (vitest + cobertura)
+        run: npm test
