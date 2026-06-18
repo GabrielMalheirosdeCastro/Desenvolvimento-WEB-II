@@ -9,6 +9,17 @@ e o versionamento segue o [Versionamento Semântico](https://semver.org/lang/pt-
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-06-17
+
+### Fixed
+- Tratamento explícito do evento `error` no `app.listen` em `apps/api/server.js`.
+  Em desenvolvimento local (`node --watch`), reinícios rápidos podiam colidir com
+  a instância anterior que ainda não havia liberado a porta 3010 (`EADDRINUSE`),
+  fazendo o processo encerrar com stack trace e o watcher apenas exibir
+  `Failed running 'server.js'`. Agora o erro é logado de forma explícita e o
+  processo encerra com código 1 de forma limpa. Sem efeito em produção (o
+  container não usa `--watch` e a porta está livre).
+
 ## [2.0.0] - 2026-06-16
 
 Versão final de entrega acadêmica. Consolida os 16 requisitos funcionais e o

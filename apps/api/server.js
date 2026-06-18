@@ -138,6 +138,20 @@ const server = app.listen(PORT, HOST, () => {
     console.log(`[${new Date().toISOString()}] ${pkg.name} v${pkg.version} ouvindo em http://${HOST}:${PORT}`);
 });
 
+// Tratamento explícito de falha no bind. Em dev local (node --watch) um
+// reinício rápido pode colidir com a instância anterior que ainda não
+// liberou a porta (EADDRINUSE). Sem este handler, o erro sobe como stack
+// trace e o --watch apenas imprime "Failed running 'server.js'". Aqui o
+// log fica explícito e o processo encerra com código 1 de forma limpa.
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`[${new Date().toISOString()}] porta ${PORT} em uso (instância anterior não liberou). Encerre o processo antigo e reinicie.`);
+    } else {
+        console.error(`[${new Date().toISOString()}] erro no listen:`, err.message);
+    }
+    process.exit(1);
+});
+
 // Graceful shutdown — Docker/EasyPanel envia SIGTERM em redeploy.
 const shutdown = (signal) => {
     console.log(`[${new Date().toISOString()}] recebido ${signal}, encerrando...`);
